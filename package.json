@@ -1,0 +1,26 @@
+{
+  "name": "nautic-online",
+  "version": "1.0.0",
+  "description": "boat marketing",
+  "main": "index.js",
+  "scripts": {
+    "start": "server.js",
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://schnueggel@bitbucket.org/battleprogrammers/nautic-online.git"
+  },
+  "author": [
+    "Christian Steinmann",
+    "Yannik Mortier"
+  ],
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/battleprogrammers/nautic-online#readme",
+  "dependencies": {
+    "express": "^4.12.3"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.11"
+  }
+}
