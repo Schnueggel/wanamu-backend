@@ -24,5 +24,36 @@ module.exports = {
                 });
             });
         });
+    },
+
+    deleteListing: function (id) {
+        return new Promise(function (fulfill, reject) {
+            config.getMysqlPool().getConnection(function (err, connection) {
+                if(err) {
+                    reject(err);
+                    return;
+                }
+                // Use the connection
+                connection.query('DELETE FROM dat_anzeigen WHERE anzeigen_id = ?', [id], function (err, result) {
+                    if(err) {
+                        reject(err);
+                        return;
+                    }
+
+                    // And done with the connection.
+                    connection.release();
+                    return fulfill(result.affectedRows);
+
+                    // Don't use the connection here, it has been returned to the pool.
+                });
+            });
+        });
     }
+
+    //Insert
+    //GetListings (Limit, Offset)
+    // Limit und Offset, Maxresult müssen auch zurückgegeben werden, Kontrollobjekt für AngularJS
+    // { limit : 10, offset: 20, maxresult : 50, data : rows }
+    // Für alle Rückgaben implementieren
+
 }

@@ -5,24 +5,16 @@ var express = require('express');
 var path = require('path');
 var mysql = require('mysql');
 
-
-
 var app = express();
+
+var router = require('./src/server/controller');
+//var listing = require('./src/server/controller/listing');
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-// Database
-
-var pool  = mysql.createPool({
-    host     : 'localhost',
-    user     : 'nautic',
-    password : 'nautic',
-    database : 'nautic'
-});
-app.set('dbPool', pool);
-
-
+app.use(router);
+//app.use('/listing', listing);
 app.use(express.static(path.join(__dirname, 'public')));
 
 
