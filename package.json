@@ -19,7 +19,8 @@
   "homepage": "https://bitbucket.org/battleprogrammers/nautic-online#readme",
   "dependencies": {
     "express": "^4.12.3",
-    "mysql": "^2.6.2"
+    "mysql": "^2.6.2",
+    "promise": "^7.0.1"
   },
   "devDependencies": {
     "gulp": "^3.8.11"

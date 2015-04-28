@@ -1,29 +1,28 @@
-var mysql = require('mysql');
-
-var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'nautic',
-    password: 'nautic'
-});
-
-function handleConnectionError(err) {
-    console.log(err);
-}
+var config = require('../config'),
+    promise = require('promise');
 
 module.exports = {
-  getListing : function(id) {
-      connection.connect(function(err) {
-          if(err) {
-              handleConnectionError(err);
-              return;
-          }
-      });
+    getListing: function (id) {
+        return new Promise(function (fulfill, reject) {
+            config.getMysqlPool().getConnection(function (err, connection) {
+                if(err) {
+                    reject(err);
+                    return;
+                }
+                // Use the connection
+                connection.query('SELECT * FROM dat_anzeigen WHERE anzeigen_id = ?', [id], function (err, rows) {
+                    if(err) {
+                        reject(err);
+                        return;
+                    }
 
-      var post  = {id: 1, title: 'Hello MySQL'};
-      var query = connection.query('INSERT INTO posts SET ?', post, function(err, result) {
-          // Neat!
-      });
-      console.log(query.sql); // INSERT INTO posts SET `id` = 1, `title` = 'Hello MySQL'
+                    // And done with the connection.
+                    connection.release();
+                    return fulfill(rows[0]);
 
-  }
-};
+                    // Don't use the connection here, it has been returned to the pool.
+                });
+            });
+        });
+    }
+}
