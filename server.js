@@ -3,20 +3,33 @@
  */
 var express = require('express');
 var path = require('path');
+var mysql = require('mysql');
+
+
 
 var app = express();
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
+// Database
+
+var pool  = mysql.createPool({
+    host     : 'localhost',
+    user     : 'nautic',
+    password : 'nautic',
+    database : 'nautic'
+});
+app.set('dbPool', pool);
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 
 
-app.get('/', function (req, res) {
+/*app.get('/', function (req, res) {
     res.send('Hello World!');
-});
+});*/
 
 var server = app.listen(port, function () {
 
