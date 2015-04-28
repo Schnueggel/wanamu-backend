@@ -7,12 +7,12 @@ router.get('/:id', function(request, response) {
     var promise = listing.getListing(request.params.id);
     promise.then(function(res) {
         if(!res) {
-            response.send(404);
+            response.sendStatus(404);
             return;
         }
         response.send(res);
     }).catch(function(err) {
-        response.send(500);
+        response.sendStatus(500);
         //response.send(err);
     })
 });
