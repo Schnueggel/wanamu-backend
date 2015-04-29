@@ -2,6 +2,9 @@ var config = require('../config'),
     promise = require('promise');
 
 module.exports = {
+    foo: function() {
+        console.log('bar');
+    },
     getListing: function (id) {
         //return getListings({limit: 1, offset: 0, id:id});
         return new Promise(function (fulfill, reject) {
