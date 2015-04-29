@@ -13,16 +13,20 @@
   },
   "author": [
     "Christian Steinmann",
-    "Yannik Mortier"
+    "Yannick Mortier"
   ],
   "license": "ISC",
   "homepage": "https://bitbucket.org/battleprogrammers/nautic-online#readme",
   "dependencies": {
     "express": "^4.12.3",
     "mysql": "^2.6.2",
-    "promise": "^7.0.1"
+    "promise": "^7.0.1",
+    "sequelize": "^2.1.0"
   },
   "devDependencies": {
-    "gulp": "^3.8.11"
+    "gulp": "^3.8.11",
+    "gulp-batch": "^1.0.5",
+    "gulp-develop-server": "^0.4.2",
+    "gulp-watch": "^4.2.4"
   }
 }
