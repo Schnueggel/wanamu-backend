@@ -7,7 +7,7 @@ var mysql = require('mysql');
 
 var app = express();
 
-var router = require('./src/server/controller');
+var router = require('./server/controller/index');
 //var listing = require('./src/server/controller/listing');
 
 var port = normalizePort(process.env.PORT || '3000');
