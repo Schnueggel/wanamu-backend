@@ -1,4 +1,16 @@
-var mysql = require('mysql');
+var mysql = require('mysql'),
+    Sequelize = require('sequelize');
+
+var sequelize = new Sequelize('sequelize', 'sequelize', 'sequelize', {
+    host: 'localhost',
+    dialect: 'mysql',
+
+    pool: {
+        max: 5,
+        min: 0,
+        idle: 10000
+    }
+});
 
 var config = {
     mysql : {
@@ -11,7 +23,10 @@ var config = {
     getMysqlPool : function() {
         return pool;
     },
-    port : 3000,
+    getSequelize : function() {
+        return sequelize;
+    },
+    port : 3000
 }
 
 var pool = mysql.createPool(config.mysql);
