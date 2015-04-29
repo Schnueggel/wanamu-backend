@@ -3,6 +3,7 @@ var config = require('../config'),
 
 module.exports = {
     getListing: function (id) {
+        //return getListings({limit: 1, offset: 0, id:id});
         return new Promise(function (fulfill, reject) {
             config.getMysqlPool().getConnection(function (err, connection) {
                 if (err) {
