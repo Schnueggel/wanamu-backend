@@ -10,7 +10,8 @@ var config = {
     },
     getMysqlPool : function() {
         return pool;
-    }
+    },
+    port : 3000,
 }
 
 var pool = mysql.createPool(config.mysql);

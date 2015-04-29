@@ -3,25 +3,16 @@
  */
 var express = require('express');
 var path = require('path');
-var mysql = require('mysql');
-
+var config = require('./server/config');
 var app = express();
 
-var router = require('./server/controller/index');
-//var listing = require('./src/server/controller/listing');
-
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+// Routing Setup
+var router = require('./server/controller');
 
 app.use(router);
-//app.use('/listing', listing);
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-
-/*app.get('/', function (req, res) {
-    res.send('Hello World!');
-});*/
+var port = config.port;
 
 var server = app.listen(port, function () {
 
@@ -30,24 +21,3 @@ var server = app.listen(port, function () {
 
     console.log('Example app listening at http://%s:%s', host, port);
 });
-
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val) {
-    var port = parseInt(val, 10);
-
-    if (isNaN(port)) {
-        // named pipe
-        return val;
-    }
-
-    if (port >= 0) {
-        // port number
-        return port;
-    }
-
-    return false;
-}
