@@ -1,6 +1,5 @@
 var gulp = require('gulp'),
     server = require('gulp-develop-server'),
-    watch = require('gulp-watch'),
     batch = require('gulp-batch');
 
 gulp.task('default', ['build', 'watch'], function () {
@@ -19,7 +18,7 @@ gulp.task('server:start', ['move'], function (cb) {
 });
 
 gulp.task('watch', function() {
-    watch('src/**/*.js', batch(function () {
+    gulp.watch('src/**/*.js', batch(function () {
         gulp.start('build');
     }));
 });
