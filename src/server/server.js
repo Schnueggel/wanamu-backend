@@ -1,14 +1,16 @@
 /**
  * Created by Christian on 4/27/2015.
  */
-var express = require('express');
-var path = require('path');
-var config = require('./server/config');
-var app = express();
+var express = require('express'),
+    path = require('path'),
+    config = require('./server/config'),
+    livereload = require('connect-livereload'),
+    app = express();
 
 // Routing Setup
 var router = require('./server/controller');
 
+app.use(livereload());
 app.use(express.static(path.resolve(__dirname + '/../app')));
 app.use(router);
 
