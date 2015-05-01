@@ -9,7 +9,7 @@ module.exports = angular.module('home', [])
         $stateProvider
             .state('home', {
                 abstract: true,
-                template: 'template.html',
+                template: require('./template.html'),
                 controller: 'HomeCtrl',
                 role: 'public'
             });
