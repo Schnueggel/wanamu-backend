@@ -1,10 +1,10 @@
+'use strict';
 
 /*global window*/
 var ngModule = angular.module('nautic', [
     'ui.router',
     'ngAnimate',
     'ngTouch',
-    'cfp.hotkeys',
     require('./home').name,
     'pascalprecht.translate'
 ]);
@@ -20,7 +20,7 @@ ngModule.config([
         /*
          * $log provider enable disable on dev environment
          */
-        $logProvider.debugEnabled(config.debug);
+        $logProvider.debugEnabled(true);
 
         // Fallback on unknown state/route
         $urlRouterProvider.otherwise('/home');
@@ -49,12 +49,6 @@ ngModule.config([
         });
 
         $translateProvider.fallbackLanguage('en');
-
-        /*
-         * HTTP Interceptor
-         */
-        $httpProvider.interceptors.push('errorHttpInterceptor');
-
     }
 ])
     .run(['$rootScope',  '$state', '$log', '$window',
@@ -68,7 +62,6 @@ ngModule.config([
             };
 
             $rootScope.$state = $state;
-
             /**
              * Add display object to rootScope. Yoso display size detection directive is connected.
              * Every controller and template can get current display size using $scope.display.size
