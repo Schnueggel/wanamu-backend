@@ -121,7 +121,7 @@ gulp.task('http-browser', function () {
     var options = {
         url: 'http://localhost:3000'
     };
-    gulp.src(distIndexHtml)
+    return gulp.src(distIndexHtml)
         .pipe(open('', options));
 });
 
