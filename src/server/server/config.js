@@ -1,10 +1,12 @@
+'use strict';
+
 var mysql = require('mysql'),
-    Sequelize = require('sequelize');
+    Sequelize = require('sequelize'),
+    pool = null;
 
 var sequelize = new Sequelize('sequelize', 'sequelize', 'sequelize', {
     host: 'localhost',
     dialect: 'mysql',
-
     pool: {
         max: 5,
         min: 0,
@@ -13,22 +15,23 @@ var sequelize = new Sequelize('sequelize', 'sequelize', 'sequelize', {
 });
 
 var config = {
-    mysql : {
-        port : 3306,
-        host : 'localhost',
-        user : 'nautic',
+    debug: process.env.NAUTIC_DEBUG === '1' ? true : false,
+    mysql: {
+        port: 3306,
+        host: 'localhost',
+        user: 'nautic',
         password: 'nautic',
         database: 'nautic'
     },
-    getMysqlPool : function() {
+    getMysqlPool: function () {
         return pool;
     },
-    getSequelize : function() {
+    getSequelize: function () {
         return sequelize;
     },
-    port : 3000
+    port: process.env.NAUTIC_PORT || 3000
 }
 
-var pool = mysql.createPool(config.mysql);
+pool = mysql.createPool(config.mysql);
 
 module.exports = config;
