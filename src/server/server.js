@@ -9,8 +9,8 @@ var app = express();
 // Routing Setup
 var router = require('./server/controller');
 
+app.use(express.static(path.resolve(__dirname + '/../app')));
 app.use(router);
-app.use(express.static(path.join(__dirname, 'public')));
 
 var port = config.port;
 
