@@ -16,6 +16,8 @@
     "unused": true,
     "strict": true,
     "trailing": true,
+    "mocha": true,
+    "browser": true,
     "smarttabs": true,
     "white": true,
     "validthis": true,
@@ -24,8 +26,8 @@
         // Angular Mocks
         "inject": false,
         // JASMINE
-        "describe": false,
-        "it": false,
+        "describe": true,
+        "it": true,
         "before": false,
         "beforeEach": false,
         "after": false,

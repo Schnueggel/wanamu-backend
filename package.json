@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "server.js",
-    "test": "gulp test"
+    "test": "mocha ./test/mocha --recursive"
   },
   "repository": {
     "type": "git",
