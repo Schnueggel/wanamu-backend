@@ -1,11 +1,13 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express'),
+    router = express.Router(),
+    listing = require('../controller/listing'),
+    toplisting = require('../controller/toplisting');
 
+// Listing Routes
+router.get('/listing/:id', listing.get);
+router.get('/listing/list/:limit/:offset', listing.list);
 
-var listing = require('../controller/listing');
-var toplisting = require('../controller/toplisting');
-
-router.use('/listing', listing);
-router.use('/toplisting', toplisting);
+// Toplisting Routes
+router.get('/toplisting/list', toplisting.list);
 
 module.exports = router;

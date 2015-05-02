@@ -58,7 +58,7 @@ var webpackConfig = {
  **/
 // Default task Builds the application. Just call gulp
 gulp.task('default', ['build']);
-
+// Build the application into the dist folder
 gulp.task('build', function (cb) {
     runSequence('build-server', 'build-app', cb);
 });
@@ -83,12 +83,15 @@ gulp.task('build-server', function (cb) {
 /**
  * Dependend Tasks come here
  **/
+// Start all clean tasks
 gulp.task('build-clean', ['build-clean-app', 'build-clean-server'], function (cb) {
     cb();
 });
+// Remove all app code in dist folder
 gulp.task('build-clean-app', function (cb) {
     return del([distAppPath], {}, cb);
 });
+// Remove all server code in dist folder
 gulp.task('build-clean-server', function (cb) {
     return del([distServerPath], {}, cb);
 });
@@ -110,13 +113,14 @@ gulp.task('build-webpack', function (callback) {
 /**
  * Server start, restart, and browser open and Refresh
  */
+// Start a development server using the real server script
 gulp.task('server-start', function (cb) {
     server.kill('SIGTERM', function () {
         server.listen({path: distServerScript}, livereload.listen);
         cb();
     });
 });
-
+// Open the browser and opens the frontend of this app
 gulp.task('http-browser', function () {
     var options = {
         url: 'http://localhost:3000'
@@ -124,7 +128,7 @@ gulp.task('http-browser', function () {
     return gulp.src(distIndexHtml)
         .pipe(open('', options));
 });
-
+// restart the node server and then livereload
 gulp.task('server-restart', function (cb) {
     server.changed(function (error) {
         if (!error) {
@@ -137,23 +141,25 @@ gulp.task('server-restart', function (cb) {
 /**
  * Watching Frontend and Backend and restart server or livereload frontend
  */
-
+// Start all watch tasks
 gulp.task('watch', ['watch-server', 'watch-app'], function (cb) {
     cb();
 });
-
+// Watch the server code and restart the server on changes
 gulp.task('watch-server', function (cb) {
     gulp.watch(['src/server/**/*.js'], {debounceDelay: 2000}, function () {
         runSequence('build-server', 'server-restart');
     });
     cb();
 });
+// Watch frontend code and reload the webpage if changes occur
 gulp.task('watch-app', function (cb) {
     gulp.watch(['src/app/**/*.js', 'src/app/**/*.html'], {debounceDelay: 2000}, function () {
         runSequence('build-app', 'livereload');
     });
     cb();
 });
+//Reload the browser page
 gulp.task('livereload', function (cb) {
     livereload.changed(distIndexHtml);
     cb();
