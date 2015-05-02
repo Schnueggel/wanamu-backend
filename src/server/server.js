@@ -8,7 +8,7 @@ var express = require('express'),
     app = express();
 
 // Routing Setup
-var router = require('./server/controller');
+var router = require('./server/routes');
 
 app.use(livereload());
 app.use(express.static(path.resolve(__dirname + '/../app')));
