@@ -10,7 +10,7 @@ module.exports = angular.module('home', [])
             .state('home', {
                 abstract: true,
                 template: require('./layout.html'),
-                controller: 'HomeCtrl',
+                controller: 'HomeCtrl as Home',
                 role: 'public'
             })
             .state('home.index', {
@@ -20,7 +20,9 @@ module.exports = angular.module('home', [])
             }).state('home.index.home', {
                 'url': '/home'
             });
-        console.log('test');
     }])
-    .controller('HomeCtrl', ['$scope', '$state', '$window', '$filter',  function ($scope, $state, $window, $filter) {
+    .controller('HomeCtrl', ['$scope',  function ($scope) {
+        var home = this;
+        home.hund = 'wauwau';
+        $scope.test = 1;
     }]);

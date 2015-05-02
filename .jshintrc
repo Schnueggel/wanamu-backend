@@ -28,10 +28,10 @@
         // JASMINE
         "describe": true,
         "it": true,
-        "before": false,
-        "beforeEach": false,
-        "after": false,
-        "afterEach": false,
-        "expect": false
+        "before": true,
+        "beforeEach": true,
+        "after": true,
+        "afterEach": true,
+        "expect": true
     }
 }

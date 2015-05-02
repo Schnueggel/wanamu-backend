@@ -9,6 +9,9 @@ var gulp = require('gulp'),
     runSequence = require('run-sequence'),
     webpack = require('webpack'),
     path = require('path'),
+    exec = require('child_process').exec,
+    karma = require('karma').server,
+    mocha = require('gulp-mocha'),
     del = require('del');
 
 var srcAppPath = path.join(__dirname, 'src/app'),
@@ -66,6 +69,11 @@ gulp.task('build', function (cb) {
 gulp.task('build-serve',  function (cb) {
     runSequence('build', 'server-start', 'watch', 'http-browser', cb);
 });
+
+gulp.task('test', function (cb) {
+    runSequence('test-jasmine', 'test-mocha', cb);
+});
+
 //Builds the frontend
 gulp.task('build-app', function (cb) {
     runSequence('build-clean-app',
@@ -182,4 +190,18 @@ gulp.task('dist-server', function () {
 //Move the app static files into the app folder
 gulp.task('dist-app-static', function () {
     return gulp.src(path.join(srcAppStaticFolder, '**')).pipe(gulp.dest(distAppPath));
+});
+
+/**
+ * Test Tasks
+ */
+gulp.task('test-jasmine', ['build-webpack'], function (cb) {
+    karma.start({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true
+    }, cb);
+});
+gulp.task('test-mocha',  function () {
+    return gulp.src('test/mocha/**/**.js')
+        .pipe(mocha());
 });
