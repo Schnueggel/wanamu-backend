@@ -70,6 +70,7 @@ gulp.task('build-serve',  function (cb) {
     runSequence('build', 'server-start', 'watch', 'http-browser', cb);
 });
 
+// Test frontend and backend
 gulp.task('test', function (cb) {
     runSequence('test-jasmine', 'test-mocha', cb);
 });
