@@ -1,10 +1,10 @@
 'use strict';
 
-var listing = require('./../model/listing');
+var listingModel = require('./../model/listing');
 
 var listing = {
     'get' : function (request, response) {
-        var promise = listing.getListing(request.params.id);
+        var promise = listingModel.getListing(request.params.id);
         promise.then(function (res) {
             if (!res) {
                 response.sendStatus(404);
@@ -17,7 +17,7 @@ var listing = {
         });
     },
     'list' : function (request, response) {
-        var promise = listing.getListings(request.params.limit, request.params.offset);
+        var promise = listingModel.getListings(request.params.limit, request.params.offset);
         promise.then(function (res) {
             /*if(!res) {
              response.sendStatus(404);
