@@ -1,5 +1,6 @@
-var config = require('../config'),
-    promise = require('promise');
+'use strict';
+
+var config = require('../config');
 
 module.exports = {
     foo: function() {

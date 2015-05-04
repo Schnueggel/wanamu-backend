@@ -1,11 +1,13 @@
-var config = require('../config'),
-    promise = require('promise');
+'use strict';
+
+var config = require('../config');
 
 module.exports = {
     getAll: function () {
         return new Promise(function (fulfill, reject) {
             config.getMysqlPool().getConnection(function (err, connection) {
                 if (err) {
+                    console.log(err);
                     reject(err);
                     return;
                 }

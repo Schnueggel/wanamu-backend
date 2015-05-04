@@ -65,7 +65,7 @@ gulp.task('default', ['build']);
 gulp.task('build', function (cb) {
     runSequence('build-server', 'build-app', cb);
 });
-//Builds frontend and backend, starting the development server and opens a browser.
+//Builds frontend and backend, starting the development.json server and opens a browser.
 gulp.task('build-serve',  function (cb) {
     runSequence('build', 'server-start', 'watch', 'http-browser', cb);
 });
@@ -122,7 +122,7 @@ gulp.task('build-webpack', function (callback) {
 /**
  * Server start, restart, and browser open and Refresh
  */
-// Start a development server using the real server script
+// Start a development.json server using the real server script
 gulp.task('server-start', function (cb) {
     server.kill('SIGTERM', function () {
         server.listen({path: distServerScript}, livereload.listen);
