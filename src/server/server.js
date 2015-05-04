@@ -5,11 +5,13 @@ var express = require('express'),
     path = require('path'),
     config = require('./server/config'),
     livereload = require('connect-livereload'),
+    logger = require('morgan'),
     app = express();
 
 // Routing Setup
 var router = require('./server/routes');
 
+app.use(logger('dev'));
 app.use(livereload());
 app.use(express.static(path.resolve(__dirname + '/../app')));
 app.use(router);
