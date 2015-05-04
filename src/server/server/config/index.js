@@ -7,9 +7,12 @@ var mysql = require('mysql'),
 
 
 nconf.argv()
-    .env()
-    .file({file: __dirname + '/default.json'})
-    .file('env', {file: __dirname + '/' + nconf.get('NODE_ENV').toLowerCase() + '.json'});
+    .env();
+
+var env = nconf.get('NODE_ENV') || 'development';
+
+nconf.file({file: __dirname + '/default.json'})
+    .file('env', {file: __dirname + '/' + env.toLowerCase() + '.json'});
 
 var sequelize = new Sequelize('sequelize', 'sequelize', 'sequelize', nconf.get('sequelize'));
 
