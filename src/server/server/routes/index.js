@@ -1,7 +1,7 @@
 var express = require('express'),
     router = express.Router(),
     listing = require('../controller/listing'),
-    toplisting = require('../controller/toplisting');
+    toplisting = require('../controller/toplisting.js');
 
 // Listing Routes
 router.get('/listing/:id', listing.get);

@@ -1,5 +1,11 @@
 # Nautic Online Rewrite in Node.JS
 
+## Install
+   use `gulp build-serve` to start development server
+   
+   use `gulp build` to build only
+   
+   use `gulp test` to start tests
 ## Application structure
 
 The application source code is located in `src`.
