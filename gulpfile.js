@@ -156,7 +156,7 @@ gulp.task('watch', ['watch-server', 'watch-app'], function (cb) {
 });
 // Watch the server code and restart the server on changes
 gulp.task('watch-server', function (cb) {
-    gulp.watch(['src/server/**/*.js'], {debounceDelay: 2000}, function () {
+    gulp.watch(['src/server/**/*.js', 'src/server/**/*.json'], {debounceDelay: 2000}, function () {
         runSequence('build-server', 'server-restart');
     });
     cb();
