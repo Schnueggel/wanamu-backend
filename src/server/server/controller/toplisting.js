@@ -1,10 +1,10 @@
 'use strict';
 
-var toplisting = require('./../model/toplisting');
+var toplistingModel = require('./../model/toplisting');
 
 var toplisting = {
     list : function (request, response) {
-        var promise = toplisting.getAll();
+        var promise = toplistingModel.getAll();
         promise.then(function (res) {
             /*if(!res) {
              response.sendStatus(404);
