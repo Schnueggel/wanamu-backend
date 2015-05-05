@@ -1,3 +1,8 @@
 {
-    "debug": true
+    "debug": true,
+    "mysql":  {
+        "user": "nautic_dev",
+        "password": "nautic_dev",
+        "database": "nautic_dev"
+    }
 }

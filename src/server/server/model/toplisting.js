@@ -1,31 +1,28 @@
 'use strict';
 
-var config = require('../config');
+var sequelize = require('../config').getSequelize(),
+    Listing = require('./listing.js');
 
-module.exports = {
-    getAll: function () {
-        return new Promise(function (fulfill, reject) {
-            config.getMysqlPool().getConnection(function (err, connection) {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                    return;
-                }
-                // Use the connection
-                connection.query('SELECT * FROM dat_anzeigen, dat_topview WHERE dat_topview.anzeigen_id = dat_anzeigen.anzeigen_id', function (err, rows) {
-                    if (err) {
-                        reject(err);
-                        return;
-                    }
-
-                    // And done with the connection.
-                    connection.release();
-                    return fulfill(rows);
-
-                    // Don't use the connection here, it has been returned to the pool.
-                });
-            });
-        });
+var Toplisting = sequelize.define('Toplisting', {
+    id : {
+        type: sequelize.Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    created: {
+        type: sequelize.Sequelize.DATE,
+        defaultValue: sequelize.Sequelize.NOW
+    },
+    updated : {
+        type: sequelize.Sequelize.DATE,
+        defaultValue: null
+    },
+    deleted : {
+        type: sequelize.Sequelize.DATE,
+        defaultValue: null
     }
+});
 
-}
+Toplisting.belongsTo(Listing);
+
+module.exports = Toplisting;

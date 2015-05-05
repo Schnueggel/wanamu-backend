@@ -14,7 +14,7 @@ var env = nconf.get('NODE_ENV') || 'development';
 nconf.file({file: __dirname + '/default.json'})
     .file('env', {file: __dirname + '/' + env.toLowerCase() + '.json'});
 
-var sequelize = new Sequelize('sequelize', 'sequelize', 'sequelize', nconf.get('sequelize'));
+var sequelize = new Sequelize(nconf.get('mysql:database'), nconf.get('mysql:user'), nconf.get('mysql:password'), nconf.get('sequelize'));
 
 pool = mysql.createPool(nconf.get('mysql'));
 

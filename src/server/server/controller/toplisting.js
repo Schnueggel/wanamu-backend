@@ -4,16 +4,28 @@ var toplistingModel = require('./../model/toplisting');
 
 var toplisting = {
     list : function (request, response) {
-        var promise = toplistingModel.getAll();
-        promise.then(function (res) {
-            /*if(!res) {
-             response.sendStatus(404);
-             return;
-             }*/
-            response.send(res);
+        // ==============================================================================
+        // Default result Object
+        // ==============================================================================
+        var result = {
+            offset: request.param('offset', 0),
+            limit: request.param('limit', 1000),
+            total: 0,
+            data: []
+        };
+        toplistingModel.findAndCountAll({
+            limit: result.limit,
+            offset: result.offset
+        }, {
+            raw: true
+        }).then(function (res) {
+            result.data = res.rows;
+            result.total = res.count;
+            result.count = res.count;
+            response.send(result);
         }).catch(function (err) {
             response.sendStatus(500);
-            //response.send(err);
+            console.log(err);
         });
     }
 };
