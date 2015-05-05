@@ -6,6 +6,12 @@
    use `gulp build` to build only
    
    use `gulp test` to start tests
+   
+## Development
+For development create a MYSQL database at localhost and create a user and database named `nautic_dev` 
+with password `nautic_dev`
+
+   use `gulp build-development-database` to build the development database.
 ## Application structure
 
 The application source code is located in `src`.
