@@ -62,6 +62,7 @@ var webpackConfig = {
 
 // ===================================================================
 // Default task Builds the application. Just call gulp
+// ===================================================================
 gulp.task('default', ['build']);
 // ===================================================================
 // Build the application into the dist folder
@@ -173,16 +174,16 @@ gulp.task('watch', ['watch-server', 'watch-app'], function (cb) {
 });
 // ==================================================================
 // Watch the server code and restart the server on changes
-gulp.task('watch-server', function (cb) {
+gulp.task('watch-server', function () {
     gulp.watch(['src/server/**/*.js', 'src/server/**/*.json'], {debounceDelay: 2000}, function () {
-        runSequence('build-server', 'server-restart', cb);
+        runSequence('build-server', 'server-restart');
     });
 });
 // ===================================================================
 // Watch frontend code and reload the webpage if changes occur
-gulp.task('watch-app', function (cb) {
+gulp.task('watch-app', function () {
     gulp.watch(['src/app/**/*.js', 'src/app/**/*.html'], {debounceDelay: 2000}, function () {
-        runSequence('build-app', 'livereload', cb);
+        runSequence('build-app', 'livereload');
     });
 });
 // ===================================================================
@@ -232,7 +233,23 @@ gulp.task('test-jasmine', ['build-webpack'], function (cb) {
 });
 // =================================================================
 // Start server side unit tests with mocha
+// =================================================================
 gulp.task('test-mocha',  function () {
     return gulp.src('test/mocha/**/**.js')
         .pipe(mocha());
+});
+
+// ==========================================================================
+// Database deployment
+// ==========================================================================
+gulp.task('build-development-database', function (cb) {
+    var modelpath = path.join(srcServerPath, 'server', 'model'),
+        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
+
+    require('fs').readdirSync(modelpath).forEach(function (file) {
+        require(path.join(modelpath, file));
+    });
+    process.env.NODE_ENV = 'development';
+    sequelize.sync({'force': true});
+    cb();
 });
