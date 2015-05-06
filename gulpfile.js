@@ -5,6 +5,7 @@ var gulp = require('gulp'),
     gutil = require('gulp-util'),
     open = require('gulp-open'),
     livereload = require('gulp-livereload'),
+    jshint = require('gulp-jshint'),
     replace = require('gulp-replace'),
     runSequence = require('run-sequence'),
     webpack = require('webpack'),
@@ -59,7 +60,6 @@ var webpackConfig = {
  * Main Tasks come here
  * ===================================================================
  */
-
 // ===================================================================
 // Default task Builds the application. Just call gulp
 // ===================================================================
@@ -67,7 +67,7 @@ gulp.task('default', ['build']);
 // ===================================================================
 // Build the application into the dist folder
 gulp.task('build', function (cb) {
-    runSequence('build-server', 'build-app', cb);
+    runSequence('jshint', 'build-server', 'build-app', cb);
 });
 // ====================================================================
 //Builds frontend and backend, starting the development.json server and opens a browser.
@@ -133,7 +133,6 @@ gulp.task('build-webpack', function (callback) {
  * Server start, restart, and browser open and Refresh
  * ==========================================================
  */
-
 // ============================================================
 // Start a development.json server using the real server script
 gulp.task('server-start', function (cb) {
@@ -202,7 +201,7 @@ gulp.task('livereload', function (cb) {
 // =========================================================================
 // Build the index.html of the frontend and move it to the app folder
 gulp.task('build-app-html', function () {
-    var script = '<script src="' + indexFileName + '"></script>';
+    var script = '<script src="' + indexFileName.replace('.js','-' + Date.now() + '.js') + '"></script>';
     return gulp.src(srcIndexHtml)
         .pipe(replace('<!--scripts-->', script))
         .pipe(gulp.dest(distAppPath));
@@ -282,4 +281,13 @@ gulp.task('build-production-database', function (cb) {
     sequelize.sync();
     //TODO INSERT DATA
     cb();
+});
+
+// ==========================================================================
+// Code Quality
+// ==========================================================================
+gulp.task('jshint', function () {
+    var json = JSON.parse(require('fs').readFileSync(('./.jshintrc')));
+    return gulp.src('src')
+        .pipe(jshint(json));
 });

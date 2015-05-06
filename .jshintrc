@@ -23,9 +23,7 @@
     "validthis": true,
     "globals": {
         "angular": false,
-        // Angular Mocks
         "inject": false,
-        // JASMINE
         "describe": true,
         "it": true,
         "before": true,
