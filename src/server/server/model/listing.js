@@ -9,6 +9,13 @@ var Listing = sequelize.define('Listing', {
         primaryKey: true,
         autoIncrement: true
     },
+    listingNr: {
+        type: sequelize.Sequelize.STRING,
+        unique: true
+    },
+    category: {
+        type: sequelize.Sequelize.STRING
+    },
     title: {
         type: sequelize.Sequelize.STRING
     },
