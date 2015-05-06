@@ -253,3 +253,33 @@ gulp.task('build-development-database', function (cb) {
     sequelize.sync({'force': true});
     cb();
 });
+// ==========================================================================
+// Database deployment
+// ==========================================================================
+gulp.task('build-test-database', function (cb) {
+    var modelpath = path.join(srcServerPath, 'server', 'model'),
+        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
+
+    require('fs').readdirSync(modelpath).forEach(function (file) {
+        require(path.join(modelpath, file));
+    });
+    process.env.NODE_ENV = 'test';
+    sequelize.sync({'force': true});
+    // TODO INSERT DATA
+    cb();
+});
+// ==========================================================================
+// Database deployment
+// ==========================================================================
+gulp.task('build-production-database', function (cb) {
+    var modelpath = path.join(srcServerPath, 'server', 'model'),
+        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
+
+    require('fs').readdirSync(modelpath).forEach(function (file) {
+        require(path.join(modelpath, file));
+    });
+    process.env.NODE_ENV = 'production';
+    sequelize.sync();
+    //TODO INSERT DATA
+    cb();
+});
