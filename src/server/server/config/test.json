@@ -1,0 +1,8 @@
+{
+    "debug": true,
+    "mysql":  {
+        "user": "nautic_test",
+        "password": "nautic_test",
+        "database": "nautic_test"
+    }
+}
