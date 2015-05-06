@@ -80,20 +80,23 @@ gulp.task('build-serve',  function (cb) {
 gulp.task('test', function (cb) {
     runSequence('test-jasmine', 'test-mocha', cb);
 });
-// =======================================================
-//Builds the frontend
+// ===========================================================================
+// Builds the frontend
+// ===========================================================================
 gulp.task('build-app', function (cb) {
     runSequence('build-clean-app',
         'build-webpack',
         'build-app-html',
         'dist-app-static', cb);
 });
-// ========================================================
-//Build the server
+// ===========================================================================
+// Build the server
+// ===========================================================================
 gulp.task('build-server', function (cb) {
     runSequence('build-clean-server',
         'dist-server', cb);
 });
+
 /**
  * ============================================================================
  * Dependend Tasks come here
@@ -117,6 +120,7 @@ gulp.task('build-clean-server', function (cb) {
 });
 // ===========================================================
 // Create webpacked files
+// ===========================================================
 gulp.task('build-webpack', function (callback) {
     var webpackCompiler = webpack(webpackConfig);
     webpackCompiler.run(function (err, stats) {
@@ -188,19 +192,15 @@ gulp.task('watch-app', function () {
 });
 // ===================================================================
 // Reload the browser page
+// ===================================================================
 gulp.task('livereload', function (cb) {
     livereload.changed(distIndexHtml);
     cb();
 });
 
-/**
- * =========================================================================
- * Build and file moving
- * =========================================================================
- */
-
 // =========================================================================
 // Build the index.html of the frontend and move it to the app folder
+// =========================================================================
 gulp.task('build-app-html', function () {
     var script = '<script src="' + webpackConfig.output.filename + '"></script>';
     return gulp.src(srcIndexHtml)
@@ -209,6 +209,7 @@ gulp.task('build-app-html', function () {
 });
 // ===============================================================
 // Moves the server code into the dist folder
+// ===============================================================
 gulp.task('dist-server', function () {
     return gulp.src(path.join(srcServerPath, '**')).pipe(gulp.dest(distServerPath));
 });
@@ -225,24 +226,30 @@ gulp.task('dist-app-static', function () {
 
 // ================================================================
 // Start frontend unit tests
+// ================================================================
 gulp.task('test-jasmine', ['build-webpack'], function (cb) {
+    process.env.NODE_ENV = 'test';
     karma.start({
         configFile: __dirname + '/karma.conf.js',
         singleRun: true
     }, cb);
 });
+
 // =================================================================
 // Start server side unit tests with mocha
 // =================================================================
-gulp.task('test-mocha',  function () {
+gulp.task('test-mocha', ['build-test-database'], function () {
+    process.env.NODE_ENV = 'test';
     return gulp.src('test/mocha/**/**.js')
         .pipe(mocha());
 });
 
-// ==========================================================================
-// Database deployment
-// ==========================================================================
+/**
+ * DATABASE DEPLOYMENT
+ */
+
 gulp.task('build-development-database', function (cb) {
+    process.env.NODE_ENV = 'development';
     var modelpath = path.join(srcServerPath, 'server', 'model'),
         sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize(),
         stat = null,
@@ -257,10 +264,16 @@ gulp.task('build-development-database', function (cb) {
         }
     });
     process.env.NODE_ENV = 'development';
-    sequelize.sync({'force': true});
-    cb();
+    sequelize.sync({'force': true})
+        .then(function(){
+            cb();
+        })
+        .catch(function(err) {
+            throw err;
+    });
 });
 gulp.task('build-test-database', function (cb) {
+    process.env.NODE_ENV = 'test';
     var modelpath = path.join(srcServerPath, 'server', 'model'),
         sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize(),
         stat = null,
@@ -274,9 +287,17 @@ gulp.task('build-test-database', function (cb) {
         }
     });
     process.env.NODE_ENV = 'test';
-    sequelize.sync({'force': true});
+    sequelize.sync({'force': true}).then(function(){
+        require(path.join(srcServerPath,'server','setup', 'test', 'database.js')).then(function(){
+            console.log('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGhui');
+            cb();
+        }).catch(function(err) {
+            console.error(err);
+            cb();
+        });
+    });
+
     // TODO INSERT DATA
-    cb();
 });
 gulp.task('build-production-database', function (cb) {
     var modelpath = path.join(srcServerPath, 'server', 'model'),
@@ -293,9 +314,8 @@ gulp.task('build-production-database', function (cb) {
         }
     });
     process.env.NODE_ENV = 'production';
-    sequelize.sync();
+    sequelize.sync().then(function(){cb();});
     //TODO INSERT DATA
-    cb();
 });
 
 // ==========================================================================

@@ -36,11 +36,9 @@ var Listing = sequelize.define('Listing', {
     },
     description: {
         type: sequelize.Sequelize.TEXT
-    },
-    deleted : {
-        type: sequelize.Sequelize.DATE,
-        defaultValue: null
     }
+}, {
+    paranoid: true
 });
 
 Listing.belongsTo(User);
