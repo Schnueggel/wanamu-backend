@@ -12,6 +12,7 @@ var gulp = require('gulp'),
     path = require('path'),
     karma = require('karma').server,
     mocha = require('gulp-mocha'),
+    fs = require('fs'),
     del = require('del');
 
 var srcAppPath = path.join(__dirname, 'src/app'),
@@ -31,7 +32,7 @@ var webpackConfig = {
     entry: path.join(srcAppPath, appscript),
     output: {
         path: distAppPath,
-        filename: indexFileName
+        filename: indexFileName.replace('.js','-' + Date.now() + '.js')
     },
     module: {
         noParse: [
@@ -201,7 +202,7 @@ gulp.task('livereload', function (cb) {
 // =========================================================================
 // Build the index.html of the frontend and move it to the app folder
 gulp.task('build-app-html', function () {
-    var script = '<script src="' + indexFileName.replace('.js','-' + Date.now() + '.js') + '"></script>';
+    var script = '<script src="' + webpackConfig.output.filename + '"></script>';
     return gulp.src(srcIndexHtml)
         .pipe(replace('<!--scripts-->', script))
         .pipe(gulp.dest(distAppPath));
@@ -243,39 +244,53 @@ gulp.task('test-mocha',  function () {
 // ==========================================================================
 gulp.task('build-development-database', function (cb) {
     var modelpath = path.join(srcServerPath, 'server', 'model'),
-        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
+        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize(),
+        stat = null,
+        filepath = null;
 
-    require('fs').readdirSync(modelpath).forEach(function (file) {
-        require(path.join(modelpath, file));
+    console.log(modelpath);
+    fs.readdirSync(modelpath).forEach(function (file) {
+        filepath = path.join(modelpath, file);
+        stat = fs.statSync(filepath);
+        if (stat.isFile()) {
+            require(filepath);
+        }
     });
     process.env.NODE_ENV = 'development';
     sequelize.sync({'force': true});
     cb();
 });
-// ==========================================================================
-// Database deployment
-// ==========================================================================
 gulp.task('build-test-database', function (cb) {
     var modelpath = path.join(srcServerPath, 'server', 'model'),
-        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
+        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize(),
+        stat = null,
+        filepath = null;
 
-    require('fs').readdirSync(modelpath).forEach(function (file) {
-        require(path.join(modelpath, file));
+    fs.readdirSync(modelpath).forEach(function (file) {
+        filepath = path.join(modelpath, file);
+        stat = fs.statSync(filepath);
+        if (stat.isFile()) {
+            require(filepath);
+        }
     });
     process.env.NODE_ENV = 'test';
     sequelize.sync({'force': true});
     // TODO INSERT DATA
     cb();
 });
-// ==========================================================================
-// Database deployment
-// ==========================================================================
 gulp.task('build-production-database', function (cb) {
     var modelpath = path.join(srcServerPath, 'server', 'model'),
-        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
+        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize(),
+        stat = null,
+        filepath = null;
 
-    require('fs').readdirSync(modelpath).forEach(function (file) {
-        require(path.join(modelpath, file));
+
+    fs.readdirSync(modelpath).forEach(function (file) {
+        filepath = path.join(modelpath, file);
+        stat = fs.statSync(filepath);
+        if (stat.isFile()) {
+            require(filepath);
+        }
     });
     process.env.NODE_ENV = 'production';
     sequelize.sync();
