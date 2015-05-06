@@ -37,14 +37,6 @@ var Listing = sequelize.define('Listing', {
     description: {
         type: sequelize.Sequelize.TEXT
     },
-    created: {
-        type: sequelize.Sequelize.DATE,
-        defaultValue: sequelize.Sequelize.NOW
-    },
-    updated : {
-        type: sequelize.Sequelize.DATE,
-        defaultValue: null
-    },
     deleted : {
         type: sequelize.Sequelize.DATE,
         defaultValue: null

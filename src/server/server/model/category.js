@@ -14,6 +14,9 @@ var Category = sequelize.define('Category', {
     name: {
         type: sequelize.Sequelize.STRING
     },
+    key: {
+        type: sequelize.Sequelize.INTEGER
+    },
     parent: {
         type: sequelize.Sequelize.INTEGER
     }

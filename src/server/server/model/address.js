@@ -30,14 +30,6 @@ module.exports = sequelize.define('Address', {
     phone: {
         type: sequelize.Sequelize.STRING
     },
-    created: {
-        type: sequelize.Sequelize.DATE,
-        defaultValue: sequelize.Sequelize.NOW
-    },
-    updated : {
-        type: sequelize.Sequelize.DATE,
-        defaultValue: null
-    },
     deleted : {
         type: sequelize.Sequelize.DATE,
         defaultValue: null

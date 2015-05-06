@@ -9,14 +9,6 @@ var Toplisting = sequelize.define('Toplisting', {
         primaryKey: true,
         autoIncrement: true
     },
-    created: {
-        type: sequelize.Sequelize.DATE,
-        defaultValue: sequelize.Sequelize.NOW
-    },
-    updated : {
-        type: sequelize.Sequelize.DATE,
-        defaultValue: null
-    },
     deleted : {
         type: sequelize.Sequelize.DATE,
         defaultValue: null
