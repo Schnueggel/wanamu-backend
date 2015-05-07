@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * REQUIRE
+ * ######################################################################################
+ * ######################################################################################
+ */
 var gulp = require('gulp'),
     server = require('gulp-develop-server'),
     gutil = require('gulp-util'),
@@ -14,7 +21,13 @@ var gulp = require('gulp'),
     mocha = require('gulp-mocha'),
     fs = require('fs'),
     del = require('del');
-
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * PATH VARS
+ * ######################################################################################
+ * ######################################################################################
+ */
 var srcAppPath = path.join(__dirname, 'src/app'),
     srcServerPath = path.join(__dirname, 'src/server'),
     srcAppStaticFolder = path.join(srcAppPath, 'static'),
@@ -27,6 +40,21 @@ var srcAppPath = path.join(__dirname, 'src/app'),
     distIndexHtml = path.join(distAppPath, 'index.html'),
     indexFileName = 'index.js';
 
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * VAR DEFINITION
+ * ######################################################################################
+ * ######################################################################################
+ */
+var requireFolder = null;
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * WEBPACK CONFIG
+ * ######################################################################################
+ * ######################################################################################
+ */
 var webpackConfig = {
     context: __dirname,
     entry: path.join(srcAppPath, appscript),
@@ -57,9 +85,11 @@ var webpackConfig = {
     }
 };
 /**
- * ===================================================================
+ * ######################################################################################
+ * ######################################################################################
  * Main Tasks come here
- * ===================================================================
+ * ######################################################################################
+ * ######################################################################################
  */
 // ===================================================================
 // Default task Builds the application. Just call gulp
@@ -67,16 +97,20 @@ var webpackConfig = {
 gulp.task('default', ['build']);
 // ===================================================================
 // Build the application into the dist folder
+// ===================================================================
 gulp.task('build', function (cb) {
     runSequence('jshint', 'build-server', 'build-app', cb);
 });
 // ====================================================================
-//Builds frontend and backend, starting the development.json server and opens a browser.
+// Builds frontend and backend,
+// starting the development.json server and opens a browser.
+// ====================================================================
 gulp.task('build-serve',  function (cb) {
     runSequence('build', 'server-start', 'watch', 'http-browser', cb);
 });
 // ======================================================
 // Test frontend and backend
+// ======================================================
 gulp.task('test', function (cb) {
     runSequence('test-jasmine', 'test-mocha', cb);
 });
@@ -98,23 +132,27 @@ gulp.task('build-server', function (cb) {
 });
 
 /**
- * ============================================================================
+ * ######################################################################################
+ * ######################################################################################
  * Dependend Tasks come here
- * ============================================================================
+ * ######################################################################################
+ * ######################################################################################
  */
-
 // =========================================================
 // Start all clean tasks
+// =========================================================
 gulp.task('build-clean', ['build-clean-app', 'build-clean-server'], function (cb) {
     cb();
 });
 // ==========================================================
 // Remove all app code in dist folder
+// ==========================================================
 gulp.task('build-clean-app', function (cb) {
     return del([distAppPath], {}, cb);
 });
 // ==========================================================
 // Remove all server code in dist folder
+// ==========================================================
 gulp.task('build-clean-server', function (cb) {
     return del([distServerPath], {}, cb);
 });
@@ -134,12 +172,15 @@ gulp.task('build-webpack', function (callback) {
     });
 });
 /**
- * ==========================================================
+ * ######################################################################################
+ * ######################################################################################
  * Server start, restart, and browser open and Refresh
- * ==========================================================
+ * ######################################################################################
+ * ######################################################################################
  */
 // ============================================================
 // Start a development.json server using the real server script
+// ============================================================
 gulp.task('server-start', function (cb) {
     server.kill('SIGTERM', function () {
         server.listen({path: distServerScript}, livereload.listen);
@@ -148,6 +189,7 @@ gulp.task('server-start', function (cb) {
 });
 // =================================================================
 // Open the browser and opens the frontend of this app
+// =================================================================
 gulp.task('http-browser', function () {
     var options = {
         url: 'http://localhost:3000'
@@ -156,7 +198,8 @@ gulp.task('http-browser', function () {
         .pipe(open('', options));
 });
 // ==================================================================
-// restart the node server and then livereload
+// Restart the node server and then livereload
+// ==================================================================
 gulp.task('server-restart', function (cb) {
     server.changed(function (error) {
         if (!error) {
@@ -166,18 +209,21 @@ gulp.task('server-restart', function (cb) {
     });
 });
 /**
- * ==========================================================================
+ * ######################################################################################
+ * ######################################################################################
  * Watching Frontend and Backend and restart server or livereload frontend
- * ==========================================================================
+ * ######################################################################################
+ * ######################################################################################
  */
-
 // ==================================================================
 // Start all watch tasks
+// ==================================================================
 gulp.task('watch', ['watch-server', 'watch-app'], function (cb) {
     cb();
 });
 // ==================================================================
 // Watch the server code and restart the server on changes
+// ==================================================================
 gulp.task('watch-server', function () {
     gulp.watch(['src/server/**/*.js', 'src/server/**/*.json'], {debounceDelay: 2000}, function () {
         runSequence('build-server', 'server-restart');
@@ -185,6 +231,7 @@ gulp.task('watch-server', function () {
 });
 // ===================================================================
 // Watch frontend code and reload the webpage if changes occur
+// ===================================================================
 gulp.task('watch-app', function () {
     gulp.watch(['src/app/**/*.js', 'src/app/**/*.html'], {debounceDelay: 2000}, function () {
         runSequence('build-app', 'livereload');
@@ -213,17 +260,20 @@ gulp.task('build-app-html', function () {
 gulp.task('dist-server', function () {
     return gulp.src(path.join(srcServerPath, '**')).pipe(gulp.dest(distServerPath));
 });
-// ===============================================================
+// ===================================================================================
 // Move the app static files into the app folder
+// ===================================================================================
 gulp.task('dist-app-static', function () {
     return gulp.src(path.join(srcAppStaticFolder, '**')).pipe(gulp.dest(distAppPath));
 });
-/**
- * ===================================================================================
- * Test Tasks
- * ===================================================================================
- */
 
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * TEST TASKS
+ * ######################################################################################
+ * ######################################################################################
+ */
 // ================================================================
 // Start frontend unit tests
 // ================================================================
@@ -245,31 +295,21 @@ gulp.task('test-mocha', ['build-test-database'], function () {
 });
 
 /**
+ * ######################################################################################
+ * ######################################################################################
  * DATABASE DEPLOYMENT
+ * ######################################################################################
+ * ######################################################################################
  */
-
+// ==========================================================================
+// Builds the development database
+// ==========================================================================
 gulp.task('build-development-database', function (cb) {
     process.env.NODE_ENV = 'development';
     var modelpath = path.join(srcServerPath, 'server', 'model'),
         sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
 
-
-    console.log(modelpath);
-    var readFolder = function (folder) {
-        var stat = null,
-            filepath = null;
-        fs.readdirSync(folder).forEach(function (file) {
-            filepath = path.join(folder, file);
-            stat = fs.statSync(filepath);
-            if (stat.isFile()) {
-                require(filepath);
-            }
-            if (stat.isDirectory()) {
-                readFolder(filepath);
-            }
-        });
-    };
-    readFolder(modelpath);
+    requireFolder(modelpath);
 
     process.env.NODE_ENV = 'development';
     sequelize.sync({'force': true})
@@ -280,26 +320,15 @@ gulp.task('build-development-database', function (cb) {
             throw err;
     });
 });
+// ==========================================================================
+// Builds the test database
+// ==========================================================================
 gulp.task('build-test-database', function (cb) {
     process.env.NODE_ENV = 'test';
     var modelpath = path.join(srcServerPath, 'server', 'model'),
         sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
 
-    var readFolder = function (folder) {
-        var stat = null,
-            filepath = null;
-        fs.readdirSync(folder).forEach(function (file) {
-            filepath = path.join(folder, file);
-            stat = fs.statSync(filepath);
-            if (stat.isFile()) {
-                require(filepath);
-            }
-            if (stat.isDirectory()) {
-                readFolder(filepath);
-            }
-        });
-    };
-    readFolder(modelpath);
+    requireFolder(modelpath);
 
     process.env.NODE_ENV = 'test';
     sequelize.sync({'force': true}).then(function(){
@@ -314,26 +343,14 @@ gulp.task('build-test-database', function (cb) {
 
     // TODO INSERT DATA
 });
+// ==========================================================================
+// Builds the production database
+// ==========================================================================
 gulp.task('build-production-database', function (cb) {
     var modelpath = path.join(srcServerPath, 'server', 'model'),
         sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
 
-
-    var readFolder = function (folder) {
-        var stat = null,
-            filepath = null;
-        fs.readdirSync(folder).forEach(function (file) {
-            filepath = path.join(folder, file);
-            stat = fs.statSync(filepath);
-            if (stat.isFile()) {
-                require(filepath);
-            }
-            if (stat.isDirectory()) {
-                readFolder(filepath);
-            }
-        });
-    };
-    readFolder(modelpath);
+    requireFolder(modelpath);
 
     process.env.NODE_ENV = 'production';
     sequelize.sync().then(function(){cb();});
@@ -348,3 +365,30 @@ gulp.task('jshint', function () {
     return gulp.src('src')
         .pipe(jshint(json));
 });
+
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * HELPER FUNCTIONS
+ * ######################################################################################
+ * ######################################################################################
+ */
+
+/**
+ * Requires all js files in a folder
+ * @param {string} folder path to folder
+ */
+requireFolder = function (folder) {
+    var stat = null,
+        filepath = null;
+    fs.readdirSync(folder).forEach(function (file) {
+        filepath = path.join(folder, file);
+        stat = fs.statSync(filepath);
+        if (stat.isFile()) {
+            require(filepath);
+        }
+        if (stat.isDirectory()) {
+            requireFolder(filepath);
+        }
+    });
+};

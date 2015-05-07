@@ -20,7 +20,7 @@ var User = sequelize.define('User', {
         unique: true,
         validate: {
             isEmail: {
-                msg: "Es muss eine gültige E-Mail Adresse angegeben werden."
+                msg: 'Es muss eine gültige E-Mail Adresse angegeben werden.'
             }
         }
     },
@@ -53,7 +53,7 @@ var User = sequelize.define('User', {
         type: sequelize.Sequelize.STRING(50),
         validate: {
             isUrl: {
-                msg: "Es muss keine oder eine gültige Webseite angegeben werden."
+                msg: 'Es muss keine oder eine gültige Webseite angegeben werden.'
             }
         }
     },
@@ -62,8 +62,8 @@ var User = sequelize.define('User', {
         defaultValue: null,
         validate: {
             isAfter: {
-                args: "1900-01-01",
-                msg: "Das Geburtsdatum darf nicht vor dem 01.01.1900 liegen."
+                args: '1900-01-01',
+                msg: 'Das Geburtsdatum darf nicht vor dem 01.01.1900 liegen.'
             }
         }
     },
@@ -76,7 +76,7 @@ var User = sequelize.define('User', {
     paranoid: true
 });
 
-User.belongsTo(Salutation);
+User.hasOne(Salutation, { as: 'salutation' });
 User.belongsTo(UserGroup);
 User.hasMany(Address, {as: 'Addresses'});
 
