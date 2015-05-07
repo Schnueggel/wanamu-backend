@@ -13,4 +13,6 @@ module.exports = sequelize.define('Salutation', {
         type: sequelize.Sequelize.STRING,
         unique: true
     }
+}, {
+    timestamps: false
 });

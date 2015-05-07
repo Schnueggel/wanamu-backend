@@ -29,9 +29,7 @@ module.exports = sequelize.define('Address', {
     },
     phone: {
         type: sequelize.Sequelize.STRING
-    },
-    deleted : {
-        type: sequelize.Sequelize.DATE,
-        defaultValue: null
     }
+}, {
+    paranoid: true
 });

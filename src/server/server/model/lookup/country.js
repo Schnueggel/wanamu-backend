@@ -13,4 +13,6 @@ module.exports = sequelize.define('Country', {
         type: sequelize.Sequelize.STRING,
         unique: true
     }
+}, {
+    timestamps: false
 });

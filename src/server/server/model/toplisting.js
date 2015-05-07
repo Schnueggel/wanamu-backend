@@ -8,11 +8,9 @@ var Toplisting = sequelize.define('Toplisting', {
         type: sequelize.Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
-    },
-    deleted : {
-        type: sequelize.Sequelize.DATE,
-        defaultValue: null
     }
+}, {
+    paranoid: true
 });
 
 Toplisting.belongsTo(Listing);

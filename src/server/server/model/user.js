@@ -11,29 +11,43 @@ var User = sequelize.define('User', {
         primaryKey: true,
         autoIncrement: true
     },
-    firstname: {
-        type: sequelize.Sequelize.STRING
+    firstName: {
+        type: sequelize.Sequelize.STRING,
+        allowNull: false
+
     },
-    lastname: {
-        type: sequelize.Sequelize.STRING
+    lastName: {
+        type: sequelize.Sequelize.STRING,
+        allowNull: false
     },
     country: {
         type: sequelize.Sequelize.STRING
     },
     password: {
-        type: sequelize.Sequelize.STRING
+        type: sequelize.Sequelize.STRING,
+        allowNull: false
     },
     email: {
-        type: sequelize.Sequelize.STRING
+        type: sequelize.Sequelize.STRING,
+        allowNull: false,
+        validate: {
+            isEmail: {
+                msg: "Es muss eine gültige E-Mail Adresse angegeben werden."
+            }
+        }
     },
     birthday: {
         type: sequelize.Sequelize.DATE,
-        defaultValue: null
-    },
-    deleted : {
-        type: sequelize.Sequelize.DATE,
-        defaultValue: null
+        defaultValue: null,
+        validate: {
+            isAfter: {
+                args: "1900-01-01",
+                msg: "Das Geburtsdatum darf nicht vor dem 01.01.1900 liegen."
+            }
+        }
     }
+}, {
+    paranoid: true
 });
 
 
