@@ -6,7 +6,7 @@ module.exports = sequelize.define('UserGroup', {
         primaryKey: true,
         autoIncrement: true
     },
-    userGroup: {
+    name: {
         type: sequelize.Sequelize.STRING,
         unique: true,
         allowNull: false

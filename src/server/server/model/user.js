@@ -76,7 +76,7 @@ var User = sequelize.define('User', {
     paranoid: true
 });
 
-User.hasOne(Salutation, { as: 'salutation' });
+User.belongsTo(Salutation, { as: 'salutation', allowNull: true });
 User.belongsTo(UserGroup);
 User.hasMany(Address, {as: 'Addresses'});
 

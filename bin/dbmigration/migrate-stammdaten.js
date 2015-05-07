@@ -1,20 +1,15 @@
 'use strict';
 
 process.env.NODE_ENV = 'development';
-var mysql = require('mysql'),
-    config = require('../../src/server/server/config'),
+var mysql = require('mysql'), config = require('../../src/server/server/config'),
     sequelize = config.getSequelize(),
     Salutation = require('../../src/server/server/model/lookup/salutation'),
     UserGroup = require('../../src/server/server/model/user-group'),
     Address = require('../../src/server/server/model/address'),
     User = require('../../src/server/server/model/user');
 
-
 var directConnection = mysql.createConnection({
-    host: 'localhost',
-    user: 'nauticlive',
-    password: 'nauticlive',
-    database: 'nauticlive'
+    host: 'localhost', user: 'nautic', password: 'nautic', database: 'nautic'
 });
 
 directConnection.connect(function (err) {
@@ -26,96 +21,193 @@ directConnection.connect(function (err) {
     console.log('connected as id ' + directConnection.threadId);
 });
 
-// Migrate Salutations
-/*directConnection.query('SELECT DISTINCT anrede FROM dat_stammdaten WHERE anrede IS NOT NULL', function (err, salutations) {
- if (err) {
- console.error('Error with query: ' + err.stack);
- process.exit(1);
- }
- function createSalutations(salutations) {
- if (!salutations.length) return;
- var anrede = salutations.pop(),
- salutation = {
- salutation: anrede.anrede
- };
- Salutation.create(salutation).then(function () {
- createSalutations(salutations);
- }, function (err) {
- console.error('Error inserting salutation: ' + err);
- process.exit(1);
- });
- }
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * HERE WE START
+ * ######################################################################################
+ * ######################################################################################
+ */
+var funcs = [createSalutations, createUserGroups, createUsers, theEnd];
 
- createSalutations(salutations);
+var i = -1,
+    donext = function(){
+        console.log('GO NEXT');
+        i++;
+        funcs[i]().then(donext).catch(errorAndExit);
+    };
 
- });*/
+donext();
 
-// Migrate Groups
-/*
-directConnection.query('SELECT DISTINCT gruppe FROM dat_stammdaten WHERE gruppe IS NOT NULL', function (err, gruppen) {
- if (err) {
- console.error('Error with query: ' + err.stack);
- process.exit(1);
- }
-
- function createUserGroups(gruppen) {
- if (!gruppen.length) return;
- var gruppe = gruppen.pop(),
- userGroup = {
- userGroup: gruppe.gruppe
- };
- UserGroup.create(userGroup).then(function () {
- createUserGroups(gruppen);
- }, function (err) {
- console.error('Error inserting usergroup: ' + err);
- process.exit(1);
- });
- }
-
- createUserGroups(gruppen);
-
- });*/
-
-// Finally, migrate the users
-directConnection.query('SELECT *, PASSDECRYPT(password) AS passwort_entschluesselt FROM dat_stammdaten LIMIT 100', function (err, stammdaten) {
-    if (err) {
-        console.error('Error with query: ' + err.stack);
-        process.exit(1);
-    }
-
-    function createUser(stammdaten) {
-        if (!stammdaten.length) return;
-        var newUser = {};
-        var alterBenutzer = stammdaten.shift();
-        // TODO: Implement Salutation
-        UserGroup.findOne({where: {userGroup: alterBenutzer.gruppe}}).then(function (userGroup) {
-            console.log(alterBenutzer.gruppe + ' -> ' + userGroup.userGroup);
-
-            var address = {
-                street: alterBenutzer.strasse,
-                zipCode: alterBenutzer.plz,
-                city: alterBenutzer.ort,
-                phone: alterBenutzer.telefon,
-                mobile: alterBenutzer.mobil,
-                fax: alterBenutzer.telefax
-            };
-            Address.create(address).then(function (newAddress) {
-                console.log(newAddress.id);
-                createUser(stammdaten);
-            }, function (err) {
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * MAIN FUNCTIONS
+ * ######################################################################################
+ * ######################################################################################
+ */
+function createUserGroups() {
+    console.log('CREATE Usergroups');
+    var groups = [];
+    var p = new Promise(function(resolve){
+        directConnection.query('SELECT DISTINCT gruppe FROM dat_stammdaten WHERE gruppe IS NOT NULL', function (err, gruppen) {
+            if (err) {
                 console.error('Error with query: ' + err.stack);
                 process.exit(1);
+            }
+
+            if (!gruppen.length) {
+                errorAndExit('No usergroups found');
+            }
+
+            gruppen.forEach(function(group) {
+                groups.push({
+                    name: group.gruppe
+                });
             });
 
-        }, function (err) {
-            console.error('Error with query: ' + err.stack);
-            process.exit(1);
+            if (!groups.length) {
+                errorAndExit('No usergroups generated');
+            }
+
+            UserGroup.bulkCreate(groups).then(function () {
+                console.log('CREATED UserGroups');
+                resolve();
+            }, function (err) {
+                if (err.name === 'SequelizeUniqueConstraintError') {
+                    resolve();
+                } else {
+                    errorAndExit(err);
+                }
+            });
         });
+    });
+    return p;
+}
+
+function createUsers() {
+    console.log('CREATE Users');
+       var p = new Promise(function(resolve) {
+           var query = directConnection.query('SELECT *, AES_DECRYPT(password,\'werdqwxyxdQEgfd\') AS password_entschluesselt FROM dat_stammdaten');
+           // ==========================================================================
+           // https://www.npmjs.com/package/mysql#streaming-query-rows
+           // ==========================================================================
+           query.on('error', errorAndExit)
+                .on('result', function (row) {
+
+                   directConnection.pause();
+
+                   var addressdata = {
+                       street: row.strasse,
+                       zipCode: row.plz,
+                       city: row.ort,
+                       phone: row.telefon,
+                       mobile: row.mobil,
+                       fax: row.telefax
+                   };
+                   var userdata = {
+                       firstName: row.vorname,
+                       lastName: row.nachname,
+                       companyName: row.fa_name,
+                       companyContact: row.fa_kontakt,
+                       title: row.titel,
+                       salutation: translateSalutation(row.anrede),
+                       email: row.email,
+                       website: row.internet,
+                       oldContactId: row.alte_kontakt_id,
+                       password: row.password_entschluesselt
+                   };
+                   createUser(userdata).then(function (user) {
+                       addressdata.UserId = user.id;
+                       createAddress(addressdata).then(function () {
+                           directConnection.resume();
+                       }).catch(errorAndExit);
+                   }).catch(function(err){
+                       if (err.name === 'SequelizeValidationError') {
+                           console.log(err);
+                           console.log(row);
+                           directConnection.resume();
+                       } else if (err.name === 'SequelizeUniqueConstraintError') {
+                           console.log(err);
+                           console.log(row);
+                           directConnection.resume();
+                       } else {
+                           errorAndExit(err);
+                       }
+                   });
+               });
+       });
+    return p;
+}
+
+function createSalutations() {
+    console.log('CREATE Salutations');
+    var p = new Promise(function(resolve){
+        Salutation.bulkCreate([
+            {name : 'Mr.'},
+            {name : 'Ms.'},
+            {name : 'Company'}
+        ]).then(function(){
+            console.log('CREATED Salutation');
+            resolve();
+        }).catch(function(err){
+            if (err.name === 'SequelizeUniqueConstraintError') {
+                resolve();
+            } else {
+                errorAndExit(err);
+            }
+        });
+    });
+    return p;
+}
+
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * HELPER FUNCTIONS
+ * ######################################################################################
+ * ######################################################################################
+ */
+function createUser(data) {
+    var p = new Promise(function(resolve, reject){
+        User.create(data).then(function(user){
+            resolve(user);
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+
+    return p;
+}
+function createAddress(data) {
+    var p = new Promise(function(resolve){
+        Address.create(data).then(function (newAddress) {
+            resolve(newAddress);
+        }, errorAndExit);
+    });
+
+    return p;
+}
+
+function translateSalutation(old) {
+    if (old === 'herr') {
+        return 'Mr.';
+    } else if (old === 'frau') {
+        return 'Ms.';
+    } else if (old === 'firma') {
+        return 'Company';
+    } else if (old === null) {
+        return null;
     }
+    errorAndExit('Wrong salutation found: ' + old);
+}
 
-    createUser(stammdaten);
+function errorAndExit(err){
+    console.log(err);
+    process.exit(1);
+}
 
-});
+function theEnd(){
+    directConnection.end();
+}
 
-
-directConnection.end();
