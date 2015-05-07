@@ -24,12 +24,12 @@ The backend code is located in:
 
 `src/server`
 
-The builded code will put into the `dist` folder. An have the same structure as the `src` folder.
+The built code will be put into the `dist` folder and have the same structure as the `src` folder.
 
 ## Tools and Software
 
-The Backend of the Application is written with NodeJs.
-The Frontend is made with Angular.
+The backend of the application is written in NodeJs using the Express framework.
+The frontend is made with Angular.
 
 ## Build
 
@@ -38,13 +38,13 @@ We use gulp to control the build process of the application.
 The frontend will be packed with Webpack and all client side javascript code will result in a single index.js file placed in `dist/app`.
 
 ### Typescript
-Its also possible to write typescript for frontend code makeing files with a `.ts` extension.
+Its also possible to write typescript for frontend code creating files with a `.ts` extension.
 
 ### ES6
- To use ES6 we inculded babel into the build process. Files that use ES6 features need the extension `es6.js`
+ To use ES6 we included babel into the build process. Files that use ES6 features need the extension `.es6.js`
 
 ## Tests
-The application get tested in two ways. To start all test you can use:
+The application gets tested in two ways. To start all tests you can use:
 
 `gulp test`
 
@@ -72,7 +72,7 @@ To start the tests on the command line you can use:
 
 ## Database
 
-All data is stored in a Mysql Database.
+All data is stored in a MySQL Database.
 
 ## Mockups
 

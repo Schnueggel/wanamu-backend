@@ -4,7 +4,7 @@ var sequelize = require('../config').getSequelize(),
     User = require('./user.js');
 
 var Listing = sequelize.define('Listing', {
-    id : {
+    id: {
         type: sequelize.Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
