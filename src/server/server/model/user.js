@@ -1,7 +1,6 @@
 'use strict';
 var Address = require('./address'),
     Salutation = require('./lookup/salutation.js'),
-    Title = require('./lookup/title.js'),
     Group = require('./group.js'),
     sequelize = require('../config').getSequelize();
 
@@ -25,10 +24,13 @@ var User = sequelize.define('User', {
             }
         }
     },
+    title: {
+        type: sequelize.Sequelize.STRING(15),
+        allowNull: true
+    },
     firstName: {
         type: sequelize.Sequelize.STRING(50),
         allowNull: false
-
     },
     lastName: {
         type: sequelize.Sequelize.STRING(50),
