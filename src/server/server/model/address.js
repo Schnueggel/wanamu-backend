@@ -1,6 +1,6 @@
 'use strict';
 var sequelize = require('../config').getSequelize(),
-    Country = require('./lookup/Country.js');
+    Country = require('./lookup/country.js');
 
 var Address = module.exports = sequelize.define('Address', {
     id: {
