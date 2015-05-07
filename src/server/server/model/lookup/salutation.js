@@ -9,9 +9,10 @@ module.exports = sequelize.define('Salutation', {
         primaryKey: true,
         autoIncrement: true
     },
-    name: {
+    salutation: {
         type: sequelize.Sequelize.STRING,
-        unique: true
+        unique: true,
+        allowNull: false
     }
 }, {
     timestamps: false

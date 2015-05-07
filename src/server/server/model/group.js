@@ -1,15 +1,12 @@
-/**
- * Created by Christian on 5/5/2015.
- */
-var sequelize = require('../../config').getSequelize();
+var sequelize = require('../config').getSequelize();
 
-module.exports = sequelize.define('Country', {
-    id : {
+module.exports = sequelize.define('Group', {
+    id: {
         type: sequelize.Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    country: {
+    group: {
         type: sequelize.Sequelize.STRING,
         unique: true,
         allowNull: false

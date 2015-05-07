@@ -1,16 +1,15 @@
-/**
- * Created by Christian on 5/5/2015.
- */
-var sequelize = require('../config').getSequelize();
+'use strict';
+var sequelize = require('../config').getSequelize(),
+    Country = require('./lookup/Country.js');
 
-module.exports = sequelize.define('Address', {
-    id : {
+var Address = module.exports = sequelize.define('Address', {
+    id: {
         type: sequelize.Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
     street: {
-        type: sequelize.Sequelize.STRING
+        type: sequelize.Sequelize.STRING(50)
     },
     addition1: {
         type: sequelize.Sequelize.STRING
@@ -18,18 +17,20 @@ module.exports = sequelize.define('Address', {
     addition2: {
         type: sequelize.Sequelize.STRING
     },
-    zipcode: {
-        type: sequelize.Sequelize.STRING
+    zipCode: {
+        type: sequelize.Sequelize.STRING(10)
     },
     city: {
-        type: sequelize.Sequelize.STRING
-    },
-    country: {
-        type: sequelize.Sequelize.STRING
+        type: sequelize.Sequelize.STRING(50)
     },
     phone: {
-        type: sequelize.Sequelize.STRING
+        type: sequelize.Sequelize.STRING(30)
+    },
+    mobile: {
+        type: sequelize.Sequelize.STRING(30)
     }
 }, {
     paranoid: true
 });
+
+Address.belongsTo(Country);
