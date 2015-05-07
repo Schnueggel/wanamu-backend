@@ -5,6 +5,7 @@ var mysql = require('mysql'),
     config = require('../../src/server/server/config'),
     sequelize = config.getSequelize(),
     Salutation = require('../../src/server/server/model/lookup/salutation'),
+    UserGroup = require('../../src/server/server/model/user-group'),
     User = require('../../src/server/server/model/user');
 
 
@@ -24,8 +25,8 @@ directConnection.connect(function (err) {
     console.log('connected as id ' + directConnection.threadId);
 });
 
-// Convert Salutations
-directConnection.query('SELECT DISTINCT anrede FROM dat_stammdaten WHERE anrede IS NOT NULL', function (err, salutations) {
+// Migrate Salutations
+/*directConnection.query('SELECT DISTINCT anrede FROM dat_stammdaten WHERE anrede IS NOT NULL', function (err, salutations) {
     if (err) {
         console.error('Error with query: ' + err.stack);
         process.exit(1);
@@ -45,6 +46,31 @@ directConnection.query('SELECT DISTINCT anrede FROM dat_stammdaten WHERE anrede 
     }
 
     createSalutations(salutations);
+
+ });*/
+
+// Migrate Groups
+directConnection.query('SELECT DISTINCT gruppe FROM dat_stammdaten WHERE gruppe IS NOT NULL', function (err, gruppen) {
+    if (err) {
+        console.error('Error with query: ' + err.stack);
+        process.exit(1);
+    }
+
+    function createUserGroups(gruppen) {
+        if (!gruppen.length) return;
+        var gruppe = gruppen.pop(),
+            userGroup = {
+                userGroup: gruppe.gruppe
+            };
+        UserGroup.create(userGroup).then(function () {
+            createUserGroups(gruppen);
+        }, function (err) {
+            console.error('Error inserting usergroup: ' + err);
+            process.exit(1);
+        });
+    }
+
+    createUserGroups(gruppen);
 
 });
 

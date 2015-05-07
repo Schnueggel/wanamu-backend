@@ -1,12 +1,12 @@
 var sequelize = require('../config').getSequelize();
 
-module.exports = sequelize.define('Group', {
+module.exports = sequelize.define('UserGroup', {
     id: {
         type: sequelize.Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    group: {
+    userGroup: {
         type: sequelize.Sequelize.STRING,
         unique: true,
         allowNull: false

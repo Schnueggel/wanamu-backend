@@ -1,7 +1,7 @@
 'use strict';
 var Address = require('./address'),
     Salutation = require('./lookup/salutation.js'),
-    Group = require('./group.js'),
+    UserGroup = require('./user-group.js'),
     sequelize = require('../config').getSequelize();
 
 var User = sequelize.define('User', {
@@ -77,7 +77,7 @@ var User = sequelize.define('User', {
 });
 
 User.belongsTo(Salutation);
-User.belongsTo(Group);
+User.belongsTo(UserGroup);
 User.hasMany(Address, {as: 'Addresses'});
 
 module.exports = User;
