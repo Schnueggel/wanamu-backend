@@ -77,7 +77,6 @@ var User = sequelize.define('User', {
 });
 
 User.belongsTo(Salutation);
-User.belongsTo(Title);
 User.belongsTo(Group);
 User.hasMany(Address, {as: 'Addresses'});
 
