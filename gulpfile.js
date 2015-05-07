@@ -283,17 +283,24 @@ gulp.task('build-development-database', function (cb) {
 gulp.task('build-test-database', function (cb) {
     process.env.NODE_ENV = 'test';
     var modelpath = path.join(srcServerPath, 'server', 'model'),
-        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize(),
-        stat = null,
-        filepath = null;
+        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
 
-    fs.readdirSync(modelpath).forEach(function (file) {
-        filepath = path.join(modelpath, file);
-        stat = fs.statSync(filepath);
-        if (stat.isFile()) {
-            require(filepath);
-        }
-    });
+    var readFolder = function (folder) {
+        var stat = null,
+            filepath = null;
+        fs.readdirSync(folder).forEach(function (file) {
+            filepath = path.join(folder, file);
+            stat = fs.statSync(filepath);
+            if (stat.isFile()) {
+                require(filepath);
+            }
+            if (stat.isDirectory()) {
+                readFolder(filepath);
+            }
+        });
+    };
+    readFolder(modelpath);
+
     process.env.NODE_ENV = 'test';
     sequelize.sync({'force': true}).then(function(){
         require(path.join(srcServerPath,'server','setup', 'test', 'database.js')).then(function(){
@@ -309,18 +316,25 @@ gulp.task('build-test-database', function (cb) {
 });
 gulp.task('build-production-database', function (cb) {
     var modelpath = path.join(srcServerPath, 'server', 'model'),
-        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize(),
-        stat = null,
-        filepath = null;
+        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
 
 
-    fs.readdirSync(modelpath).forEach(function (file) {
-        filepath = path.join(modelpath, file);
-        stat = fs.statSync(filepath);
-        if (stat.isFile()) {
-            require(filepath);
-        }
-    });
+    var readFolder = function (folder) {
+        var stat = null,
+            filepath = null;
+        fs.readdirSync(folder).forEach(function (file) {
+            filepath = path.join(folder, file);
+            stat = fs.statSync(filepath);
+            if (stat.isFile()) {
+                require(filepath);
+            }
+            if (stat.isDirectory()) {
+                readFolder(filepath);
+            }
+        });
+    };
+    readFolder(modelpath);
+
     process.env.NODE_ENV = 'production';
     sequelize.sync().then(function(){cb();});
     //TODO INSERT DATA
