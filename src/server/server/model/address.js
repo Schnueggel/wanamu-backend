@@ -28,6 +28,9 @@ var Address = module.exports = sequelize.define('Address', {
     },
     mobile: {
         type: sequelize.Sequelize.STRING(30)
+    },
+    fax: {
+        type: sequelize.Sequelize.STRING(30)
     }
 }, {
     paranoid: true
