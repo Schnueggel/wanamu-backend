@@ -12,7 +12,11 @@ var Category = require('../../model/category.js'),
 // Collect all truncate promises
 // ==========================================================================
 destroypromises.push(Category.destroy({
-    truncate: true
+    where: {
+        id: {
+            $in: [1,2,3]
+        }
+    }
 }));
 
 var completepromise = new Promise(function(resolve, reject) {
@@ -24,9 +28,9 @@ var completepromise = new Promise(function(resolve, reject) {
         // Create all create data promises
         // ==========================================================================
         createpromises.push(Category.bulkCreate([
-            {id: 1, name: 'category1', key: 1},
-            {id: 2, name: 'category2', key: 2},
-            {id: 3, name: 'category3', key: 11, parent: 1}
+            {id: 1, name: 'category1' },
+            {id: 2, name: 'category2' },
+            {id: 3, name: 'category3', parent: 1}
         ]));
 
         // ==========================================================================

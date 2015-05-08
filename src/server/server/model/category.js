@@ -13,15 +13,9 @@ var Category = sequelize.define('Category', {
     },
     name: {
         type: sequelize.Sequelize.STRING
-    },
-    sortKey: {
-        type: sequelize.Sequelize.INTEGER
-    },
-    parent: {
-        type: sequelize.Sequelize.INTEGER
     }
 });
 
-Category.belongsTo(Category, {foreignKey: 'parent'});
+Category.belongsTo(Category, {foreignKey: 'parent', allowNull: true});
 
 module.exports = Category;

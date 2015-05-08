@@ -14,6 +14,8 @@ var gulp = require('gulp'),
     livereload = require('gulp-livereload'),
     jshint = require('gulp-jshint'),
     replace = require('gulp-replace'),
+    typescript = require('gulp-typescript'),
+    merge = require('merge2'),
     runSequence = require('run-sequence'),
     webpack = require('webpack'),
     path = require('path'),
@@ -87,6 +89,19 @@ var webpackConfig = {
 /**
  * ######################################################################################
  * ######################################################################################
+ * TYPESCRIPT CONFIG
+ * ######################################################################################
+ * ######################################################################################
+ */
+var tsProject = typescript.createProject({
+    module: 'commonjs', //For nodejs
+    typescript: require('typescript'),
+    declarationFiles: true,
+    noExternalResolve: true
+});
+/**
+ * ######################################################################################
+ * ######################################################################################
  * Main Tasks come here
  * ######################################################################################
  * ######################################################################################
@@ -127,8 +142,7 @@ gulp.task('build-app', function (cb) {
 // Build the server
 // ===========================================================================
 gulp.task('build-server', function (cb) {
-    runSequence('build-clean-server',
-        'dist-server', cb);
+    runSequence('build-clean-server', 'dist-server', 'build-typescript', cb);
 });
 
 /**
@@ -225,7 +239,7 @@ gulp.task('watch', ['watch-server', 'watch-app'], function (cb) {
 // Watch the server code and restart the server on changes
 // ==================================================================
 gulp.task('watch-server', function () {
-    gulp.watch(['src/server/**/*.js', 'src/server/**/*.json'], {debounceDelay: 2000}, function () {
+    gulp.watch(['src/server/**/*.*(js|json|ts)'], {debounceDelay: 2000}, function () {
         runSequence('build-server', 'server-restart');
     });
 });
@@ -233,7 +247,7 @@ gulp.task('watch-server', function () {
 // Watch frontend code and reload the webpage if changes occur
 // ===================================================================
 gulp.task('watch-app', function () {
-    gulp.watch(['src/app/**/*.js', 'src/app/**/*.html'], {debounceDelay: 2000}, function () {
+    gulp.watch(['src/app/**/*.*(js,html)'], {debounceDelay: 2000}, function () {
         runSequence('build-app', 'livereload');
     });
 });
@@ -244,7 +258,13 @@ gulp.task('livereload', function (cb) {
     livereload.changed(distIndexHtml);
     cb();
 });
-
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * MOVE FILES
+ * ######################################################################################
+ * ######################################################################################
+ */
 // =========================================================================
 // Build the index.html of the frontend and move it to the app folder
 // =========================================================================
@@ -254,15 +274,27 @@ gulp.task('build-app-html', function () {
         .pipe(replace('<!--scripts-->', script))
         .pipe(gulp.dest(distAppPath));
 });
-// ===============================================================
+// ==========================================================================
 // Moves the server code into the dist folder
-// ===============================================================
+// ==========================================================================
 gulp.task('dist-server', function () {
-    return gulp.src(path.join(srcServerPath, '**')).pipe(gulp.dest(distServerPath));
+    return gulp.src(srcServerPath + '/**/*.*(js|json)').pipe(gulp.dest(distServerPath));
 });
-// ===================================================================================
+// ==========================================================================
+// Build Serverside Typescript
+// ==========================================================================
+gulp.task('build-typescript', function() {
+    var tsResult = gulp.src(path.join(srcServerPath, '**', '*.ts'))
+        .pipe(typescript(tsProject));
+
+    return merge([ // Merge the two output streams, so this task is finished when the IO of both operations are done.
+        tsResult.dts.pipe(gulp.dest(path.join(distServerPath, 'definitions'))),
+        tsResult.js.pipe(gulp.dest(distServerPath))
+    ]);
+});
+// ==========================================================================
 // Move the app static files into the app folder
-// ===================================================================================
+// ==========================================================================
 gulp.task('dist-app-static', function () {
     return gulp.src(path.join(srcAppStaticFolder, '**')).pipe(gulp.dest(distAppPath));
 });
@@ -274,9 +306,9 @@ gulp.task('dist-app-static', function () {
  * ######################################################################################
  * ######################################################################################
  */
-// ================================================================
+// ==========================================================================
 // Start frontend unit tests
-// ================================================================
+// ==========================================================================
 gulp.task('test-jasmine', ['build-webpack'], function (cb) {
     process.env.NODE_ENV = 'test';
     karma.start({
@@ -285,9 +317,9 @@ gulp.task('test-jasmine', ['build-webpack'], function (cb) {
     }, cb);
 });
 
-// =================================================================
+// ==========================================================================
 // Start server side unit tests with mocha
-// =================================================================
+// ==========================================================================
 gulp.task('test-mocha', ['build-test-database'], function () {
     process.env.NODE_ENV = 'test';
     return gulp.src('test/mocha/**/**.js')
@@ -333,7 +365,6 @@ gulp.task('build-test-database', function (cb) {
     process.env.NODE_ENV = 'test';
     sequelize.sync({'force': true}).then(function(){
         require(path.join(srcServerPath,'server','setup', 'test', 'database.js')).then(function(){
-            console.log('GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGhui');
             cb();
         }).catch(function(err) {
             console.error(err);
@@ -384,7 +415,7 @@ requireFolder = function (folder) {
     fs.readdirSync(folder).forEach(function (file) {
         filepath = path.join(folder, file);
         stat = fs.statSync(filepath);
-        if (stat.isFile()) {
+        if (stat.isFile() && path.extname(file) === '.js') {
             require(filepath);
         }
         if (stat.isDirectory()) {
