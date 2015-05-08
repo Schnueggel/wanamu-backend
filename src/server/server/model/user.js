@@ -76,9 +76,9 @@ var User = sequelize.define('User', {
     paranoid: true
 });
 
-User.belongsTo(Salutation, { as: 'salutation', allowNull: true });
-User.belongsTo(UserGroup);
-User.hasMany(Address, {as: 'Addresses'});
+User.belongsTo(Salutation, { foreignKey: 'salutation', allowNull: true });
+User.belongsTo(UserGroup,  { foreignKey: 'userGroup'});
+User.hasMany(Address, {foreignKey: 'user'});
 
 module.exports = User;
 
