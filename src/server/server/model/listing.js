@@ -129,7 +129,7 @@ var Listing = sequelize.define('Listing', {
         type: sequelize.Sequelize.ENUM('Text', 'Bild1', 'Bild2')
     },
     confirmedAt: {
-        type: sequelize.Sequelize.DATETIME
+        type: sequelize.Sequelize.DATE
     },
     weightTons: {
         type: sequelize.Sequelize.STRING
