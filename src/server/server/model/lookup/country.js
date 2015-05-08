@@ -9,7 +9,7 @@ module.exports = sequelize.define('Country', {
         primaryKey: true,
         autoIncrement: true
     },
-    country: {
+    name: {
         type: sequelize.Sequelize.STRING,
         unique: true,
         allowNull: false

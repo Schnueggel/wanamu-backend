@@ -126,6 +126,7 @@ function createUsers() {
                        if (err.name === 'SequelizeValidationError') {
                            console.log(err);
                            console.log(row);
+
                            directConnection.resume();
                        } else if (err.name === 'SequelizeUniqueConstraintError') {
                            console.log(err);

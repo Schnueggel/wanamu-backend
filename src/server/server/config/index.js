@@ -5,16 +5,15 @@ var mysql = require('mysql'),
     nconf = require('nconf'),
     pool = null;
 
-
 nconf.argv()
     .env();
 
 var env = nconf.get('NODE_ENV') || 'development';
 
 nconf.file({file: __dirname + '/default.json'})
-    .file('env', {file: __dirname + '/' + env.toLowerCase() + '.json'});
+    .file('env', {file: __dirname + '/' + env.toLowerCase() + '.json'})
+    .file('local', {file: __dirname + '/local.json'});
 
-console.log(env);
 var sequelize = new Sequelize(nconf.get('mysql:database'), nconf.get('mysql:user'), nconf.get('mysql:password'), nconf.get('sequelize'));
 
 pool = mysql.createPool(nconf.get('mysql'));
