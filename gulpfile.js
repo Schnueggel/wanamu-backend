@@ -320,12 +320,17 @@ gulp.task('test-jasmine', ['build-webpack'], function (cb) {
 // ==========================================================================
 // Start server side unit tests with mocha
 // ==========================================================================
-gulp.task('test-mocha', ['build-test-database'], function () {
+gulp.task('test-mocha', ['prepare-moch-tests'], function () {
     process.env.NODE_ENV = 'test';
     return gulp.src('test/mocha/**/**.js')
         .pipe(mocha());
 });
-
+// ==========================================================================
+// Setup everything for testing
+// ==========================================================================
+gulp.task('prepare-moch-tests', function(cb){
+    runSequence('build-test-database', 'build-server', cb);
+});
 /**
  * ######################################################################################
  * ######################################################################################
