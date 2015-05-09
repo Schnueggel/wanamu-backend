@@ -38,4 +38,3 @@ var Address = module.exports = sequelize.define('Address', {
 
 Address.belongsTo(Country, {foreignKey : 'country'});
 
-module.exports = Address;
