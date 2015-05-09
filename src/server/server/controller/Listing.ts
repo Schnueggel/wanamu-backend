@@ -1,9 +1,10 @@
 'use strict';
-
-var listingModel = require('./../model/listing');
-
-var listing = {
-    'get' : function (request, response) {
+class Listing {
+    listingModel: Model;
+    constructor (listingModel: Model) {
+        this.listingModel = listingModel;
+    }
+    get(request, response) {
         // ==========================================================================
         // Default result object
         // ==========================================================================
@@ -14,10 +15,10 @@ var listing = {
         // Find a specific listing.
         // But not if it is flagged as deleted (deleted date is set)
         // ==========================================================================
-        listingModel.find({
+        this.listingModel.find({
             where: {
                 id: request.params.id,
-                $and : {
+                $and: {
                     deleted: null
                 }
             }
@@ -32,8 +33,9 @@ var listing = {
             response.sendStatus(500);
             console.log(err);
         });
-    },
-    'list' : function (request, response) {
+    }
+
+    list(request, response) {
         console.log(request.params);
         var result = {
             limit: request.param('limit', 1000),
@@ -41,8 +43,7 @@ var listing = {
             data: [],
             total: 0
         };
-        console.log(result);
-        listingModel.findAndCountAll({
+        this.listingModel.findAndCountAll({
             limit: result.limit,
             offset: result.offset
         }, {
@@ -56,6 +57,5 @@ var listing = {
             console.error(err);
         });
     }
-};
-
-module.exports = listing;
+}
+export = Listing;

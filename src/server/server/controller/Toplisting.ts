@@ -1,9 +1,11 @@
 'use strict';
 
-var toplistingModel = require('./../model/toplisting');
-
-var toplisting = {
-    list : function (request, response) {
+class Toplisting {
+    topListingModel: Model;
+    constructor (topListingModel: Model) {
+        this.topListingModel = topListingModel;
+    }
+    list (request, response) {
         // ==============================================================================
         // Default result Object
         // ==============================================================================
@@ -13,7 +15,7 @@ var toplisting = {
             total: 0,
             data: []
         };
-        toplistingModel.findAndCountAll({
+        this.topListingModel.findAndCountAll({
             limit: result.limit,
             offset: result.offset
         }, {
@@ -21,12 +23,11 @@ var toplisting = {
         }).then(function (res) {
             result.data = res.rows;
             result.total = res.count;
-            result.count = res.count;
             response.send(result);
         }).catch(function (err) {
             response.sendStatus(500);
             console.log(err);
         });
     }
-};
-module.exports = toplisting;
+}
+export = Toplisting;
