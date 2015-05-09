@@ -27,7 +27,6 @@ describe('Get Category Model', function () {
             include : [{ all: true, nested: true }]
         }).then(function(res){
             assert.equal(typeof res, 'object');
-            console.log(res);
             assert.equal(res.parent, 1);
             done();
         }).catch(function(err){
