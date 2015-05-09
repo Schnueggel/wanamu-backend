@@ -31,6 +31,20 @@ The built code will be put into the `dist` folder and have the same structure as
 The backend of the application is written in NodeJs using the Express framework.
 The frontend is made with Angular.
 
+### Docs:
+
+Sequelize (Database ORM):
+
+<http://docs.sequelizejs.com/en/latest/docs/getting-started/>
+
+TypeScript:
+
+<http://www.typescriptlang.org/Handbook>
+
+Express:
+
+<http://expressjs.com/api.html>
+
 ## Build
 
 We use gulp to control the build process of the application.
@@ -38,6 +52,7 @@ We use gulp to control the build process of the application.
 The frontend will be packed with Webpack and all client side javascript code will result in a single index.js file placed in `dist/app`.
 
 ### Typescript
+
 Its also possible to write typescript for frontend code creating files with a `.ts` extension.
 
 ### ES6
