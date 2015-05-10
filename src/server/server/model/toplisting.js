@@ -13,6 +13,6 @@ var Toplisting = sequelize.define('Toplisting', {
     paranoid: true
 });
 
-Toplisting.belongsTo(Listing, {foreignKey : 'listing'});
+Toplisting.belongsTo(Listing, {foreignKey : 'listingId'});
 
 module.exports = Toplisting;

@@ -101,9 +101,10 @@ module.exports = User;
  * After Create Hook
  * @param user
  * @param options
- * @param fn
+ * @param fn only exists if the signature of the hook has a third argument but co.wrap(afterCreate) creates function(){}
+ *
  */
-function* afterCreate(user, options, fn){
+function* afterCreate(user, options){
     // ==========================================================================
     // We create the customerNumber.
     // The customer number consists of the usergroup flag and the user id

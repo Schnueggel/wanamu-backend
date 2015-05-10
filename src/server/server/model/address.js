@@ -36,5 +36,5 @@ var Address = module.exports = sequelize.define('Address', {
     paranoid: true
 });
 
-Address.belongsTo(Country, {foreignKey : 'country'});
+Address.belongsTo(Country, {foreignKey : 'countryId'});
 

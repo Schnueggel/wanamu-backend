@@ -150,11 +150,11 @@ var Listing = sequelize.define('Listing', {
 });
 
 
-Listing.belongsTo(User, { foreignKey: 'user', allowNull: false});
-Listing.belongsTo(Category, { foreignKey: 'category'});
-Listing.belongsTo(Country, { foreignKey : 'country'});
-Listing.belongsTo(PaymentMethod, { foreignKey : 'paymentMethod'});
-Listing.belongsTo(Condition, { foreignKey: 'condition'});
+Listing.belongsTo(User, { foreignKey: 'userId', allowNull: false});
+Listing.belongsTo(Category, { foreignKey: 'categoryId'});
+Listing.belongsTo(Country, { foreignKey : 'countryId'});
+Listing.belongsTo(PaymentMethod, { foreignKey : 'paymentMethodId'});
+Listing.belongsTo(Condition, { foreignKey: 'conditionId'});
 
 module.exports = Listing;
 
@@ -172,7 +172,7 @@ module.exports = Listing;
  * @param options
  * @param fn
  */
-function* beforeCreate(listing, options, fn){
+function* beforeCreate(listing, options){
 
     var user = yield listing.getUser();
 
