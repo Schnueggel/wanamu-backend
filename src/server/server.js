@@ -8,14 +8,32 @@ var express = require('express'),
     config = require('./server/config'),
     livereload = require('connect-livereload'),
     logger = require('morgan'),
+    bodyParser = require('body-parser'),
     app = express();
+
+
+// configure app to use bodyParser()
+// this will let us get the data from a POST
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 
 // Routing Setup
 var router = require('./server/routes');
 
-app.use(logger(process.env.NODE_ENV));
+
+app.use(logger('combined'));
 app.use(livereload());
 app.use(express.static(path.resolve(__dirname + '/../app')));
+app.use(function(req, res, next) {
+    req.session = {
+        user: {
+            id : 1
+        }
+    };
+    next();
+});
+
 app.use(router);
 
 var server = app.listen(config.get('port'), function () {
