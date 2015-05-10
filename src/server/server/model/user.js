@@ -79,12 +79,13 @@ var User = sequelize.define('User', {
     paranoid: true,
     hooks: {
         afterCreate: function(user, options, fn){
+            console.log(user.getUserGroup);
             // ==========================================================================
             // We create the customerNumber.
             // The customer number consists of the usergroup flag and the user id
             // ==========================================================================
             user.getUserGroup().then(function(group){
-                user.customerNumber = group.flag.toUpperCase() + Util.zeroPad(user.id, 5);
+                user.customerNumber = group.flag.toUpperCase() + Util.Instance.zeroPad(user.id, 5);
                 user.save().then(function(){
                     fn(null, user);
                 }).catch(function(err){
