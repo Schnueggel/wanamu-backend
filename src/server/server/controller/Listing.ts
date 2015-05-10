@@ -7,13 +7,13 @@ var User = require('../model/user.js'),
  * Listing Controller
  */
 class Listing {
-    listingModel: Model;
+    listingModel: SequelizeModel;
 
     /**
      * Create Listing
      * @param listingModel
      */
-    constructor (listingModel: Model) {
+    constructor (listingModel: SequelizeModel) {
         this.listingModel = listingModel;
     }
 
