@@ -121,7 +121,7 @@ gulp.task('build', function (cb) {
 // starting the development.json server and opens a browser.
 // ====================================================================
 gulp.task('build-serve',  function (cb) {
-    runSequence('build', 'server-start', 'watch', 'http-browser', cb);
+    runSequence('build', 'build-development-database', 'server-start', 'watch', 'http-browser', cb);
 });
 // ======================================================
 // Test frontend and backend
@@ -349,12 +349,17 @@ gulp.task('build-development-database',['build-server'], function (cb) {
     requireFolder(modelpath);
 
     process.env.NODE_ENV = 'development';
-    sequelize.sync({'force': true})
-        .then(function(){
-            cb();
-        })
-        .catch(function(err) {
-            throw err;
+    sequelize.query("SET FOREIGN_KEY_CHECKS = 0").then(function(){
+        sequelize.sync({'force': true})
+            .then(function(){
+                var devDbSetupScript = path.join(distServerPath, 'server', 'setup', 'development', 'database.js');
+                require(devDbSetupScript).then(function(){
+                cb();
+            })
+            .catch(function(err) {
+                throw err;
+            })
+        });
     });
 });
 // ==========================================================================
@@ -370,7 +375,8 @@ gulp.task('build-test-database',['build-server'], function (cb) {
     process.env.NODE_ENV = 'test';
     sequelize.query("SET FOREIGN_KEY_CHECKS = 0").then(function(){
         sequelize.sync({'force': true}).then(function(){
-            require(path.join(distServerPath, 'server', 'setup', 'test', 'database.js')).then(function(){
+            var testDbSetupScript = path.join(distServerPath, 'server', 'setup', 'test', 'database.js');
+            require(testDbSetupScript).then(function(){
                 cb();
             }).catch(function(err) {
                 console.error(err);
