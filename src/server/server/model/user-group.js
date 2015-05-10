@@ -10,6 +10,14 @@ module.exports = sequelize.define('UserGroup', {
         type: sequelize.Sequelize.STRING,
         unique: true,
         allowNull: false
+    },
+    // ==========================================================================
+    // shortcut used in listing numbers
+    // ==========================================================================
+    flag: {
+        type: sequelize.Sequelize.STRING(2),
+        unique: true,
+        allowNull: false
     }
 }, {
     timestamps: false

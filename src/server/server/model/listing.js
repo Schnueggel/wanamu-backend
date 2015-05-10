@@ -5,7 +5,8 @@ var sequelize = require('../config').getSequelize(),
     Category = require('./category.js'),
     Country = require('./lookup/country.js'),
     PaymentMethod = require('./lookup/payment-method.js'),
-    Condition = require('./lookup/condition.js');
+    Condition = require('./lookup/condition.js'),
+    Util = require('../util/Util.js');
 
 var Listing = sequelize.define('Listing', {
     id: {
@@ -44,7 +45,7 @@ var Listing = sequelize.define('Listing', {
     motorType: {
         type: sequelize.Sequelize.ENUM('einzelmot', 'doppelmot', '')
     },
-    motorFuel: {
+    motorEngine: {
         type: sequelize.Sequelize.ENUM('diesel','benzin','gas','elektro','hybrid','','brennstofzelle')
     },
     motorName: {
@@ -133,11 +134,53 @@ var Listing = sequelize.define('Listing', {
     },
     weightTons: {
         type: sequelize.Sequelize.STRING
-    }}, {
-    paranoid: true
+    }},{
+    // ==========================================================================
+    // OPTIONS
+    // ==========================================================================
+        paranoid: true,
+        hooks: {
+            beforeCreate: beforeCreate
+    }
 });
 
-Listing.belongsTo(User, {foreignKey: 'user'});
+function beforeCreate(listing, options, fn){
+
+    listing.getUser().then(function(user){
+
+        if (user === null || user.customerNumber.length === 0) {
+            console.error('Cannot create Listing for User. No customer number found');
+            throw new Error('Cannot create Listing for User. No customer number found');
+        }
+
+        // This function tries to reate the Listing number until a valid one is found
+        var createListingNr = function() {
+            var listingNr = Util.Instance.generateListingId(user.customerNumber);
+            listingNr = listingNr.toUpperCase();
+            Listing.find({
+                where: {
+                    listingNr: listingNr
+                }
+            }).then(function(result){
+                if (result === null) {
+                    listing.listingNr = listingNr;
+                    fn(null, listing);
+                } else {
+                    createListingNr();
+                }
+            }).catch(function(err){
+                console.error(err);
+                throw new Error('Unable to create listing number');
+            });
+        };
+        createListingNr();
+    }).catch(function(err){
+        console.log(err);
+        throw new Error('Cant create listing, because accessing user failed');
+    });
+}
+
+Listing.belongsTo(User, {as: 'User', foreignKey: 'user', allowNull: false});
 Listing.belongsTo(Category, { foreignKey: 'category'});
 Listing.belongsTo(Country, { foreignKey : 'country'});
 Listing.belongsTo(PaymentMethod, { foreignKey : 'paymentMethod'});
