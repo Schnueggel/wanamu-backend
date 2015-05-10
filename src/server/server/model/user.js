@@ -3,7 +3,8 @@ var Address = require('./address'),
     Salutation = require('./lookup/salutation.js'),
     UserGroup = require('./user-group.js'),
     sequelize = require('../config').getSequelize(),
-    Util = require('../util/Util.js');
+    Util = require('../util/Util.js'),
+    co = require('co');
 
 var User = sequelize.define('User', {
     id : {
@@ -78,32 +79,44 @@ var User = sequelize.define('User', {
     // ==========================================================================
     paranoid: true,
     hooks: {
-        afterCreate: function(user, options, fn){
-            console.log(user.getUserGroup);
-            // ==========================================================================
-            // We create the customerNumber.
-            // The customer number consists of the usergroup flag and the user id
-            // ==========================================================================
-            user.getUserGroup().then(function(group){
-                user.customerNumber = group.flag.toUpperCase() + Util.Instance.zeroPad(user.id, 5);
-                user.save().then(function(){
-                    fn(null, user);
-                }).catch(function(err){
-                    console.error(err);
-                    throw new Error('Unable to create customer number');
-                });
-            }).catch(function(err){
-                console.error(err);
-                throw new Error('Unable to create customer number');
-            });
-        }
+        afterCreate: co.wrap(afterCreate)
     }
 });
-
 
 User.belongsTo(Salutation, { as:'Salutation', foreignKey: 'salutation', allowNull: true });
 User.belongsTo(UserGroup,  { as:'UserGroup', foreignKey: 'userGroup', allowNull: false });
 User.hasMany(Address, {foreignKey: 'user'});
 
 module.exports = User;
+
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * Helper Functions
+ * ######################################################################################
+ * ######################################################################################
+ */
+
+/**
+ * After Create Hook
+ * @param user
+ * @param options
+ * @param fn
+ */
+function* afterCreate(user, options, fn){
+
+    // ==========================================================================
+    // We create the customerNumber.
+    // The customer number consists of the usergroup flag and the user id
+    // ==========================================================================
+
+    var group = yield user.getUserGroup();
+
+    user.customerNumber = group.flag.toUpperCase() + Util.Instance.zeroPad(user.id, 5);
+
+    yield user.save();
+
+    fn(null, user);
+}
+
 

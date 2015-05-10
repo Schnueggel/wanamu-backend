@@ -6,8 +6,13 @@ var sequelize = require('../config').getSequelize(),
     Country = require('./lookup/country.js'),
     PaymentMethod = require('./lookup/payment-method.js'),
     Condition = require('./lookup/condition.js'),
-    Util = require('../util/Util.js');
+    Util = require('../util/Util.js'),
+    co = require('co');
 
+/**
+ * Listing Model
+ * @type {*|{}|Model}
+ */
 var Listing = sequelize.define('Listing', {
     id: {
         type: sequelize.Sequelize.INTEGER,
@@ -140,45 +145,10 @@ var Listing = sequelize.define('Listing', {
     // ==========================================================================
         paranoid: true,
         hooks: {
-            beforeCreate: beforeCreate
+            beforeCreate: co.wrap(beforeCreate)
     }
 });
 
-function beforeCreate(listing, options, fn){
-
-    listing.getUser().then(function(user){
-
-        if (user === null || user.customerNumber.length === 0) {
-            console.error('Cannot create Listing for User. No customer number found');
-            throw new Error('Cannot create Listing for User. No customer number found');
-        }
-
-        // This function tries to reate the Listing number until a valid one is found
-        var createListingNr = function() {
-            var listingNr = Util.Instance.generateListingId(user.customerNumber);
-            listingNr = listingNr.toUpperCase();
-            Listing.find({
-                where: {
-                    listingNr: listingNr
-                }
-            }).then(function(result){
-                if (result === null) {
-                    listing.listingNr = listingNr;
-                    fn(null, listing);
-                } else {
-                    createListingNr();
-                }
-            }).catch(function(err){
-                console.error(err);
-                throw new Error('Unable to create listing number');
-            });
-        };
-        createListingNr();
-    }).catch(function(err){
-        console.log(err);
-        throw new Error('Cant create listing, because accessing user failed');
-    });
-}
 
 Listing.belongsTo(User, {as: 'User', foreignKey: 'user', allowNull: false});
 Listing.belongsTo(Category, { foreignKey: 'category'});
@@ -187,3 +157,41 @@ Listing.belongsTo(PaymentMethod, { foreignKey : 'paymentMethod'});
 Listing.belongsTo(Condition, { foreignKey: 'condition'});
 
 module.exports = Listing;
+
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * Helper Functions
+ * ######################################################################################
+ * ######################################################################################
+ */
+
+/**
+ * Before Create Hook
+ * @param listing
+ * @param options
+ * @param fn
+ */
+function* beforeCreate(listing, options, fn){
+
+    var user = yield listing.getUser();
+
+    var createListingNr = function*() {
+        var listingNr = Util.Instance.generateListingId(user.customerNumber);
+        listingNr = listingNr.toUpperCase();
+
+        var listingCollision = yield listing.find({
+            where: {
+                listingNr: listingNr
+            }
+        });
+
+        if (listingCollision === null) {
+            listing.listingNr = listingNr;
+            fn(null, listing);
+        } else {
+            co(createListingNr);
+        }
+    };
+    co(createListingNr);
+}
