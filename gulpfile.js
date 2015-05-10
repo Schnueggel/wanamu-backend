@@ -368,14 +368,17 @@ gulp.task('build-test-database',['build-server'], function (cb) {
     requireFolder(modelpath);
 
     process.env.NODE_ENV = 'test';
-    sequelize.sync({'force': true}).then(function(){
-        require(path.join(distServerPath, 'server', 'setup', 'test', 'database.js')).then(function(){
-            cb();
-        }).catch(function(err) {
-            console.error(err);
-            cb();
+    sequelize.query("SET FOREIGN_KEY_CHECKS = 0").then(function(){
+        sequelize.sync({'force': true}).then(function(){
+            require(path.join(distServerPath, 'server', 'setup', 'test', 'database.js')).then(function(){
+                cb();
+            }).catch(function(err) {
+                console.error(err);
+                cb();
+            });
         });
     });
+
 
     // TODO INSERT DATA
 });
