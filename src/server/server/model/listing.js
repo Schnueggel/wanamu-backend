@@ -150,7 +150,7 @@ var Listing = sequelize.define('Listing', {
 });
 
 
-Listing.belongsTo(User, {as: 'User', foreignKey: 'user', allowNull: false});
+Listing.belongsTo(User, { foreignKey: 'user', allowNull: false});
 Listing.belongsTo(Category, { foreignKey: 'category'});
 Listing.belongsTo(Country, { foreignKey : 'country'});
 Listing.belongsTo(PaymentMethod, { foreignKey : 'paymentMethod'});
@@ -176,11 +176,15 @@ function* beforeCreate(listing, options, fn){
 
     var user = yield listing.getUser();
 
+    // ==========================================================================
+    // Local function for recursion. Tries to create listingNr
+    // ==========================================================================
     var createListingNr = function*() {
         var listingNr = Util.Instance.generateListingId(user.customerNumber);
+
         listingNr = listingNr.toUpperCase();
 
-        var listingCollision = yield listing.find({
+        var listingCollision = yield Listing.find({
             where: {
                 listingNr: listingNr
             }
@@ -188,10 +192,11 @@ function* beforeCreate(listing, options, fn){
 
         if (listingCollision === null) {
             listing.listingNr = listingNr;
-            fn(null, listing);
         } else {
-            co(createListingNr);
+            console.log('Listing with number %s exists. Try to create new one', listingNr);
+            yield co(createListingNr);
         }
     };
-    co(createListingNr);
+
+    yield co(createListingNr);
 }
