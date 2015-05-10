@@ -40,14 +40,15 @@ class Listing {
 
         this.listingModel
             .create(input, {
-                isNewRecord: true,
-                include: [
-                    { model: Category, nested: true}
-                ]
+                isNewRecord: true
             })
             .then(function(listing){
                 listing
-                    .reload()
+                    .reload({
+                        include: [
+                            { model: Category, nested: true}
+                        ]
+                    })
                     .then(function(result){
                         response.send(result.get({
                             plain: true
