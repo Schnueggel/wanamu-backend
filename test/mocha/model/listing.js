@@ -8,7 +8,7 @@ var assert = require('assert'),
     UserGroup = require('../../../dist/server/server/model/user-group');
 
 
-describe('Get Category Model', function () {
+describe('Test Listing Model', function () {
 
     it('Should create Listing with ID 1', function (done) {
         assert.equal(typeof Listing, 'object');
@@ -21,7 +21,6 @@ describe('Get Category Model', function () {
             return result;
         }).then(function(result){
             User.create({
-                customerNumber: 'A10002',
                 email: 'test@email.de',
                 firstName: 'firstName',
                 lastName: 'lastName',
