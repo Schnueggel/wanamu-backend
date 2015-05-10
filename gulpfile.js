@@ -341,10 +341,10 @@ gulp.task('prepare-moch-tests', function(cb){
 // ==========================================================================
 // Builds the development database
 // ==========================================================================
-gulp.task('build-development-database', function (cb) {
+gulp.task('build-development-database',['build-server'], function (cb) {
     process.env.NODE_ENV = 'development';
-    var modelpath = path.join(srcServerPath, 'server', 'model'),
-        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
+    var modelpath = path.join(distServerPath, 'server', 'model'),
+        sequelize = require(path.join(distServerPath, 'server', 'config', 'index.js')).getSequelize();
 
     requireFolder(modelpath);
 
@@ -360,16 +360,16 @@ gulp.task('build-development-database', function (cb) {
 // ==========================================================================
 // Builds the test database
 // ==========================================================================
-gulp.task('build-test-database', function (cb) {
+gulp.task('build-test-database',['build-server'], function (cb) {
     process.env.NODE_ENV = 'test';
-    var modelpath = path.join(srcServerPath, 'server', 'model'),
-        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
+    var modelpath = path.join(distServerPath, 'server', 'model'),
+        sequelize = require(path.join(distServerPath, 'server', 'config', 'index.js')).getSequelize();
 
     requireFolder(modelpath);
 
     process.env.NODE_ENV = 'test';
     sequelize.sync({'force': true}).then(function(){
-        require(path.join(srcServerPath,'server','setup', 'test', 'database.js')).then(function(){
+        require(path.join(distServerPath, 'server', 'setup', 'test', 'database.js')).then(function(){
             cb();
         }).catch(function(err) {
             console.error(err);
@@ -382,7 +382,7 @@ gulp.task('build-test-database', function (cb) {
 // ==========================================================================
 // Builds the production database
 // ==========================================================================
-gulp.task('build-production-database', function (cb) {
+gulp.task('build-production-database',['build-server'], function (cb) {
     var modelpath = path.join(srcServerPath, 'server', 'model'),
         sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
 
@@ -420,6 +420,7 @@ requireFolder = function (folder) {
     fs.readdirSync(folder).forEach(function (file) {
         filepath = path.join(folder, file);
         stat = fs.statSync(filepath);
+        //Don't require .ts files
         if (stat.isFile() && path.extname(file) === '.js') {
             require(filepath);
         }
