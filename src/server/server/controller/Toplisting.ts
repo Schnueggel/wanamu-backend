@@ -1,8 +1,8 @@
 'use strict';
 
 class Toplisting {
-    topListingModel: Model;
-    constructor (topListingModel: Model) {
+    topListingModel: SequelizeModel;
+    constructor (topListingModel: SequelizeModel) {
         this.topListingModel = topListingModel;
     }
     list (request, response) {
