@@ -104,7 +104,6 @@ module.exports = User;
  * @param fn
  */
 function* afterCreate(user, options, fn){
-
     // ==========================================================================
     // We create the customerNumber.
     // The customer number consists of the usergroup flag and the user id
@@ -115,8 +114,7 @@ function* afterCreate(user, options, fn){
     user.customerNumber = group.flag.toUpperCase() + Util.Instance.zeroPad(user.id, 5);
 
     yield user.save();
-
-    fn(null, user);
+    console.log('user updated');
 }
 
 
