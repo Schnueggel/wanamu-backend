@@ -1,4 +1,8 @@
 'use strict';
+
+/**
+ * Listing Controller
+ */
 class Listing {
     listingModel: Model;
     constructor (listingModel: Model) {
