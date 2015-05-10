@@ -3,7 +3,7 @@
  * Created by Christian on 5/6/2015.
  */
 var assert = require('assert'),
-    Category = require('../../../src/server/server/model/category');
+    Category = require('../../../dist/server/server/model/category');
 
 
 describe('Get Category Model', function () {

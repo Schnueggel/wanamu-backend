@@ -5,6 +5,7 @@
  */
 
 var Category = require('../../model/category.js'),
+    UserGroup = require('../../model/user-group.js'),
     createpromises = [],
     destroypromises = [];
 
@@ -14,7 +15,14 @@ var Category = require('../../model/category.js'),
 destroypromises.push(Category.destroy({
     where: {
         id: {
-            $in: [1,2,3]
+            $notIn: [0]
+        }
+    }
+}));
+destroypromises.push(UserGroup.destroy({
+    where: {
+        id: {
+            $notIn:[0]
         }
     }
 }));
@@ -32,7 +40,11 @@ var completepromise = new Promise(function(resolve, reject) {
             {id: 2, name: 'category2' },
             {id: 3, name: 'category3', parent: 1}
         ]));
-
+        createpromises.push(UserGroup.bulkCreate([
+            {id: 1, name: 'private', flag: 'P' },
+            {id: 2, name: 'business', flag: 'G'},
+            {id: 3, name: 'admin', flag: 'A'}
+        ]));
         // ==========================================================================
         // Execute all create data promises and resolve the complete promise.
         // This means the data are in the tables
