@@ -1,11 +1,16 @@
 # Nautic Online Rewrite in Node.JS
 
 ## Install
-   use `gulp build-serve` to start development server
-   
-   use `gulp build` to build only
-   
-   use `gulp test` to start tests
+In order to run this application you need to make an alias and run the node command with `--harmony_generators` flag or use 
+io.js.
+
+Use `npm start` to start the server.
+
+Use `gulp build-serve` to start development server.
+
+Use `gulp build` to build only.
+
+Use `gulp test` to start tests.
    
 ## Development
 For development create a MYSQL database at localhost and create a user and database named `nautic_dev` 
