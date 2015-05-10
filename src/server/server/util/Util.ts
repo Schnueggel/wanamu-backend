@@ -2,8 +2,6 @@
 /**
  * Created by Christian on 5/9/2015.
  */
-var listingModel = require('../model/listing');
-
 module Util {
     export enum CHART_TYPE{
        Alpha =  1, Numeric = 2, AlphaNumeric = 3
@@ -38,6 +36,22 @@ module Util {
             return id;
         }
 
+        /**
+         * Pads a number with zeros. If the number length exceeds the padding, the number is returned as string
+         * @param num the number to pad
+         * @param numZeros zeros used to pad
+         * @returns {string}
+         */
+        public zeroPad(num, numZeros) {
+            var n = Math.abs(num);
+            var zeros = Math.max(0, numZeros - Math.floor(n).toString().length );
+            var zeroString = Math.pow(10,zeros).toString().substr(1);
+            if( num < 0 ) {
+                zeroString = '-' + zeroString;
+            }
+
+            return zeroString+n;
+        }
         /**
          *
          * @param length

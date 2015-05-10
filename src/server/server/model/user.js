@@ -2,7 +2,8 @@
 var Address = require('./address'),
     Salutation = require('./lookup/salutation.js'),
     UserGroup = require('./user-group.js'),
-    sequelize = require('../config').getSequelize();
+    sequelize = require('../config').getSequelize(),
+    Util = require('../util/Util.js');
 
 var User = sequelize.define('User', {
     id : {
@@ -78,8 +79,12 @@ var User = sequelize.define('User', {
     paranoid: true,
     hooks: {
         afterCreate: function(user, options, fn){
+            // ==========================================================================
+            // We create the customerNumber.
+            // The customer number consists of the usergroup flag and the user id
+            // ==========================================================================
             user.getUserGroup().then(function(group){
-                user.customerNumber = group.flag.toUpperCase() + zeroPad(user.id, 5);
+                user.customerNumber = group.flag.toUpperCase() + Util.zeroPad(user.id, 5);
                 user.save().then(function(){
                     fn(null, user);
                 }).catch(function(err){
@@ -94,16 +99,6 @@ var User = sequelize.define('User', {
     }
 });
 
-function zeroPad(num, numZeros) {
-    var n = Math.abs(num);
-    var zeros = Math.max(0, numZeros - Math.floor(n).toString().length );
-    var zeroString = Math.pow(10,zeros).toString().substr(1);
-    if( num < 0 ) {
-        zeroString = '-' + zeroString;
-    }
-
-    return zeroString+n;
-}
 
 User.belongsTo(Salutation, { as:'Salutation', foreignKey: 'salutation', allowNull: true });
 User.belongsTo(UserGroup,  { as:'UserGroup', foreignKey: 'userGroup', allowNull: false });
