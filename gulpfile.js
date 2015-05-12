@@ -14,7 +14,6 @@ var gulp = require('gulp'),
     livereload = require('gulp-livereload'),
     jshint = require('gulp-jshint'),
     replace = require('gulp-replace'),
-    typescript = require('gulp-typescript'),
     merge = require('merge2'),
     runSequence = require('run-sequence'),
     webpack = require('webpack'),
@@ -22,6 +21,8 @@ var gulp = require('gulp'),
     karma = require('karma').server,
     mocha = require('gulp-mocha'),
     fs = require('fs'),
+    rename = require('gulp-rename'),
+    traceur = require('gulp-traceur'),
     del = require('del');
 /**
  * ######################################################################################
@@ -86,19 +87,7 @@ var webpackConfig = {
         ]
     }
 };
-/**
- * ######################################################################################
- * ######################################################################################
- * TYPESCRIPT CONFIG
- * ######################################################################################
- * ######################################################################################
- */
-var tsProject = typescript.createProject({
-    module: 'commonjs', //For nodejs
-    typescript: require('typescript'),
-    declarationFiles: true,
-    noExternalResolve: true
-});
+
 /**
  * ######################################################################################
  * ######################################################################################
@@ -142,7 +131,7 @@ gulp.task('build-app', function (cb) {
 // Build the server
 // ===========================================================================
 gulp.task('build-server', function (cb) {
-    runSequence('build-clean-server', 'dist-server', 'build-typescript', cb);
+    runSequence('build-clean-server', 'dist-server', 'dist-traceur',  cb);
 });
 
 /**
@@ -278,20 +267,22 @@ gulp.task('build-app-html', function () {
 // Moves the server code into the dist folder
 // ==========================================================================
 gulp.task('dist-server', function () {
-    return gulp.src(srcServerPath + '/**/*.*(js|json)').pipe(gulp.dest(distServerPath));
+    return gulp.src(srcServerPath + '/**/!(*.es6)').pipe(gulp.dest(distServerPath));
 });
-// ==========================================================================
-// Build Serverside Typescript
-// ==========================================================================
-gulp.task('build-typescript', function() {
-    var tsResult = gulp.src(path.join(srcServerPath, '**', '*.ts'))
-        .pipe(typescript(tsProject));
 
-    return merge([ // Merge the two output streams, so this task is finished when the IO of both operations are done.
-        tsResult.dts.pipe(gulp.dest(path.join(distServerPath, 'definitions'))),
-        tsResult.js.pipe(gulp.dest(distServerPath))
-    ]);
+// ==========================================================================
+// Moves the es6 server code into the dist folder
+// ==========================================================================
+gulp.task('dist-traceur', function () {
+    return gulp.src(srcServerPath + '/**/*.es6.js')
+        .pipe(traceur())
+        //Remove the es6 part in the pathname
+        .pipe(rename(function(path){
+       path.basename = path.basename.substr(0, path.basename.length-4);
+       path.extname = '.js';
+    })).pipe(gulp.dest(distServerPath));
 });
+
 // ==========================================================================
 // Move the app static files into the app folder
 // ==========================================================================
@@ -349,7 +340,7 @@ gulp.task('build-development-database',['build-server'], function (cb) {
     requireFolder(modelpath);
 
     process.env.NODE_ENV = 'development';
-    sequelize.query("SET FOREIGN_KEY_CHECKS = 0").then(function(){
+    sequelize.query('SET FOREIGN_KEY_CHECKS = 0').then(function(){
         sequelize.sync({'force': true})
             .then(function(){
                 var devDbSetupScript = path.join(distServerPath, 'server', 'setup', 'development', 'database.js');
@@ -358,7 +349,7 @@ gulp.task('build-development-database',['build-server'], function (cb) {
             })
             .catch(function(err) {
                 throw err;
-            })
+            });
         });
     });
 });
@@ -373,7 +364,7 @@ gulp.task('build-test-database',['build-server'], function (cb) {
     requireFolder(modelpath);
 
     process.env.NODE_ENV = 'test';
-    sequelize.query("SET FOREIGN_KEY_CHECKS = 0").then(function(){
+    sequelize.query('SET FOREIGN_KEY_CHECKS = 0').then(function(){
         sequelize.sync({'force': true}).then(function(){
             var testDbSetupScript = path.join(distServerPath, 'server', 'setup', 'test', 'database.js');
             require(testDbSetupScript).then(function(){
