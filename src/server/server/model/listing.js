@@ -6,8 +6,9 @@ var sequelize = require('../config').getSequelize(),
     Country = require('./lookup/country.js'),
     PaymentMethod = require('./lookup/payment-method.js'),
     Condition = require('./lookup/condition.js'),
-    Util = require('../util/Util.js'),
+    Util = require('../util/util.js'),
     co = require('co');
+
 
 /**
  * Listing Model
@@ -150,13 +151,14 @@ var Listing = sequelize.define('Listing', {
 });
 
 
+
 Listing.belongsTo(User, { foreignKey: 'userId', allowNull: false});
 Listing.belongsTo(Category, { foreignKey: 'categoryId'});
 Listing.belongsTo(Country, { foreignKey : 'countryId'});
 Listing.belongsTo(PaymentMethod, { foreignKey : 'paymentMethodId'});
 Listing.belongsTo(Condition, { foreignKey: 'conditionId'});
 
-module.exports = Listing;
+
 
 /**
  * ######################################################################################
@@ -172,7 +174,7 @@ module.exports = Listing;
  * @param options
  * @param fn
  */
-function* beforeCreate(listing, options){
+function* beforeCreate(listing){
 
     var user = yield listing.getUser();
 
@@ -180,7 +182,7 @@ function* beforeCreate(listing, options){
     // Local function for recursion. Tries to create listingNr
     // ==========================================================================
     var createListingNr = function*() {
-        var listingNr = Util.Instance.generateListingId(user.customerNumber);
+        var listingNr = Util.generateListingId(user.customerNumber);
 
         listingNr = listingNr.toUpperCase();
 
@@ -200,3 +202,7 @@ function* beforeCreate(listing, options){
 
     yield co(createListingNr);
 }
+
+
+module.exports = Listing;
+

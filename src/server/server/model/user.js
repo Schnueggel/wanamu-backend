@@ -3,7 +3,7 @@ var Address = require('./address'),
     Salutation = require('./lookup/salutation.js'),
     UserGroup = require('./user-group.js'),
     sequelize = require('../config').getSequelize(),
-    Util = require('../util/Util.js'),
+    Util = require('../util/util.js'),
     co = require('co');
 
 var User = sequelize.define('User', {
@@ -112,9 +112,10 @@ function* afterCreate(user, options){
 
     var group = yield user.getUserGroup();
 
-    user.customerNumber = group.flag.toUpperCase() + Util.Instance.zeroPad(user.id, 5);
+    user.customerNumber = group.flag.toUpperCase() + Util.zeroPad(user.id, 5);
 
     yield user.save();
+
     console.log('user updated');
 }
 
