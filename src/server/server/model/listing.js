@@ -152,7 +152,7 @@ var Listing = sequelize.define('Listing', {
 
 
 
-Listing.belongsTo(User, { foreignKey: 'userId', allowNull: false});
+Listing.belongsTo(User, { foreignKey: 'userId', allowNull: false, save: false});
 Listing.belongsTo(Category, { foreignKey: 'categoryId'});
 Listing.belongsTo(Country, { foreignKey : 'countryId'});
 Listing.belongsTo(PaymentMethod, { foreignKey : 'paymentMethodId'});

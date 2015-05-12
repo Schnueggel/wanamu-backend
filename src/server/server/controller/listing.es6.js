@@ -1,7 +1,8 @@
 
 var User = require('../model/user.js'),
     Category = require('../model/category.js'),
-    ListingModel = require('../model/listing.js');
+    ListingModel = require('../model/listing.js'),
+    co = require('co');
 
 module.exports = {
 
@@ -19,35 +20,7 @@ module.exports = {
      * @param request
      * @param response
      */
-    create: function (request, response) {
-
-        let input = request.body || {},
-            user = request.session.user;
-
-        input.user = user.id;
-
-        ListingModel
-            .create(input, {
-                isNewRecord: true
-            })
-            .then(function(listing){
-                listing
-                    .reload({
-                        include: [
-                            { model: Category, nested: true }
-                        ]
-                    })
-                    .then(function(result){
-                        response.send(result.get({
-                            plain: true
-                        }));
-                    });
-            })
-            .catch(function(err) {
-                console.error(err);
-                response.status(422).send(err);
-            });
-    },
+    create: co.wrap(createListing),
 
     /**
      * Delete a listing
@@ -126,4 +99,49 @@ module.exports = {
             console.error(err);
         });
     }
+};
+
+
+function* createListing(req, res){
+    let input = req.body || {},
+        user = req.session.user,
+        listing = null;
+
+    if (!user.id) {
+        res.status(401).send('No valid user informations could be found');
+        return;
+    }
+
+    try{
+        user =  yield User.find(user.id);
+    }catch(err){
+        console.error(err);
+        res.status(401).send('No valid user could be found');
+        return;
+    }
+
+    try{
+        input.userId = user.get('id');
+        listing = ListingModel.build(input,{
+            isNewRecord: true
+        });
+        listing.set('userId',user.get('id'));
+        yield listing.save();
+    } catch(err){
+        console.error(err);
+        res.status(422).send(err);
+        return;
+    }
+
+    yield listing.reload({
+        include: [
+            { model: Category, nested: true }
+        ]
+    });
+
+    var data = listing.get({
+        plain: true
+    });
+
+    res.send(data);
 }

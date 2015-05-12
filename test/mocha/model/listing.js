@@ -23,38 +23,6 @@ describe('Test Listing Model', function () {
             console.error(err);
             done();
         });
-
-        //UserGroup.find({where:{name:'private'}}).then(function(result){
-        //    assert(typeof result, 'object');
-        //    assert(result.name, 'private');
-        //    return result;
-        //}).then(function(result){
-        //    User.create({
-        //        email: 'test@email.de',
-        //        firstName: 'firstName',
-        //        lastName: 'lastName',
-        //        password: 'abcdef',
-        //        userGroup: result.id
-        //    }).then(function(user){
-        //        Listing.create({
-        //            user: user.id
-        //        }).then(function(listing){
-        //            console.log('Listing created');
-        //            assert(typeof listing.id, 'number', 'Listing ID is not a number');
-        //            done();
-        //        }).catch(function(err){
-        //            console.error(err);
-        //            done();
-        //        });
-        //    }).catch(function(err){
-        //        console.error(err);
-        //        done();
-        //    });
-        //}).catch(function(err){
-        //    console.error(err);
-        //    done();
-        //});
-
     });
 });
 
@@ -62,21 +30,18 @@ describe('Test Listing Model', function () {
 function* testCreateListing(){
     var usergroup = yield UserGroup.find({where:{name:'private'}});
 
-    assert(typeof usergroup, 'object');
-    assert(usergroup.name, 'private');
+    assert(typeof usergroup, 'object', 'A');
+    assert(usergroup.name, 'private' ,'B');
 
-    var user = yield User.create({
-        email: 'test@email.de',
-        firstName: 'firstName',
-        lastName: 'lastName',
-        password: 'abcdef',
-        userGroup: usergroup.id
-    });
+    var user = yield User.find(1);
+
+    assert(typeof user, 'object', 'C');
 
     var listing = yield Listing.create({
-        user: user.id
+        title: 'Model Test',
+        userId: user.id
     });
 
     assert(typeof listing.id, 'number', 'Listing ID is not a number');
-    assert(listing.user, user.id);
+    assert(listing.userId, user.get('id'), 'Listing userId and User.id do not match');
 }
