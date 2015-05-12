@@ -1,11 +1,9 @@
 'use strict';
 
-class Toplisting {
-    topListingModel: SequelizeModel;
-    constructor (topListingModel: SequelizeModel) {
-        this.topListingModel = topListingModel;
-    }
-    list (request, response) {
+var topListingModel = require('../model/toplisting.js');
+
+module.exports = {
+    list: function(request, response) {
         // ==============================================================================
         // Default result Object
         // ==============================================================================
@@ -15,7 +13,7 @@ class Toplisting {
             total: 0,
             data: []
         };
-        this.topListingModel.findAndCountAll({
+        topListingModel.findAndCountAll({
             limit: result.limit,
             offset: result.offset
         }, {
@@ -29,5 +27,4 @@ class Toplisting {
             console.log(err);
         });
     }
-}
-export = Toplisting;
+};
