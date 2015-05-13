@@ -34,6 +34,12 @@ function* createUserGroups() {
         {id: 3, name: 'admin', flag: 'A'}
     ]);
 }
+function* createListing() {
+    yield Listing.bulkCreate([
+        {id: 1, title: 'Test Listing 1', userId: 1, categoryId: 3 },
+        {id: 2, name: 'Test Listing 2', userId: 1, categoryId: 3 }
+    ]);
+}
 /**
  * Setup complete database
  */
@@ -41,6 +47,7 @@ function* setup(){
     yield createCategories();
     yield createUserGroups();
     yield createUsers();
+    yield createListing();
     console.log('user created');
 }
 

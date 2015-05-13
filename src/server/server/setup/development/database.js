@@ -6,6 +6,7 @@
 var User = require('../../model/user.js'),
     UserGroup = require('../../model/user-group.js'),
     Category = require('../../model/category.js'),
+    Listing = require('../../model/listing.js'),
     co = require('co');
 
 /**
@@ -23,6 +24,7 @@ function* setup(){
     yield createCategories();
     yield createUserGroups();
     yield createUsers();
+    yield createListing();
     console.log('user created');
 }
 
@@ -43,6 +45,12 @@ function* createCategories() {
         {id: 1, name: 'category1' },
         {id: 2, name: 'category2' },
         {id: 3, name: 'category3', parent: 1}
+    ]);
+}
+function* createListing() {
+    yield Listing.bulkCreate([
+        {id: 1, title: 'Test Listing 1', userId: 1, categoryId: 3 },
+        {id: 2, name: 'Test Listing 2', userId: 1, categoryId: 3 }
     ]);
 }
 
