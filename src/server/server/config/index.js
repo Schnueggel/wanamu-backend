@@ -22,9 +22,9 @@ if ([DEVELOPMENT, TEST, PRODUCTION].indexOf(env) === -1) {
     throw new Error('Invalid server environment found:' + env);
 }
 
-nconf.file({file: __dirname + '/default.json'})
-    .file('env', {file: __dirname + '/' + env.toLowerCase() + '.json'})
-    .file('local', {file: __dirname + '/local.json'});
+nconf.file({file: __dirname + '/json/default.json'})
+    .file('env', {file: __dirname + '/json/' + env.toLowerCase() + '.json'})
+    .file('local', {file: __dirname + '/json/local.json'});
 
 
 nconf.set('env', env);
