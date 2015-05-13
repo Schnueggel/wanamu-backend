@@ -1,3 +1,5 @@
+'use strict';
+
 var User = require('../model/user.js'),
     Category = require('../model/category.js'),
     ListingModel = require('../model/listing.js'),
@@ -17,10 +19,10 @@ function* updateListing(req, res) {
         // Not sure if this is the way to do it with Angular
         res.set('X-Auth-Required', 'true');
         req.session.returnUrl = req.originalUrl;
-        res.redirect('/login/');
+        res.send(401);
         return;
     }
-    let user = req.session.user,
+    let user = req.user,
         listing = null;
 
     if (!user.id) {
@@ -80,10 +82,10 @@ function* destroyListing(req, res) {
         // Not sure if this is the way to do it with Angular
         res.set('X-Auth-Required', 'true');
         req.session.returnUrl = req.originalUrl;
-        res.redirect('/login/');
+        res.send(401);
         return;
     }
-    let user = req.session.user,
+    let user = req.user,
         listing = null;
 
     if (!user.id) {
@@ -127,7 +129,7 @@ function* destroyListing(req, res) {
 
 function* createListing(req, res) {
     let input = req.body || {},
-        user = req.session.user,
+        user = req.user,
         listing = null;
 
     if (!user.id) {
@@ -169,11 +171,11 @@ function* createListing(req, res) {
     res.send(data);
 }
 
-function* getListing(request, response) {
+function* getListing(req, res) {
 
-    if (request.params.id === undefined) {
+    if (req.params.id === undefined) {
         console.error('Get:Listing missing id');
-        response.sendStatus(403);
+        res.sendStatus(403);
         return;
     }
     // ==========================================================================
@@ -191,7 +193,7 @@ function* getListing(request, response) {
     try {
         listing = yield ListingModel.find({
             where: {
-                id: request.params.id,
+                id: req.params.id,
                 $and: {
                     deleted: null
                 }
@@ -199,18 +201,26 @@ function* getListing(request, response) {
         });
     } catch (err) {
         console.error(err);
-        response.status(404).send('Listing not found');
+        res.status(404).send('Listing not found');
         return;
     }
 
     result.data.push(listing.toJSON());
-    response.send(result);
+    res.send(result);
 }
 
-function* listListing(request, response) {
+function* listListing(req, res) {
+    if (!req.isAuthenticated()) {
+        // Not sure if this is the way to do it with Angular
+        res.set('X-Auth-Required', 'true');
+        req.session.returnUrl = req.originalUrl;
+        res.send(401);
+        return;
+    }
+
     let result = {
-            limit: request.param('limit', 1000),
-            offset: request.param('offset', 0),
+            limit: req.param('limit', 1000),
+            offset: req.param('offset', 0),
             data: [],
             total: 0
         },
@@ -225,11 +235,11 @@ function* listListing(request, response) {
         });
     } catch (err) {
         console.error(err);
-        response.status(500).send(err);
+        res.status(500).send(err);
     }
 
     result.data = listings.rows;
     result.total = listings.total;
-    response.send(result);
+    res.send(result);
 }
 

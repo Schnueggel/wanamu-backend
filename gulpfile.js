@@ -275,7 +275,9 @@ gulp.task('dist-server', function () {
 // ==========================================================================
 gulp.task('dist-traceur', function () {
     return gulp.src(srcServerPath + '/**/*.es6.js')
-        .pipe(traceur())
+        .pipe(traceur({
+            //https://github.com/google/traceur-compiler/blob/master/src/Options.js#L25
+        }))
         //Remove the es6 part in the pathname
         .pipe(rename(function(path){
        path.basename = path.basename.substr(0, path.basename.length-4);

@@ -1,6 +1,12 @@
 {
     "port": 3000,
     "debug": false,
+    "forceloginOnDev": false,
+    "session": {
+        "resave": false,
+        "saveUninitialized": true,
+        "secret":"§Schlumpf9678Yanus._."
+    },
     "mysql": {
         "port": 3306,
         "host": "localhost",
