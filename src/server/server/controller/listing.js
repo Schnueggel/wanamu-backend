@@ -73,7 +73,9 @@ function* updateListing(req, res) {
         plain: true
     });
 
-    res.send(data);
+    res.send({
+        data:data
+    });
 
 }
 
@@ -168,11 +170,12 @@ function* createListing(req, res) {
         plain: true
     });
 
-    res.send(data);
+    res.send({
+        data: data
+    });
 }
 
 function* getListing(req, res) {
-
     if (req.params.id === undefined) {
         console.error('Get:Listing missing id');
         res.sendStatus(403);
@@ -191,25 +194,35 @@ function* getListing(req, res) {
     // ==========================================================================
 
     try {
-        listing = yield ListingModel.find({
+        listing = yield ListingModel.findOne({
             where: {
                 id: req.params.id,
                 $and: {
-                    deleted: null
+                    deletedAt: null
                 }
             }
         });
+
+        if (!listing){
+            res.status(404).send('Listing not found');
+            return;
+        }
     } catch (err) {
         console.error(err);
-        res.status(404).send('Listing not found');
+        res.send(500);
         return;
     }
 
     result.data.push(listing.toJSON());
     res.send(result);
 }
-
+/**
+ * Sends a list of json
+ * @param req
+ * @param res
+ */
 function* listListing(req, res) {
+    console.log('Klist');
     let result = {
             limit: req.param('limit', 1000),
             offset: req.param('offset', 0),
