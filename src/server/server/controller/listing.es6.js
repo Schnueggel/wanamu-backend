@@ -27,9 +27,7 @@ module.exports = {
      * @param request
      * @param response
      */
-    delete: function (request, response) {
-
-    },
+    destroy: co.wrap(destroyListing),
 
     /**
      * Get a listing
@@ -102,13 +100,57 @@ module.exports = {
 };
 
 
+function* destroyListing(req, res) {
+    if (!req.isAuthenticated()) {
+        // Not sure if this is the way to do it with Angular
+        res.set('X-Auth-Required', 'true');
+        req.session.returnUrl = req.originalUrl;
+        res.redirect('/login/');
+        return;
+    }
+    let user = req.session.user,
+        listing = null;
+
+    if (!user.id) {
+        res.status(401).send('No valid user information could be found');
+        return;
+    }
+
+    try {
+        user = yield User.find(user.id);
+    } catch (err) {
+        console.error(err);
+        res.status(401).send('No valid user could be found');
+        return;
+    }
+
+    try {
+        listing = yield Listing.find(req.params.id);
+    } catch (err) {
+        console.error(err);
+        res.status(404).send('Listing could not be found');
+        return;
+    }
+
+    try {
+        yield listing.destroy();
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error deleting the listing');
+        return;
+    }
+
+    res.status(200).send('Listing with id ' + req.params.id + ' successfully deleted');
+
+}
+
 function* createListing(req, res){
     let input = req.body || {},
         user = req.session.user,
         listing = null;
 
     if (!user.id) {
-        res.status(401).send('No valid user informations could be found');
+        res.status(401).send('No valid user information could be found');
         return;
     }
 
