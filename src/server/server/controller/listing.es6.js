@@ -207,7 +207,7 @@ function* destroyListing(req, res) {
         return;
     }
 
-    res.status(200).send('Listing with id ' + req.params.id + ' successfully deleted');
+    res.status(200).send({});
 
 }
 
