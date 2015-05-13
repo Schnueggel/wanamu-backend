@@ -132,6 +132,12 @@ function* destroyListing(req, res) {
         return;
     }
 
+    if (listing.User.id != user.id) {
+        console.error('Listing does not belong to user');
+        res.status(401).send('Listing does not belong to user');
+        return;
+    }
+
     try {
         yield listing.destroy();
     } catch (err) {
