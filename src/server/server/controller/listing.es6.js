@@ -11,9 +11,7 @@ module.exports = {
      * @param request
      * @param response
      */
-    update: function (request, response) {
-
-    },
+    update: co.wrap(updateListing),
 
     /**
      * Create a listing
@@ -100,6 +98,69 @@ module.exports = {
 };
 
 
+function* updateListing(req, res) {
+    if (!req.isAuthenticated()) {
+        // Not sure if this is the way to do it with Angular
+        res.set('X-Auth-Required', 'true');
+        req.session.returnUrl = req.originalUrl;
+        res.redirect('/login/');
+        return;
+    }
+    let user = req.session.user,
+        listing = null;
+
+    if (!user.id) {
+        res.status(401).send('No valid user information could be found');
+        return;
+    }
+
+    try {
+        user = yield User.find(user.id);
+    } catch (err) {
+        console.error(err);
+        res.status(401).send('No valid user could be found');
+        return;
+    }
+
+    try {
+        listing = yield Listing.find(req.params.id);
+    } catch (err) {
+        console.error(err);
+        res.status(404).send('Listing could not be found');
+        return;
+    }
+
+    if (listing.get('userId') != user.get('id')) {
+        console.error('Listing does not belong to user');
+        res.status(401).send('Listing does not belong to user');
+        return;
+    }
+
+    try {
+        listing.set(input);
+        listing.set('userId', user.get('id'));
+        yield listing.save();
+    } catch (err) {
+        console.error(err);
+        res.status(422).send(err);
+        return;
+    }
+
+
+    yield listing.reload({
+        include: [
+            {model: Category, nested: true}
+        ]
+    });
+
+    var data = listing.get({
+        plain: true
+    });
+
+    res.send(data);
+
+}
+
 function* destroyListing(req, res) {
     if (!req.isAuthenticated()) {
         // Not sure if this is the way to do it with Angular
@@ -132,7 +193,7 @@ function* destroyListing(req, res) {
         return;
     }
 
-    if (listing.User.id != user.id) {
+    if (listing.get('userId') != user.get('id')) {
         console.error('Listing does not belong to user');
         res.status(401).send('Listing does not belong to user');
         return;
