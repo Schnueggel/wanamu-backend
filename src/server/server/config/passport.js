@@ -20,7 +20,7 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(id, done) {
 
-    User.findOne({'id': id}).then(function(user){
+    User.findOne(id).then(function(user){
         done(null, user)
     }).catch(function(err){
         done(err, null);
@@ -32,7 +32,8 @@ passport.deserializeUser(function(id, done) {
 passport.dev = function() {
     return co.wrap(function*(req, res, next) {
         if (!config.get('forceLoginOnDev', false) &&(config.isDevelopment() || config.isTest())) {
-            var user = yield User.findOne({'id':1});
+            var user = yield User.findOne(1);
+
             if (!user) {
                 throw new Error('Test user with ID one could not be found in database');
             }
