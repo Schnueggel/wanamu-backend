@@ -18,10 +18,10 @@ router.route('/listing')
 router.route('/listing/{id:int}')
     .put(ListingController.update)
     .get(ListingController.get)
-    .delete( ListingController.delete);
+    .delete(ListingController.destroy);
 
 // Toplisting Routes
 router.get('/toplisting/list', TopListingController.list);
 
 
-module.export = router;
+module.exports = router;

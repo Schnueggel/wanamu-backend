@@ -232,3 +232,4 @@ function* listListing(request, response) {
     result.total = listings.total;
     response.send(result);
 }
+
