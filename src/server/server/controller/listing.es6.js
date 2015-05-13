@@ -1,100 +1,14 @@
-
 var User = require('../model/user.js'),
     Category = require('../model/category.js'),
     ListingModel = require('../model/listing.js'),
     co = require('co');
 
 module.exports = {
-
-    /**
-     * Update a listing
-     * @param request
-     * @param response
-     */
     update: co.wrap(updateListing),
-
-    /**
-     * Create a listing
-     * @param request
-     * @param response
-     */
     create: co.wrap(createListing),
-
-    /**
-     * Delete a listing
-     * @param request
-     * @param response
-     */
     destroy: co.wrap(destroyListing),
-
-    /**
-     * Get a listing
-     * @param request
-     * @param response
-     */
-    get: function (request, response) {
-
-        if (request.params.id === undefined) {
-            console.error('Get:Listing missing id');
-            response.sendStatus(403);
-            return;
-        }
-        // ==========================================================================
-        // Default result object
-        // ==========================================================================
-        let result = {
-            data: []
-        };
-        // ==========================================================================
-        // Find a specific listing.
-        // But not if it is flagged as deleted (deleted date is set)
-        // ==========================================================================
-        ListingModel.find({
-            where: {
-                id: request.params.id,
-                $and: {
-                    deleted: null
-                }
-            }
-        }).then(function (res) {
-            if (res === null) {
-                response.sendStatus(404);
-                return;
-            }
-            result.data.push(res.toJSON());
-            response.send(result);
-        }).catch((err) => {
-            response.sendStatus(500);
-            console.log(err);
-        });
-    },
-
-    /**
-     * Get multiple listings
-     * @param request
-     * @param response
-     */
-    list: function(request, response) {
-        let result = {
-            limit: request.param('limit', 1000),
-            offset: request.param('offset', 0),
-            data: [],
-            total: 0
-        };
-        ListingModel.findAndCountAll({
-            limit: result.limit,
-            offset: result.offset
-        }, {
-            raw: true
-        }).then((res) => {
-            result.data = res.rows;
-            result.total = res.total;
-            response.send(result);
-        }).catch((err) => {
-            response.send(err);
-            console.error(err);
-        });
-    }
+    get: co.wrap(getListing),
+    list: co.wrap(listListing)
 };
 
 
@@ -211,7 +125,7 @@ function* destroyListing(req, res) {
 
 }
 
-function* createListing(req, res){
+function* createListing(req, res) {
     let input = req.body || {},
         user = req.session.user,
         listing = null;
@@ -221,22 +135,22 @@ function* createListing(req, res){
         return;
     }
 
-    try{
-        user =  yield User.find(user.id);
-    }catch(err){
+    try {
+        user = yield User.find(user.id);
+    } catch (err) {
         console.error(err);
         res.status(401).send('No valid user could be found');
         return;
     }
 
-    try{
+    try {
         input.userId = user.get('id');
-        listing = ListingModel.build(input,{
+        listing = ListingModel.build(input, {
             isNewRecord: true
         });
-        listing.set('userId',user.get('id'));
+        listing.set('userId', user.get('id'));
         yield listing.save();
-    } catch(err){
+    } catch (err) {
         console.error(err);
         res.status(422).send(err);
         return;
@@ -244,7 +158,7 @@ function* createListing(req, res){
 
     yield listing.reload({
         include: [
-            { model: Category, nested: true }
+            {model: Category, nested: true}
         ]
     });
 
@@ -253,4 +167,68 @@ function* createListing(req, res){
     });
 
     res.send(data);
+}
+
+function* getListing(request, response) {
+
+    if (request.params.id === undefined) {
+        console.error('Get:Listing missing id');
+        response.sendStatus(403);
+        return;
+    }
+    // ==========================================================================
+    // Default result object
+    // ==========================================================================
+    let result = {
+            data: []
+        },
+        listing = null;
+    // ==========================================================================
+    // Find a specific listing.
+    // But not if it is flagged as deleted (deleted date is set)
+    // ==========================================================================
+
+    try {
+        listing = yield ListingModel.find({
+            where: {
+                id: request.params.id,
+                $and: {
+                    deleted: null
+                }
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        response.status(404).send('Listing not found');
+        return;
+    }
+
+    result.data.push(listing.toJSON());
+    response.send(result);
+}
+
+function* listListing(request, response) {
+    let result = {
+            limit: request.param('limit', 1000),
+            offset: request.param('offset', 0),
+            data: [],
+            total: 0
+        },
+        listings = null;
+
+    try {
+        listings = yield ListingModel.findAndCountAll({
+            limit: result.limit,
+            offset: result.offset
+        }, {
+            raw: true
+        });
+    } catch (err) {
+        console.error(err);
+        response.status(500).send(err);
+    }
+
+    result.data = listings.rows;
+    result.total = listings.total;
+    response.send(result);
 }
