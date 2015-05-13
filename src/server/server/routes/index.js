@@ -16,7 +16,7 @@ router.route('/listing')
     .get(ListingController.list)
     .post(ListingController.create);
 
-router.route('/listing/{id:int}')
+router.route('/listing/:id')
     .put(ListingController.update)
     .get(ListingController.get)
     .delete(ListingController.destroy);
