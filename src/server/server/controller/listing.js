@@ -3,7 +3,7 @@
 var User = require('../model/user.js'),
     Category = require('../model/category.js'),
     ListingModel = require('../model/listing.js'),
-    Util = require('../util.js'),
+    Util = require('../util/util.js'),
     co = require('co');
 
 module.exports = {
