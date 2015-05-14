@@ -119,8 +119,6 @@ function* afterCreate(user, options){
     user.customerNumber = group.flag.toUpperCase() + Util.zeroPad(user.id, 5);
 
     yield user.save();
-
-    console.log('user updated');
 }
 
 

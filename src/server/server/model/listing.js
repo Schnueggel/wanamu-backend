@@ -168,8 +168,6 @@ Listing.belongsTo(Condition, { foreignKey: 'conditionId'});
  */
 
 function* beforeBulkCreate(listings){
-    console.log('Before Bulk create');
-
     for(var i = 0; i < listings.length; i++) {
         yield beforeCreate(listings[i]);
     }
@@ -182,8 +180,6 @@ function* beforeBulkCreate(listings){
  * @param fn
  */
 function* beforeCreate(listing){
-
-    console.log('beforeCreate');
     var user = listing.User;
     if (!user) {
         user = yield listing.getUser();
