@@ -146,7 +146,8 @@ var Listing = sequelize.define('Listing', {
     // ==========================================================================
         paranoid: true,
         hooks: {
-            beforeCreate: co.wrap(beforeCreate)
+            beforeCreate: co.wrap(beforeCreate),
+            beforeBulkCreate: co.wrap(beforeBulkCreate)
     }
 });
 
@@ -166,6 +167,14 @@ Listing.belongsTo(Condition, { foreignKey: 'conditionId'});
  * ######################################################################################
  */
 
+function* beforeBulkCreate(listings){
+    console.log('Before Bulk create');
+
+    for(var i = 0; i < listings.length; i++) {
+        yield beforeCreate(listings[i]);
+    }
+}
+
 /**
  * Before Create Hook
  * @param listing
@@ -174,7 +183,11 @@ Listing.belongsTo(Condition, { foreignKey: 'conditionId'});
  */
 function* beforeCreate(listing){
 
-    var user = yield listing.getUser();
+    console.log('beforeCreate');
+    var user = listing.User;
+    if (!user) {
+        user = yield listing.getUser();
+    }
 
     // ==========================================================================
     // Local function for recursion. Tries to create listingNr
@@ -198,7 +211,7 @@ function* beforeCreate(listing){
         }
     };
 
-    yield co(createListingNr);
+    yield createListingNr();
 }
 
 
