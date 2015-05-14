@@ -66,7 +66,18 @@ var Util = {
         }
 
         return text;
+    }, /**
+     *
+     * Gets all attributes from a SequelizeModel and removes the ones that are specified in notthis
+     * @param {Object} SequelizeModel
+     * @param {Array} notthis
+     */
+    getAllFieldsButNot: function(SequelizeModel, notthis) {
+        var keys = Object.keys(SequelizeModel.attributes);
+        keys.filter(function(item){
+            return notthis.indexOf(item) === -1
+        });
     }
-}
+};
 
 module.exports = Util;
