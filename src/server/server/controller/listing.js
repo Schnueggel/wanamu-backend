@@ -94,7 +94,7 @@ function* destroyListing(req, res) {
     // Try to find Listing
     // ==========================================================================
     try {
-        listing = yield Listing.find(req.params.id);
+        listing = yield ListingModel.find(req.params.id);
     } catch (err) {
         console.error(err);
         res.status(404).send('Listing could not be found');
