@@ -34,7 +34,9 @@ passport.deserializeUser(function(id, done) {
 passport.dev = function() {
     return co.wrap(function*(req, res, next) {
         if (!config.get('forceLoginOnDev', false) &&(config.isDevelopment() || config.isTest())) {
-            var user = yield User.findOne(1);
+            var user = yield User.findOne(1, {
+                include: [{all: true, nested: true}]
+            });
 
             if (!user) {
                 throw new Error('Test user with ID one could not be found in database');
