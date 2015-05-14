@@ -17,7 +17,7 @@ module.exports = {
 
 function* updateListing(req, res) {
 
-    let user = req.user,
+    var user = req.user,
         input = req.body || {},
         listing = null;
 
@@ -87,7 +87,7 @@ function* updateListing(req, res) {
  */
 function* destroyListing(req, res) {
 
-    let user = req.user,
+    var user = req.user,
         listing = null;
 
     // ==========================================================================
@@ -130,7 +130,7 @@ function* destroyListing(req, res) {
  * @param res
  */
 function* createListing(req, res) {
-    let input = req.body || {},
+    var input = req.body || {},
         user = req.user,
         listing = null;
 
@@ -138,11 +138,10 @@ function* createListing(req, res) {
     // Try to create a new listing
     // ==========================================================================
     try {
-        input.userId = user.get('id');
+        input.userId = user.id;
         listing = ListingModel.build(input, {
             isNewRecord: true
         });
-        listing.set('userId', user.get('id'));
         yield listing.save();
     } catch (err) {
         console.error(err);
@@ -182,7 +181,7 @@ function* getListing(req, res) {
     // ==========================================================================
     // Default result object
     // ==========================================================================
-    let result = {
+    var result = {
             data: []
         },
         listing;
@@ -227,7 +226,7 @@ function* getListing(req, res) {
  * @param res
  */
 function* listListing(req, res) {
-    let result = {
+    var result = {
             limit: req.query.limit ? req.query.limit : 1000,
             offset: req.query.offset !== 0 ? req.query.offset : 0,
             data: [],
