@@ -3,6 +3,7 @@
 var User = require('../model/user.js'),
     Category = require('../model/category.js'),
     ListingModel = require('../model/listing.js'),
+    Util = require('../util.js'),
     co = require('co');
 
 module.exports = {
@@ -15,53 +16,40 @@ module.exports = {
 
 
 function* updateListing(req, res) {
-    if (!req.isAuthenticated()) {
-        // Not sure if this is the way to do it with Angular
-        res.set('X-Auth-Required', 'true');
-        req.session.returnUrl = req.originalUrl;
-        res.send(401);
-        return;
-    }
+
     let user = req.user,
+        input = req.body || {},
         listing = null;
 
-    if (!user.id) {
-        res.status(401).send('No valid user information could be found');
-        return;
-    }
-
     try {
-        user = yield User.find(user.id);
-    } catch (err) {
-        console.error(err);
-        res.status(401).send('No valid user could be found');
-        return;
-    }
-
-    try {
-        listing = yield Listing.find(req.params.id);
+        listing = yield ListingModel.findOne(req.params.id);
+        if (!listing ) {
+            throw new Error('No listing found with ID: ', req.params.id);
+        }
     } catch (err) {
         console.error(err);
         res.status(404).send('Listing could not be found');
         return;
     }
 
-    if (listing.get('userId') != user.get('id')) {
+    if (listing.get('userId') !== user.get('id')) {
         console.error('Listing does not belong to user');
-        res.status(401).send('Listing does not belong to user');
+        res.status(403).send('Listing does not belong to user');
         return;
     }
 
     try {
-        listing.set(input);
-        listing.set('userId', user.get('id'));
-        yield listing.save();
+        yield listing.updateAttributes(input, {
+            // Fields Allowed to updated
+            fields: Util.getAllFieldsButNot(ListingModel,[
+                'userId', 'id'
+            ])
+        });
     } catch (err) {
         console.error(err);
         res.status(422).send(err);
         return;
     }
-
 
     yield listing.reload({
         include: [
@@ -74,34 +62,15 @@ function* updateListing(req, res) {
     });
 
     res.send({
-        data:data
+        data: data
     });
 
 }
 
 function* destroyListing(req, res) {
-    if (!req.isAuthenticated()) {
-        // Not sure if this is the way to do it with Angular
-        res.set('X-Auth-Required', 'true');
-        req.session.returnUrl = req.originalUrl;
-        res.send(401);
-        return;
-    }
+
     let user = req.user,
         listing = null;
-
-    if (!user.id) {
-        res.status(401).send('No valid user information could be found');
-        return;
-    }
-
-    try {
-        user = yield User.find(user.id);
-    } catch (err) {
-        console.error(err);
-        res.status(401).send('No valid user could be found');
-        return;
-    }
 
     try {
         listing = yield Listing.find(req.params.id);
@@ -133,19 +102,6 @@ function* createListing(req, res) {
     let input = req.body || {},
         user = req.user,
         listing = null;
-
-    if (!user.id) {
-        res.status(401).send('No valid user information could be found');
-        return;
-    }
-
-    try {
-        user = yield User.find(user.id);
-    } catch (err) {
-        console.error(err);
-        res.status(401).send('No valid user could be found');
-        return;
-    }
 
     try {
         input.userId = user.get('id');
