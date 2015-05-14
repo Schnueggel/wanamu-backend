@@ -14,7 +14,7 @@ function* createUsers() {
         firstName: 'firstName',
         lastName: 'lastName',
         password: 'abcdef',
-        userGroup: 1
+        userGroupId: 1
     }, { isNewRecord: true });
     console.log('done');
 }
