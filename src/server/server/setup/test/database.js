@@ -6,6 +6,7 @@
 var User = require('../../model/user.js'),
     UserGroup = require('../../model/user-group.js'),
     Category = require('../../model/category.js'),
+    Listing = require('../../model/listing.js'),
     co = require('co');
 
 function* createUsers() {
