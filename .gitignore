@@ -3,4 +3,4 @@ node_modules
 .tmp
 dist
 playground
-src/server/server/config/local.json
+src/server/server/config/json/local.json
