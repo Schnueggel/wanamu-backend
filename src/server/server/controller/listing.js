@@ -95,6 +95,9 @@ function* destroyListing(req, res) {
     // ==========================================================================
     try {
         listing = yield ListingModel.find(req.params.id);
+        if (!listing){
+            throw new Error('Listing could not be found');
+        }
     } catch (err) {
         console.error(err);
         res.status(404).send('Listing could not be found');
@@ -105,7 +108,7 @@ function* destroyListing(req, res) {
     // ==========================================================================
     if (user.UserGroup.name !== 'admin' && listing.get('userId') != user.get('id')) {
         console.error('Listing does not belong to user');
-        res.status(401).send('Listing does not belong to user');
+        res.status(403).send('Listing does not belong to user');
         return;
     }
 
@@ -119,7 +122,7 @@ function* destroyListing(req, res) {
         res.status(500).send('Error deleting the listing');
         return;
     }
-    res.status(200).send({});
+    res.send();
 
 }
 
