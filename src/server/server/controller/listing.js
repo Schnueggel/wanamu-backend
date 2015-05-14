@@ -19,6 +19,7 @@ function* updateListing(req, res) {
 
     let user = req.user,
         input = req.body || {},
+        group,
         listing = null;
 
     try {
@@ -32,7 +33,9 @@ function* updateListing(req, res) {
         return;
     }
 
-    if (listing.get('userId') !== user.get('id')) {
+    group = yield user.getUserGroup();
+
+    if (group.name !== 'admin' && listing.get('userId') !== user.get('id')) {
         console.error('Listing does not belong to user');
         res.status(403).send('Listing does not belong to user');
         return;
@@ -70,7 +73,8 @@ function* updateListing(req, res) {
 function* destroyListing(req, res) {
 
     let user = req.user,
-        listing = null;
+        listing = null,
+        group;
 
     try {
         listing = yield Listing.find(req.params.id);
@@ -80,7 +84,9 @@ function* destroyListing(req, res) {
         return;
     }
 
-    if (listing.get('userId') != user.get('id')) {
+    group = yield user.getUserGroup();
+
+    if (group.name !== 'admin' && listing.get('userId') != user.get('id')) {
         console.error('Listing does not belong to user');
         res.status(401).send('Listing does not belong to user');
         return;
@@ -132,18 +138,14 @@ function* createListing(req, res) {
 }
 
 function* getListing(req, res) {
-    if (req.params.id === undefined) {
-        console.error('Get:Listing missing id');
-        res.sendStatus(403);
-        return;
-    }
+    console.log(req.user);
     // ==========================================================================
     // Default result object
     // ==========================================================================
     let result = {
             data: []
         },
-        listing = null;
+        listing;
     // ==========================================================================
     // Find a specific listing.
     // But not if it is flagged as deleted (deleted date is set)

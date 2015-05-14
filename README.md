@@ -2,7 +2,7 @@
 
 ## Install
 In order to run this application you need to make an alias and run the node command with `--harmony_generators` flag or use 
-io.js.
+`io.js`.
 
 Use `npm start` to start the server.
 
@@ -41,10 +41,6 @@ The frontend is made with Angular.
 Sequelize (Database ORM):
 
 <http://docs.sequelizejs.com/en/latest/docs/getting-started/>
-
-TypeScript:
-
-<http://www.typescriptlang.org/Handbook>
 
 Express:
 
