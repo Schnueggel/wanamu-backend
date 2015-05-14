@@ -1,30 +1,18 @@
 var express = require('express'),
     router = express.Router(),
-    TopListingController = require('../controller/toplisting'),
-    ListingController = require('../controller/listing.js'),
+    TodoListController = require('../controller/todolist.js'),
     passport = require('../config/passport.js'),
     co = require('co');
 
 module.exports = router;
 
-// ==========================================================================
-// We have to wrap the controller action methods else they loose scope
-// https://github.com/Microsoft/TypeScript/wiki/%27this%27-in-TypeScript#functionbind
-// ==========================================================================
-// Listing Routes
+router.route('/todolist')
+    .put(auth(TodoListController.update))
+    .get(TodoListController.get);
 
-router.route('/listing')
-    .get(ListingController.list)
-    .post(auth(ListingController.create));
-
-router.route('/listing/:id')
-    .put(auth(ListingController.update))
-    .get(ListingController.get)
-    .delete(auth(ListingController.destroy));
-
-
-// Toplisting Routes
-router.get('/toplisting/list', TopListingController.list);
+router.route('/todolist/:id')
+    .put(auth(TodoListController.update))
+    .get(TodoListController.get);
 
 /**
  * ######################################################################################

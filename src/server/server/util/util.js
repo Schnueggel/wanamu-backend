@@ -4,25 +4,6 @@
  */
 
 var Util = {
-    CHART_TYPE: {
-        Alpha: 1, Numeric: 2, AlphaNumeric: 3
-    },
-    /**
-     * Generates a listingId
-     * @param prefix
-     * @returns {string}
-     */
-    generateListingId: function (prefix) {
-        var id = '';
-        // Create hexcode fo timestamp
-        var timestamp = Date.now().toString(16);
-
-        id = prefix + '-' + timestamp + Util.getRandomString(2);
-
-        id = id.substr(0, id.length - 4) + '-' + id.substr(id.length - 4);
-
-        return id;
-    },
 
     /**
      * Pads a number with zeros. If the number length exceeds the padding, the number is returned as string
@@ -66,17 +47,6 @@ var Util = {
         }
 
         return text;
-    }, /**
-     *
-     * Gets all attributes from a SequelizeModel and removes the ones that are specified in notthis
-     * @param {Object} SequelizeModel
-     * @param {Array} notthis
-     */
-    getAllFieldsButNot: function(SequelizeModel, notthis) {
-        var keys = Object.keys(SequelizeModel.attributes);
-        keys.filter(function(item){
-            return notthis.indexOf(item) === -1
-        });
     }
 };
 

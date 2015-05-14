@@ -1,9 +1,6 @@
 'use strict';
 
-var mysql = require('mysql'),
-    Sequelize = require('sequelize'),
-    nconf = require('nconf'),
-    pool = null;
+var nconf = require('nconf');
 
 // ==========================================================================
 // ENVIRONMENT VARS
@@ -28,13 +25,6 @@ nconf.file({file: __dirname + '/json/default.json'})
 
 
 nconf.set('env', env);
-
-var sequelize = new Sequelize(nconf.get('mysql:database'), nconf.get('mysql:user'), nconf.get('mysql:password'), nconf.get('sequelize'));
-
-pool = mysql.createPool(nconf.get('mysql'));
-
-nconf.getMysqlPool =  function () { return pool; };
-nconf.getSequelize = function () { return sequelize; };
 
 // ==========================================================================
 // Convinient methods for checking the environment

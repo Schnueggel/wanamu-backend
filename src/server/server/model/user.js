@@ -1,124 +1,55 @@
-'use strict';
-var Address = require('./address'),
-    Salutation = require('./lookup/salutation.js'),
-    UserGroup = require('./user-group.js'),
-    sequelize = require('../config').getSequelize(),
-    Util = require('../util/util.js'),
-    co = require('co');
+/**
+ * Created by Christian on 5/15/2015.
+ */
 
-var User = sequelize.define('User', {
-    id : {
-        type: sequelize.Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    customerNumber: {
-        type: sequelize.Sequelize.STRING(10),
-        unique: true
-    },
-    email: {
-        type: sequelize.Sequelize.STRING(40),
-        allowNull: false,
-        unique: true,
-        validate: {
-            isEmail: {
-                msg: 'Es muss eine gültige E-Mail Adresse angegeben werden.'
-            }
-        }
-    },
-    title: {
-        type: sequelize.Sequelize.STRING(15),
-        allowNull: true
-    },
-    firstName: {
-        type: sequelize.Sequelize.STRING(50),
-        allowNull: false
-    },
-    lastName: {
-        type: sequelize.Sequelize.STRING(50),
-        allowNull: false
-    },
-    password: {
-        type: sequelize.Sequelize.CHAR(60).BINARY,
-        allowNull: false
-    },
-    companyName: {
-        type: sequelize.Sequelize.STRING(50)
-    },
-    companyContact: {
-        type: sequelize.Sequelize.STRING(50)
-    },
-    oldContactId: {
-        type: sequelize.Sequelize.STRING(50)
-    },
-    website: {
-        type: sequelize.Sequelize.STRING(50),
-        validate: {
-            isUrl: {
-                msg: 'Es muss keine oder eine gültige Webseite angegeben werden.'
-            }
-        }
-    },
-    birthday: {
-        type: sequelize.Sequelize.DATE,
-        defaultValue: null,
-        validate: {
-            isAfter: {
-                args: '1900-01-01',
-                msg: 'Das Geburtsdatum darf nicht vor dem 01.01.1900 liegen.'
-            }
-        }
-    },
-    banned: {
-        type: sequelize.Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-    }}, {
-    // ==========================================================================
-    // OPTIONS
-    // ==========================================================================
-    paranoid: true,
-    hooks: {
-        afterCreate: co.wrap(afterCreate)
-    }
+var mongoose = require('../config/mongoose.js'),
+    Schema = mongoose.Schema,
+    bcrypt = require(bcrypt),
+    SALT_WORK_FACTOR = 10;
+
+var User = new Schema({
+    title: String,
+    firstname: String,
+    lastname: String,
+    password: { type: String, required: true },
+    email: String,
+    salutation: String,
+    created: Date
 });
 
-User.belongsTo(Salutation, { foreignKey: 'salutationId', allowNull: true });
-User.belongsTo(UserGroup,  { foreignKey: 'userGroupId', allowNull: false });
-User.hasMany(Address, {foreignKey: 'userId'});
-
-module.exports = User;
-
-/**
- * ######################################################################################
- * ######################################################################################
- * Helper Functions
- * ######################################################################################
- * ######################################################################################
- */
-
-/**
- * After Create Hook
- * @param user
- * @param options
- * @param fn only exists if the signature of the hook has a third argument but co.wrap(afterCreate) creates function(){}
- *
- */
-function* afterCreate(user, options){
-    // ==========================================================================
-    // We create the customerNumber.
-    // The customer number consists of the usergroup flag and the user id
-    // ==========================================================================
-
-    var group = user.UserGroup;
-
-    if (!group) {
-        group = yield user.getUserGroup();
+User.pre('save',function(next) {
+    var user = this;
+    // only hash the password if it has been modified (or is new)
+    if (!user.isModified('password')) {
+        return next();
     }
 
-    user.customerNumber = group.flag.toUpperCase() + Util.zeroPad(user.id, 5);
+    // generate a salt
+    bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
+        if (err) {
+            return next(err);
+        }
 
-    yield user.save();
-}
+        // hash the password along with our new salt
+        bcrypt.hash(user.password, salt, function (err, hash) {
+            if (err) {
+                return next(err);
+            }
 
+            // override the cleartext password with the hashed one
+            user.password = hash;
+            next();
+        });
+    });
+});
 
+User.methods.comparePassword = function(candidatePassword, cb) {
+    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+        if (err) {
+            return cb(err);
+        }
+        cb(null, isMatch);
+    });
+};
+
+module.exports = mongoose.model('User',User);

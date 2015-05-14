@@ -22,7 +22,6 @@ var gulp = require('gulp'),
     mocha = require('gulp-mocha'),
     fs = require('fs'),
     rename = require('gulp-rename'),
-    traceur = require('gulp-traceur'),
     del = require('del');
 /**
  * ######################################################################################
@@ -271,21 +270,6 @@ gulp.task('dist-server', function () {
 });
 
 // ==========================================================================
-// Moves the es6 server code into the dist folder
-// ==========================================================================
-gulp.task('dist-traceur', function () {
-    return gulp.src(srcServerPath + '/**/*.es6.js')
-        .pipe(traceur({
-            //https://github.com/google/traceur-compiler/blob/master/src/Options.js#L25
-        }))
-        //Remove the es6 part in the pathname
-        .pipe(rename(function(path){
-       path.basename = path.basename.substr(0, path.basename.length-4);
-       path.extname = '.js';
-    })).pipe(gulp.dest(distServerPath));
-});
-
-// ==========================================================================
 // Move the app static files into the app folder
 // ==========================================================================
 gulp.task('dist-app-static', function () {
@@ -338,63 +322,19 @@ gulp.task('prepare-moch-tests', function(cb){
 // ==========================================================================
 gulp.task('build-development-database',['build-server'], function (cb) {
     process.env.NODE_ENV = 'development';
-    var modelpath = path.join(distServerPath, 'server', 'model'),
-        sequelize = require(path.join(distServerPath, 'server', 'config', 'index.js')).getSequelize();
-
-    requireFolder(modelpath);
-
-    process.env.NODE_ENV = 'development';
-    sequelize.query('SET FOREIGN_KEY_CHECKS = 0').then(function(){
-        sequelize.sync({'force': true})
-            .then(function(){
-                var devDbSetupScript = path.join(distServerPath, 'server', 'setup', 'development', 'database.js');
-                require(devDbSetupScript).then(function(){
-                cb();
-            })
-            .catch(function(err) {
-                throw err;
-            });
-        });
-    });
+    cb();
 });
 // ==========================================================================
 // Builds the test database
 // ==========================================================================
 gulp.task('build-test-database',['build-server'], function (cb) {
-    process.env.NODE_ENV = 'test';
-    var modelpath = path.join(distServerPath, 'server', 'model'),
-        sequelize = require(path.join(distServerPath, 'server', 'config', 'index.js')).getSequelize();
-
-    requireFolder(modelpath);
-
-    process.env.NODE_ENV = 'test';
-    sequelize.query('SET FOREIGN_KEY_CHECKS = 0').then(function(){
-        sequelize.sync({'force': true}).then(function(){
-            var testDbSetupScript = path.join(distServerPath, 'server', 'setup', 'test', 'database.js');
-            require(testDbSetupScript).then(function(){
-                cb();
-            }).catch(function(err) {
-                console.error(err);
-                cb();
-            });
-        });
-    });
-
-
-    // TODO INSERT DATA
+    cb();
 });
 // ==========================================================================
 // Builds the production database
 // ==========================================================================
 gulp.task('build-production-database',['build-server'], function (cb) {
-    var modelpath = path.join(srcServerPath, 'server', 'model'),
-        sequelize = require(path.join(srcServerPath, 'server', 'config', 'index.js')).getSequelize();
-
-    requireFolder(modelpath);
-
-    process.env.NODE_ENV = 'production';
-    sequelize.sync().then(function(){cb();});
-    //TODO INSERT DATA
+    cb();
 });
 
 // ==========================================================================
