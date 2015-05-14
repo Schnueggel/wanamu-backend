@@ -83,9 +83,9 @@ var User = sequelize.define('User', {
     }
 });
 
-User.belongsTo(Salutation, { as:'Salutation', foreignKey: 'salutation', allowNull: true });
-User.belongsTo(UserGroup,  { as:'UserGroup', foreignKey: 'userGroup', allowNull: false });
-User.hasMany(Address, {foreignKey: 'user'});
+User.belongsTo(Salutation, { foreignKey: 'salutationId', allowNull: true });
+User.belongsTo(UserGroup,  { foreignKey: 'userGroupId', allowNull: false });
+User.hasMany(Address, {foreignKey: 'userId'});
 
 module.exports = User;
 
