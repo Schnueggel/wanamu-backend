@@ -316,7 +316,9 @@ gulp.task('test-jasmine', ['build-webpack'], function (cb) {
 gulp.task('test-mocha', ['prepare-moch-tests'], function () {
     process.env.NODE_ENV = 'test';
     return gulp.src('test/mocha/**/**.js')
-        .pipe(mocha());
+        .pipe(mocha({
+            timeout: 5000
+        }));
 });
 // ==========================================================================
 // Setup everything for testing
