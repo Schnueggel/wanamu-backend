@@ -224,8 +224,8 @@ function* getListing(req, res) {
 function* listListing(req, res) {
     console.log('Klist');
     let result = {
-            limit: req.param('limit', 1000),
-            offset: req.param('offset', 0),
+            limit: req.params.limit ? req.params.limit : 1000,
+            offset: req.params.offset !== 0 ? req.params.offset : 0,
             data: [],
             total: 0
         },
