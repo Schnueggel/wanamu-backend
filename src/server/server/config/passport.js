@@ -20,8 +20,10 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(id, done) {
 
-    User.findOne(id).then(function(user){
-        done(null, user)
+    User.findOne(id, {
+        include: [{all: true, nested: true}]
+    }).then(function(user){
+        done(null, user);
     }).catch(function(err){
         done(err, null);
     });
@@ -62,7 +64,9 @@ function* strategy(username, password, done){
     }
 
     try{
-        var user = yield User.findOne(condition);
+        var user = yield User.findOne(condition, {
+            include: [{all: true, nested: true}]
+        });
         if (user === null) {
             throw new Error('User not found');
         }
