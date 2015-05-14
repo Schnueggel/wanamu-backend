@@ -19,7 +19,6 @@ function* updateListing(req, res) {
 
     let user = req.user,
         input = req.body || {},
-        group,
         listing = null;
 
     try {
@@ -33,9 +32,7 @@ function* updateListing(req, res) {
         return;
     }
 
-    group = yield user.getUserGroup();
-
-    if (group.name !== 'admin' && listing.get('userId') !== user.get('id')) {
+    if (user.UserGroup.name !== 'admin' && listing.get('userId') !== user.get('id')) {
         console.error('Listing does not belong to user');
         res.status(403).send('Listing does not belong to user');
         return;
@@ -73,8 +70,7 @@ function* updateListing(req, res) {
 function* destroyListing(req, res) {
 
     let user = req.user,
-        listing = null,
-        group;
+        listing = null;
 
     try {
         listing = yield Listing.find(req.params.id);
@@ -83,10 +79,7 @@ function* destroyListing(req, res) {
         res.status(404).send('Listing could not be found');
         return;
     }
-
-    group = yield user.getUserGroup();
-
-    if (group.name !== 'admin' && listing.get('userId') != user.get('id')) {
+    if (user.UserGroup.name !== 'admin' && listing.get('userId') != user.get('id')) {
         console.error('Listing does not belong to user');
         res.status(401).send('Listing does not belong to user');
         return;
@@ -138,7 +131,6 @@ function* createListing(req, res) {
 }
 
 function* getListing(req, res) {
-    console.log(req.user);
     // ==========================================================================
     // Default result object
     // ==========================================================================
@@ -180,7 +172,6 @@ function* getListing(req, res) {
  * @param res
  */
 function* listListing(req, res) {
-    console.log('Klist');
     let result = {
             limit: req.params.limit ? req.params.limit : 1000,
             offset: req.params.offset !== 0 ? req.params.offset : 0,
