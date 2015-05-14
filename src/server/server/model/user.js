@@ -110,7 +110,11 @@ function* afterCreate(user, options){
     // The customer number consists of the usergroup flag and the user id
     // ==========================================================================
 
-    var group = yield user.getUserGroup();
+    var group = user.UserGroup;
+
+    if (!group) {
+        group = yield user.getUserGroup();
+    }
 
     user.customerNumber = group.flag.toUpperCase() + Util.zeroPad(user.id, 5);
 
