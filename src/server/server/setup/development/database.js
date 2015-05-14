@@ -50,7 +50,7 @@ function* createCategories() {
 function* createListing() {
     yield Listing.bulkCreate([
         {id: 1, title: 'Test Listing 1', userId: 1, categoryId: 3 },
-        {id: 2, name: 'Test Listing 2', userId: 1, categoryId: 3 }
+        {id: 2, title: 'Test Listing 2', userId: 1, categoryId: 3 }
     ]);
 }
 

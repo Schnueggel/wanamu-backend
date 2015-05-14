@@ -37,8 +37,8 @@ function* createUserGroups() {
 }
 function* createListing() {
     yield Listing.bulkCreate([
-        {id: 1, title: 'Test Listing 1', userId: 1, categoryId: 3 },
-        {id: 2, name: 'Test Listing 2', userId: 1, categoryId: 3 }
+        {id: 1, title: 'Pre created dummy Test Listing 1', userId: 1, categoryId: 3 },
+        {id: 2, title: 'Pre created dummy Test  Listing 2', userId: 1, categoryId: 3 }
     ]);
 }
 /**
@@ -49,7 +49,7 @@ function* setup(){
     yield createUserGroups();
     yield createUsers();
     yield createListing();
-    console.log('user created');
+    console.log('Test data created');
 }
 
 /**
