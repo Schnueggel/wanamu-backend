@@ -2,7 +2,7 @@
  * Created by Christian on 5/14/2015.
  */
 
-var mongoose = require('../config/mongoose.js'), Schema = mongoose.Schema;
+var mongoose = require('../config/mongo.js'), Schema = mongoose.Schema;
 
 var ToDo = new Schema({
     title: String,

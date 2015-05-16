@@ -1,29 +1,10 @@
 {
     "port": 3000,
+    "cacheTime": 604800000,
     "debug": false,
     "forceloginOnDev": false,
-    "session": {
-        "resave": false,
-        "saveUninitialized": true,
-        "secret":"§Schlumpf9678Yanus._."
-    },
-    "mysql": {
-        "port": 3306,
-        "host": "localhost",
-        "user": "nautic",
-        "password": "nautic",
-        "database": "nautic"
-    },
-    "sequelize": {
-        "host": "localhost",
-        "dialect": "mysql",
-        "define": {
-            "collate": "utf8_general_ci"
-        },
-        "pool": {
-            "max": 5,
-            "min": 0,
-            "idle": 10000
-        }
+    "debug": true,
+    "mongo":  {
+        "url": "localhost:27017/todoit"
     }
 }

@@ -1,5 +1,6 @@
 'use strict';
 
+require('harmonize')();
 /**
  * ######################################################################################
  * ######################################################################################
@@ -8,17 +9,13 @@
  * ######################################################################################
  */
 var gulp = require('gulp'),
-    server = require('gulp-develop-server'),
     gutil = require('gulp-util'),
-    open = require('gulp-open'),
-    livereload = require('gulp-livereload'),
     jshint = require('gulp-jshint'),
     replace = require('gulp-replace'),
     merge = require('merge2'),
     runSequence = require('run-sequence'),
-    webpack = require('webpack'),
     path = require('path'),
-    karma = require('karma').server,
+    server = require('gulp-develop-server'),
     mocha = require('gulp-mocha'),
     fs = require('fs'),
     rename = require('gulp-rename'),
@@ -32,15 +29,10 @@ var gulp = require('gulp'),
  */
 var srcAppPath = path.join(__dirname, 'src/app'),
     srcServerPath = path.join(__dirname, 'src/server'),
-    srcAppStaticFolder = path.join(srcAppPath, 'static'),
     srcIndexHtml = path.join(srcAppPath, 'index.html'),
-    appscript = 'app.js',
     distPath = path.join(__dirname, 'dist'),
     distServerPath = path.join(distPath, 'server'),
-    distServerScript = path.join(distServerPath, 'server.js'),
-    distAppPath = path.join(distPath, 'app'),
-    distIndexHtml = path.join(distAppPath, 'index.html'),
-    indexFileName = 'index.js';
+    distServerScript = path.join(distServerPath, 'server.js');
 
 /**
  * ######################################################################################
@@ -50,42 +42,7 @@ var srcAppPath = path.join(__dirname, 'src/app'),
  * ######################################################################################
  */
 var requireFolder = null;
-/**
- * ######################################################################################
- * ######################################################################################
- * WEBPACK CONFIG
- * ######################################################################################
- * ######################################################################################
- */
-var webpackConfig = {
-    context: __dirname,
-    entry: path.join(srcAppPath, appscript),
-    output: {
-        path: distAppPath,
-        filename: indexFileName.replace('.js','-' + Date.now() + '.js')
-    },
-    module: {
-        noParse: [
-            /[\/\\]angular\.js$/,
-            /[\/\\]angular-ui-router\.js$/,
-            /[\/\\]angular-translate\.js$/
-        ],
-        loaders : [
-            {
-                test: /\.es6\.js$/,
-                loader: 'babel'
-            },
-            {
-                test: /\.ts$/,
-                loader: ['babel', 'typescript']
-            },
-            {
-                test: /\.html$/,
-                loader: 'raw'
-            }
-        ]
-    }
-};
+
 
 /**
  * ######################################################################################
@@ -102,37 +59,23 @@ gulp.task('default', ['build']);
 // Build the application into the dist folder
 // ===================================================================
 gulp.task('build', function (cb) {
-    runSequence('jshint', 'build-server', 'build-app', cb);
+    runSequence('jshint', 'build-server', cb);
 });
-// ====================================================================
-// Builds frontend and backend,
-// starting the development.json server and opens a browser.
-// ====================================================================
-gulp.task('build-serve',  function (cb) {
-    runSequence('build', 'build-development-database', 'server-start', 'watch', 'http-browser', cb);
-});
-// ======================================================
-// Test frontend and backend
-// ======================================================
-gulp.task('test', function (cb) {
-    runSequence('test-jasmine', 'test-mocha', cb);
-});
-// ===========================================================================
-// Builds the frontend
-// ===========================================================================
-gulp.task('build-app', function (cb) {
-    runSequence('build-clean-app',
-        'build-webpack',
-        'build-app-html',
-        'dist-app-static', cb);
-});
+
 // ===========================================================================
 // Build the server
 // ===========================================================================
 gulp.task('build-server', function (cb) {
-    runSequence('build-clean-server', 'dist-server', 'dist-traceur',  cb);
+    runSequence('build-clean-server', 'dist-server', cb);
 });
 
+// ====================================================================
+// Builds the backend,
+// starting the development.json server and opens a browser.
+// ====================================================================
+gulp.task('build-serve',  function (cb) {
+    runSequence('build', 'build-development-database', 'server-start', 'watch', cb);
+});
 /**
  * ######################################################################################
  * ######################################################################################
@@ -143,36 +86,17 @@ gulp.task('build-server', function (cb) {
 // =========================================================
 // Start all clean tasks
 // =========================================================
-gulp.task('build-clean', ['build-clean-app', 'build-clean-server'], function (cb) {
+gulp.task('build-clean', ['build-clean-server'], function (cb) {
     cb();
 });
-// ==========================================================
-// Remove all app code in dist folder
-// ==========================================================
-gulp.task('build-clean-app', function (cb) {
-    return del([distAppPath], {}, cb);
-});
+
 // ==========================================================
 // Remove all server code in dist folder
 // ==========================================================
 gulp.task('build-clean-server', function (cb) {
     return del([distServerPath], {}, cb);
 });
-// ===========================================================
-// Create webpacked files
-// ===========================================================
-gulp.task('build-webpack', function (callback) {
-    var webpackCompiler = webpack(webpackConfig);
-    webpackCompiler.run(function (err, stats) {
-        if (err) {
-            throw new gutil.PluginError('build-webpack', err);
-        }
-        gutil.log('[build-webpack]', stats.toString({
-            colors: true
-        }));
-        callback();
-    });
-});
+
 /**
  * ######################################################################################
  * ######################################################################################
@@ -180,49 +104,38 @@ gulp.task('build-webpack', function (callback) {
  * ######################################################################################
  * ######################################################################################
  */
-// ============================================================
-// Start a development.json server using the real server script
-// ============================================================
+    // ============================================================
+    // Start a development.json server using the real server script
+    // ============================================================
 gulp.task('server-start', function (cb) {
     server.kill('SIGTERM', function () {
-        server.listen({path: distServerScript}, livereload.listen);
+        server.listen({path: distServerScript, execArgv: ['--harmony_generators']});
         cb();
     });
 });
-// =================================================================
-// Open the browser and opens the frontend of this app
-// =================================================================
-gulp.task('http-browser', function () {
-    var options = {
-        url: 'http://localhost:3000'
-    };
-    return gulp.src(distIndexHtml)
-        .pipe(open('', options));
+
+// ==================================================================
+// Start all watch tasks
+// ==================================================================
+gulp.task('watch', ['watch-server'], function (cb) {
+    cb();
 });
 // ==================================================================
-// Restart the node server and then livereload
+// Restart the node server
 // ==================================================================
 gulp.task('server-restart', function (cb) {
     server.changed(function (error) {
-        if (!error) {
-            gulp.run('livereload');
-        }
         cb();
     });
 });
 /**
  * ######################################################################################
  * ######################################################################################
- * Watching Frontend and Backend and restart server or livereload frontend
+ * Watching Frontend and Backend and restart server  frontend
  * ######################################################################################
  * ######################################################################################
  */
-// ==================================================================
-// Start all watch tasks
-// ==================================================================
-gulp.task('watch', ['watch-server', 'watch-app'], function (cb) {
-    cb();
-});
+
 // ==================================================================
 // Watch the server code and restart the server on changes
 // ==================================================================
@@ -231,21 +144,7 @@ gulp.task('watch-server', function () {
         runSequence('build-server', 'server-restart');
     });
 });
-// ===================================================================
-// Watch frontend code and reload the webpage if changes occur
-// ===================================================================
-gulp.task('watch-app', function () {
-    gulp.watch(['src/app/**/*.*(js,html)'], {debounceDelay: 2000}, function () {
-        runSequence('build-app', 'livereload');
-    });
-});
-// ===================================================================
-// Reload the browser page
-// ===================================================================
-gulp.task('livereload', function (cb) {
-    livereload.changed(distIndexHtml);
-    cb();
-});
+
 /**
  * ######################################################################################
  * ######################################################################################
@@ -253,15 +152,7 @@ gulp.task('livereload', function (cb) {
  * ######################################################################################
  * ######################################################################################
  */
-// =========================================================================
-// Build the index.html of the frontend and move it to the app folder
-// =========================================================================
-gulp.task('build-app-html', function () {
-    var script = '<script src="' + webpackConfig.output.filename + '"></script>';
-    return gulp.src(srcIndexHtml)
-        .pipe(replace('<!--scripts-->', script))
-        .pipe(gulp.dest(distAppPath));
-});
+
 // ==========================================================================
 // Moves the server code into the dist folder
 // ==========================================================================
@@ -283,16 +174,7 @@ gulp.task('dist-app-static', function () {
  * ######################################################################################
  * ######################################################################################
  */
-// ==========================================================================
-// Start frontend unit tests
-// ==========================================================================
-gulp.task('test-jasmine', ['build-webpack'], function (cb) {
-    process.env.NODE_ENV = 'test';
-    karma.start({
-        configFile: __dirname + '/karma.conf.js',
-        singleRun: true
-    }, cb);
-});
+
 
 // ==========================================================================
 // Start server side unit tests with mocha

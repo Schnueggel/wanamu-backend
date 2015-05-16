@@ -1,8 +1,6 @@
 {
     "debug": false,
-    "mysql":  {
-        "user": "nautic",
-        "password": "nautic",
-        "database": "nautic"
+    "mongo":  {
+        "url": "localhost:27017/todoit"
     }
 }

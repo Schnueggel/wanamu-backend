@@ -2,7 +2,7 @@
  * Created by Christian on 5/15/2015.
  */
 
-var mongoose = require('../config/mongoose.js'),
+var mongoose = require('../config/mongo.js'),
     Schema = mongoose.Schema,
     bcrypt = require(bcrypt),
     SALT_WORK_FACTOR = 10;
@@ -17,6 +17,13 @@ var User = new Schema({
     created: Date
 });
 
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * Before saving we hash the password
+ * ######################################################################################
+ * ######################################################################################
+ */
 User.pre('save',function(next) {
     var user = this;
     // only hash the password if it has been modified (or is new)
