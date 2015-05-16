@@ -1,12 +1,12 @@
 'use strict';
 
-var TodoListModel = require('../model/todolist.js'),
+var UsersCollection = require('../model/user.js'),
     Util = require('../util/util.js'),
     co = require('co');
 
 module.exports = {
-    update: co.wrap(updateTodolist),
-    get: co.wrap(getTodolist)
+    update: updateTodolist,
+    get: getTodolist
 };
 
 /**
