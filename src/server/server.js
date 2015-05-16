@@ -9,6 +9,8 @@ var mongo = require('./server/config/mongo.js'),
     logger = require('koa-logger'),
     cors = require('koa-cors'),
     bodyParser = require('koa-bodyparser'),
+    session = require('koa-session'),
+    passport = require('koa-passport'),
     app = require('koa')();
 
 
@@ -24,6 +26,10 @@ app.use(cors({
 }));
 
 app.use(bodyParser());
+
+app.use(session());
+app.use(passport.initialize())
+app.use(passport.session())
 
 require('./server/routes')(app);
 

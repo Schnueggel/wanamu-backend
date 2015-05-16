@@ -3,8 +3,9 @@
  */
 'use strict';
 
-var passport = require('passport'),
+var passport = require('koa-passport'),
     LocalStrategy = require('passport-local').Strategy,
+    bcrypt = require('../config/bcryptjs'),
     User = require('../model/user.js'),
     config = require('../config'),
     co = require('co');
@@ -19,24 +20,15 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-
-    User.findOne(id, {
-        include: [{all: true, nested: true}]
-    }).then(function(user){
-        done(null, user);
-    }).catch(function(err){
-        done(err, null);
-    });
+    User.findById(id);
 });
 // ==========================================================================
 // Use this after passport initilaize for login on development and testing
 // ==========================================================================
-passport.dev = function() {
+passport.dev = function*() {
     return co.wrap(function*(req, res, next) {
         if (!config.get('forceLoginOnDev', false) &&(config.isDevelopment() || config.isTest())) {
-            var user = yield User.findOne(1, {
-                include: [{all: true, nested: true}]
-            });
+            var user = yield User.findById(1);
 
             if (!user) {
                 throw new Error('Test user with ID one could not be found in database');
@@ -52,37 +44,26 @@ passport.dev = function() {
 };
 
 function* strategy(username, password, done){
-    var condition = {
-        where : {
-            $or : [
-                {email: username},
-                {customerNumber: username}
-            ]
-        }
-    };
+
+    var user;
 
     if (config.isDevelopment() || config.isTest()) {
-        condition.where.$or.push({id:1});
-    }
+        user = yield User.findById(1);
 
-    try{
-        var user = yield User.findOne(condition, {
-            include: [{all: true, nested: true}]
-        });
-        if (user === null) {
-            throw new Error('User not found');
+    } else {
+        try{
+
+            user = yield User.findBy({email: username});
+
+        } catch(err) {
+            console.error(err);
         }
-    } catch(err){
-        console.error(err);
+    }
+    if (user === null) {
         return done(null, false, { message: 'Incorrect username.' });
     }
 
-    // ==========================================================================
-    // TODO validate Password
-    // ==========================================================================
-    //if (!user.validPassword(password)) {
-    //    return done(null, false, { message: 'Incorrect password.' });
-    //}
+
 }
 
 module.exports = passport;
