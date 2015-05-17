@@ -11,10 +11,6 @@ var assert = require('assert'),
 
 describe('Test User Model', function () {
 
-    after(function(){
-        mongo.close();
-    });
-
     it('Should create User', function (done) {
         assert.equal(typeof User, 'object');
 
@@ -55,12 +51,14 @@ function* testCreateUser(){
     user = yield User.create(userData);
 
     assert.notEqual(user, null);
+
     assert(user.email, 'test1@email.de');
     assert(user.password);
     assert(user._id);
     assert(user.firstname, 'firstname');
     assert(user.lastname, 'lastname');
     assert(user.salutation, 'mr');
+    assert(typeof user.todolists, 'object');
 
     // ==========================================================================
     // Try to create the same user again

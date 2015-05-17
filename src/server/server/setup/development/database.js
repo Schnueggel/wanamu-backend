@@ -10,7 +10,6 @@ module.exports = function(cb) {
     mongo.get('users').drop(function(){
         User = require('../../model/user.js');
         co(setup).then(function(){
-            mongo.close();
             cb()
         }).catch(function(err){
             mongo.close();

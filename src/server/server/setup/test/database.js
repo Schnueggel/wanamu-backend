@@ -10,10 +10,9 @@ module.exports = function(cb) {
     mongo.get('users').drop(function(){
         User = require('../../model/user.js');
         co(setup).then(function(){
-            //Close mongo connection als gulp task dont finishs
-            mongo.close();
             cb();
         }).catch(function(err){
+            mongo.close();
             cb();
             console.error(err);
             throw err;
@@ -24,7 +23,7 @@ module.exports = function(cb) {
 
 function* setup() {
     yield User.create({
-        username: 'test@email.de',
+        email: 'test@email.de',
         password: 'abcdefghijk',
         firstname: 'firstname',
         lastname: 'lastname',

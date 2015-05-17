@@ -5,17 +5,14 @@
 var mongo = require('../config/mongo.js'),
     bcrypt = require('../config/bcrypt.js'),
     co = require('co'),
+    todolist = require('../model/todolist.js'),
     ErrorUtil = require('../util/error.js'),
     wrap = require('co-monk');
 
 var monkcoll =  mongo.get('users');
-var users = wrap(monkcoll);
+var User = wrap(monkcoll);
 
-users.index('email', { unique: true });
-
-var User = {};
-
-User.prototype = users;
+User.index('email', { unique: true });
 
 /**
  * ######################################################################################
@@ -27,8 +24,14 @@ User.prototype = users;
 User.SALUTATION_MR = 'mr';
 User.SALUTATION_MRS = 'mrs';
 User.salutations = [User.SALUTATION_MR, User.SALUTATION_MRS];
+User.defaultTodoListName = 'default';
 
 
+/**
+ * Creates a new user
+ * @param {Object} input
+ * @returns {*}
+ */
 User.create = function* (input) {
     var data = input || {};
 
@@ -40,8 +43,12 @@ User.create = function* (input) {
         throw new ErrorUtil.UserPasswordNotCreated();
     }
 
+    data.todolists = {};
+    var tdlist = new todolist.TodoList(User.defaultTodoListName);
+    data.todolists[User.defaultTodoListName] = tdlist;
+
     try {
-        var user = yield users.insert(data);
+        var user = yield User.insert(data);
     } catch (err) {
         if (err.name === 'MongoError' && err.code === 11000) {
             throw new ErrorUtil.UserAlreadyExists();
