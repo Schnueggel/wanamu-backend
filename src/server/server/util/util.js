@@ -4,10 +4,6 @@
  */
 
 var Util = {
-    ERRORS : {
-        INVALID_USER_PASSWORD : {name: 'INVALID_USER_PASSWORD', message : 'Invalid user password.'},
-        USER_PASSWORD_NOT_CREATED : {name: 'USER_PASSWORD_NOT_CREATED', message : 'Unable to create user password.'}
-    },
     /**
      * Pads a number with zeros. If the number length exceeds the padding, the number is returned as string
      * @param num the number to pad

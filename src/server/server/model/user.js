@@ -5,7 +5,7 @@
 var mongo = require('../config/mongo.js'),
     bcrypt = require('../config/bcrypt.js'),
     co = require('co'),
-    Util = require('../util/util.js'),
+    Error = require('../util/error.js'),
     wrap = require('co-monk');
 
 var monkcoll =  mongo.get('users');
@@ -23,13 +23,13 @@ User.create = function* (input) {
 
 
     if (!data.password || data.length < 8) {
-        throw Util.ERRORS.INVALID_USER_PASSWORD;
+        throw Error.INVALID_USER_PASSWORD;
     }
 
     var password = yield bcrypt.hashAndSalt(data.password);
     console.log(password);
     if (!password && password.length !== 60) {
-        throw Util.ERRORS.USER_PASSWORD_NOT_CREATED;
+        throw Error.USER_PASSWORD_NOT_CREATED;
     }
     data.password = password;
 
