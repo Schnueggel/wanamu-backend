@@ -72,7 +72,7 @@ gulp.task('build-server', function (cb) {
 // starting the development.json server and opens a browser.
 // ====================================================================
 gulp.task('build-serve',  function (cb) {
-    runSequence('test-mocha', 'build', 'build-development-database', 'server-start', 'watch', cb);
+    runSequence('build', 'build-development-database', 'server-start', 'watch', cb);
 });
 /**
  * ######################################################################################
@@ -107,7 +107,13 @@ gulp.task('build-clean-server', function (cb) {
     // ============================================================
 gulp.task('server-start', function (cb) {
     server.kill('SIGTERM', function () {
-        server.listen({path: distServerScript, execArgv: ['--harmony_generators']});
+        server.listen({
+            path: distServerScript,
+            env: {
+                NODE_ENV : 'development',
+                DEBUG:'monk:*'
+            },
+            execArgv: ['--harmony_generators']});
         cb();
     });
 });
@@ -139,7 +145,7 @@ gulp.task('server-restart', function (cb) {
 // ==================================================================
 gulp.task('watch-server', function () {
     gulp.watch(['src/server/**/*.*(js|json|ts)'], {debounceDelay: 2000}, function () {
-        runSequence('test-mocha', 'build-server', 'server-restart');
+        runSequence('build-server', 'server-restart');
     });
 });
 
