@@ -4,11 +4,12 @@
 
 var UsersCollection = require('../model/user.js'),
     Util = require('../util/util.js'),
+    passport = require ('../config/passport.js'),
     co = require('co');
 
 module.exports = {
-    update: updateTodolist,
-    get: getTodolist
+    login: login,
+    logout: logout
 };
 
 /**
@@ -16,10 +17,18 @@ module.exports = {
  * @param req
  * @param res
  */
-function* login(req, res) {
-    var user = req.user,
-        input = req.body || {};
-    yield null;
+function* login(next) {
+    var ctx = this
+    yield* passport.authenticate('local', function*(err, user, info) {
+        if (err) throw err
+        if (user === false) {
+            ctx.status = 401
+            ctx.body = { success: false }
+        } else {
+            yield ctx.login(user)
+            ctx.body = { success: true }
+        }
+    }).call(this, next);
 }
 
 /**
@@ -28,6 +37,9 @@ function* login(req, res) {
  * @param req
  * @param res
  */
-function* logout(req, res) {
-    yield null;
+function* logout(next) {
+    this.logout();
+    this.body = {
+        success: true
+    };
 }
