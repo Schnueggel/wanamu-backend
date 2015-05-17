@@ -184,6 +184,7 @@ gulp.task('test-mocha', ['prepare-mocha-tests'], function () {
             timeout: 5000
         }));
 });
+
 // ==========================================================================
 // Setup everything for testing
 // ==========================================================================
@@ -201,15 +202,18 @@ gulp.task('prepare-mocha-tests', function(cb){
 // ==========================================================================
 // Builds the development database
 // ==========================================================================
-gulp.task('build-development-database',['build-server'], function (cb) {
+gulp.task('build-development-database', function (cb) {
     process.env.NODE_ENV = 'development';
-    cb();
+    process.env.DEBUG='monk:*';
+    var scriptpath = path.join(srcServerPath, 'server', 'setup', 'development', 'database.js');
+    require(scriptpath)(cb);
 });
 // ==========================================================================
 // Builds the test database
 // ==========================================================================
 gulp.task('build-test-database',['build-server'], function (cb) {
     process.env.DEBUG='monk:*';
+    process.env.NODE_ENV = 'test';
     var scriptpath = path.join(srcServerPath, 'server', 'setup', 'test', 'database.js');
     require(scriptpath)(cb);
 });
@@ -217,9 +221,7 @@ gulp.task('build-test-database',['build-server'], function (cb) {
 // Builds the production database
 // ==========================================================================
 gulp.task('build-production-database',['build-server'], function (cb) {
-    process.env.DEBUG='monk:*';
-    require(path.join(srcServerPath, 'server', 'setup', 'development', 'database.js'));
-    cb();
+    require(path.join(srcServerPath, 'server', 'setup', 'production', 'database.js'))(cb);
 });
 
 // ==========================================================================

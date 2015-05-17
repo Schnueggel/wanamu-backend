@@ -5,7 +5,7 @@
 var mongo = require('../config/mongo.js'),
     bcrypt = require('../config/bcrypt.js'),
     co = require('co'),
-    Error = require('../util/error.js'),
+    ErrorUtil = require('../util/error.js'),
     wrap = require('co-monk');
 
 var monkcoll =  mongo.get('users');
@@ -17,25 +17,76 @@ var User = {};
 
 User.prototype = users;
 
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * CUSTOM EXTENSIONS
+ * ######################################################################################
+ * ######################################################################################
+ */
+User.SALUTATION_MR = 'mr';
+User.SALUTATION_MRS = 'mrs';
+User.salutations = [User.SALUTATION_MR, User.SALUTATION_MRS];
+
 
 User.create = function* (input) {
     var data = input || {};
 
+    validateData(data);
 
-    if (!data.password || data.length < 8) {
-        throw Error.INVALID_USER_PASSWORD;
+    data.password = yield bcrypt.hashAndSalt(data.password);
+
+    if (!data.password && data.password.length !== 60) {
+        throw new ErrorUtil.UserPasswordNotCreated();
     }
 
-    var password = yield bcrypt.hashAndSalt(data.password);
-    console.log(password);
-    if (!password && password.length !== 60) {
-        throw Error.USER_PASSWORD_NOT_CREATED;
+    try {
+        var user = yield users.insert(data);
+    } catch (err) {
+        if (err.name === 'MongoError' && err.code === 11000) {
+            throw new ErrorUtil.UserAlreadyExists();
+        }
+        throw err;
     }
-    data.password = password;
 
-    var user = yield users.insert(data);
-    console.log(user);
-    return data;
+    return user;
 };
+
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * HELPER FUNCTIONS
+ * ######################################################################################
+ * ######################################################################################
+ */
+function validateData(data) {
+
+    var err = []
+
+    if (!data.password) {
+        err.push({field: 'password', message: 'Field cannot be empty'});
+    } else if (data.password.length < 8) {
+        err.push({field: 'password', message: 'Min length 8'});
+    }
+
+    if (!data.firstname) {
+        err.push({field: 'firstname', message: 'Field cannot be empty'});
+    }
+
+    if (!data.lastname) {
+        err.push({field: 'lastname', message: 'Field cannot be empty'});
+    }
+
+    if (!data.salutation) {
+        err.push({field: 'salutation', message: 'Field cannot be empty'});
+    } else if (User.salutations.indexOf(data.salutation) === -1) {
+        err.push({field: 'salutation', message: 'Invalid value'});
+    }
+    if (err.length > 0 ) {
+        throw new ErrorUtil.ModelValidationError(null, err, 'User');
+
+    }
+
+}
 
 module.exports = User;

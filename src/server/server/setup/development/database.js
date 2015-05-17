@@ -10,9 +10,12 @@ module.exports = function(cb) {
     mongo.get('users').drop(function(){
         User = require('../../model/user.js');
         co(setup).then(function(){
-            console.log(cb);
-            cb();
+            mongo.close();
+            cb()
         }).catch(function(err){
+            mongo.close();
+            cb();
+            console.error(err);
             throw err;
         });
     });
@@ -21,9 +24,11 @@ module.exports = function(cb) {
 function* setup() {
     yield User.create({
         username: 'test@email.de',
-        password: 'abcdefghijk'
+        password: 'abcdefghijk',
+        firstname: 'firstname',
+        lastname: 'lastname',
+        salutation: User.SALUTATION_MR
     });
 }
-
 
 
