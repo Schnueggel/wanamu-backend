@@ -27,9 +27,7 @@ var gulp = require('gulp'),
  * ######################################################################################
  * ######################################################################################
  */
-var srcAppPath = path.join(__dirname, 'src/app'),
-    srcServerPath = path.join(__dirname, 'src/server'),
-    srcIndexHtml = path.join(srcAppPath, 'index.html'),
+var srcServerPath = path.join(__dirname, 'src/server'),
     distPath = path.join(__dirname, 'dist'),
     distServerPath = path.join(distPath, 'server'),
     distServerScript = path.join(distServerPath, 'server.js');
@@ -74,7 +72,7 @@ gulp.task('build-server', function (cb) {
 // starting the development.json server and opens a browser.
 // ====================================================================
 gulp.task('build-serve',  function (cb) {
-    runSequence('build', 'build-development-database', 'server-start', 'watch', cb);
+    runSequence('test-mocha', 'build', 'build-development-database', 'server-start', 'watch', cb);
 });
 /**
  * ######################################################################################
@@ -141,7 +139,7 @@ gulp.task('server-restart', function (cb) {
 // ==================================================================
 gulp.task('watch-server', function () {
     gulp.watch(['src/server/**/*.*(js|json|ts)'], {debounceDelay: 2000}, function () {
-        runSequence('build-server', 'server-restart');
+        runSequence('test-mocha', 'build-server', 'server-restart');
     });
 });
 
@@ -179,7 +177,7 @@ gulp.task('dist-app-static', function () {
 // ==========================================================================
 // Start server side unit tests with mocha
 // ==========================================================================
-gulp.task('test-mocha', ['prepare-moch-tests'], function () {
+gulp.task('test-mocha', ['prepare-mocha-tests'], function () {
     process.env.NODE_ENV = 'test';
     return gulp.src('test/mocha/**/**.js')
         .pipe(mocha({
@@ -189,7 +187,8 @@ gulp.task('test-mocha', ['prepare-moch-tests'], function () {
 // ==========================================================================
 // Setup everything for testing
 // ==========================================================================
-gulp.task('prepare-moch-tests', function(cb){
+gulp.task('prepare-mocha-tests', function(cb){
+    process.env.NODE_ENV = 'test';
     runSequence('build-test-database', 'build-server', cb);
 });
 /**
@@ -210,12 +209,16 @@ gulp.task('build-development-database',['build-server'], function (cb) {
 // Builds the test database
 // ==========================================================================
 gulp.task('build-test-database',['build-server'], function (cb) {
-    cb();
+    process.env.DEBUG='monk:*';
+    var scriptpath = path.join(srcServerPath, 'server', 'setup', 'test', 'database.js');
+    require(scriptpath)(cb);
 });
 // ==========================================================================
 // Builds the production database
 // ==========================================================================
 gulp.task('build-production-database',['build-server'], function (cb) {
+    process.env.DEBUG='monk:*';
+    require(path.join(srcServerPath, 'server', 'setup', 'development', 'database.js'));
     cb();
 });
 
