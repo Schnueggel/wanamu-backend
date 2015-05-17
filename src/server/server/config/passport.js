@@ -15,10 +15,17 @@ passport.use(new LocalStrategy(
     co.wrap(strategy)
 ));
 
+/**
+ * Save user id in session
+ */
 passport.serializeUser(function(user, done) {
     done(null, user._id);
 });
 
+/**
+ * deserialize user
+ * find it under app.req.user (this.req.user) in koa app middleware
+ */
 passport.deserializeUser(function(id, done) {
     co(function*(){
         var user = yield User.findById(id);
@@ -32,27 +39,14 @@ passport.deserializeUser(function(id, done) {
         done(null, false, {message: 'Could not find User'});
     });
 });
-// ==========================================================================
-// Use this after passport initilaize for login on development and testing
-// ==========================================================================
-passport.dev = function*() {
-    return co.wrap(function*(req, res, next) {
-        if (!config.get('forceLoginOnDev', false) &&(config.isDevelopment() || config.isTest())) {
-            var user = yield User.findById(1);
 
-            if (!user) {
-                throw new Error('Test user with ID one could not be found in database');
-            }
-
-            req.logIn(user, {}, function(){
-                next();
-            });
-        } else {
-            next();
-        }
-    });
-};
-
+/**
+ * Local Strategy
+ * @param {String} username
+ * @param {String} password
+ * @param {Function} done
+ * @returns {*}
+ */
 function* strategy(username, password, done){
 
     var user;
