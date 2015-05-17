@@ -18,6 +18,8 @@ if (!config.isTest()) {
     app.use(logger());
 }
 
+app.keys = [config.get('session').secret];
+
 app.use(cors({
     maxAge: config.get('cacheTime') / 1000,
     credentials: true,
@@ -27,9 +29,9 @@ app.use(cors({
 
 app.use(bodyParser());
 
-app.use(session());
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(session({}, app));
+app.use(passport.initialize());
+app.use(passport.session());
 
 require('./server/routes')(app);
 

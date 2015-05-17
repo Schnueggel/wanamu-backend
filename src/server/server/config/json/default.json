@@ -1,6 +1,9 @@
 {
     "port": 3000,
     "cacheTime": 604800000,
+    "session": {
+        "secret": "dogfoodcat(-_-)"
+    },
     "debug": false,
     "forceloginOnDev": false,
     "debug": true,
