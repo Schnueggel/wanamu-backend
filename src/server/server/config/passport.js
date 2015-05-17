@@ -16,7 +16,7 @@ passport.use(new LocalStrategy(
 ));
 
 passport.serializeUser(function(user, done) {
-    done(null, user.id);
+    done(null, user._id);
 });
 
 passport.deserializeUser(function(id, done) {
@@ -58,12 +58,11 @@ function* strategy(username, password, done){
     var user;
 
     if (config.isDevelopment() || config.isTest()) {
-        user = yield User.findById(1);
+        user = yield User.findOne({email: 'test@email.de'});
 
     } else {
         try{
-
-            user = yield User.findBy({email: username});
+            user = yield User.findOne({email: username});
         } catch(err) {
             console.error(err);
             return done(null, false, {message: 'User not found'});
