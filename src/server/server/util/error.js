@@ -2,8 +2,11 @@
  * Created by Christian on 5/17/2015.
  */
 
+var TodoItError = {};
+TodoItError.prototype = new Error();
 
 module.exports = {
+    TodoItError : TodoItError,
     UserPasswordNotCreated : UserPasswordNotCreated,
     UserAlreadyExists : UserAlreadyExists,
     ModelValidationError : ModelValidationError,
@@ -13,6 +16,8 @@ module.exports = {
     UserNotFound : UserNotFound
 };
 
+
+
 /**
  *
  * @param {String} [message]
@@ -21,7 +26,6 @@ module.exports = {
 function TodoAlreadyExists (message) {
     this.name = 'TodoAlreadyExists';
     this.message = message ||  'Todo with the same title already exists';
-    this.stack = (new Error()).stack;
 }
 
 /**
@@ -32,10 +36,9 @@ function TodoAlreadyExists (message) {
 function TodoListNotFound (message) {
     this.name = 'TodoListNotFound';
     this.message = message ||  'No valid todolist could be found.';
-    this.stack = (new Error()).stack;
 }
 
-TodoListNotFound.prototype = new Error();
+TodoListNotFound.prototype = TodoItError;
 
 /**
  *
@@ -45,10 +48,9 @@ TodoListNotFound.prototype = new Error();
 function UserNotFound (message) {
     this.name = 'UserNotFound';
     this.message = message ||  'No valid user could be found.';
-    this.stack = (new Error()).stack;
 }
 
-UserNotFound.prototype = new Error();
+UserNotFound.prototype = TodoItError;
 
 /**
  *
@@ -58,10 +60,9 @@ UserNotFound.prototype = new Error();
 function UserPasswordNotCreated (message) {
     this.name = 'UserPasswordNotCreated';
     this.message = message ||  'Unable to create user password.';
-    this.stack = (new Error()).stack;
 }
 
-UserPasswordNotCreated.prototype = new Error();
+UserPasswordNotCreated.prototype = TodoItError;
 
 /**
  *
@@ -70,8 +71,7 @@ UserPasswordNotCreated.prototype = new Error();
  */
 function UserAlreadyExists (message) {
     this.name = 'UserAlreadyExists';
-    this.message = message;
-    this.stack = (new Error()).stack;
+    this.message = message || 'User already exists.';
 }
 
 UserAlreadyExists.prototype = new Error();
@@ -88,10 +88,9 @@ function ModelValidationError (message, errors, model) {
     this.message = message || 'Data validation error';
     this.errors = errors || [];
     this.model = model;
-    this.stack = (new Error()).stack;
 }
 
-ModelValidationError.prototype = new Error();
+ModelValidationError.prototype = TodoItError;
 
 /**
  *
@@ -103,7 +102,6 @@ function ModelValidationFieldError (field, message) {
     this.name = 'ModelValidationFieldError';
     this.message = message;
     this.field = field;
-    this.stack = (new Error()).stack;
 }
 
-ModelValidationFieldError.prototype = new Error();
+ModelValidationFieldError.prototype = TodoItError;
