@@ -4,6 +4,7 @@
 
 var monk = require('monk');
 var config = require('../config');
+
 var db = monk(config.get('mongo').url);
 
 module.exports = db;

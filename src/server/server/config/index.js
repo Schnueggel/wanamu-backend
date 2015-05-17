@@ -13,7 +13,7 @@ nconf.argv()
     .env();
 
 
-var env = nconf.get('NODE_ENV') || DEVELOPMENT;
+var env = nconf.get('NODE_ENV');
 
 if ([DEVELOPMENT, TEST, PRODUCTION].indexOf(env) === -1) {
     throw new Error('Invalid server environment found:' + env);

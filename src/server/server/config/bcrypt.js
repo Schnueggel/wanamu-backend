@@ -1,9 +1,12 @@
 /**
  * Created by Christian on 5/16/2015.
  */
-var bcrypt = require('bcryptjs');
+var bcrypt = require('bcryptjs'),
+    co = require('co');
 
-module.exports = {
+var bc;
+
+module.exports = bc = {
     /**
      *
      * @param passwordCandidate
@@ -29,9 +32,13 @@ module.exports = {
     },
     hash : function(password, salt){
         return new Promise(function (resolve, reject) {
-            bcrypt.hash(user.password, salt, function(err, hash) {
+            bcrypt.hash(password, salt, function(err, hash) {
                 if (err) { reject(err); } else { resolve(hash); }
             });
         });
+    },
+    hashAndSalt: function* (password) {
+        var salt = yield bc.salt();
+        return yield bc.hash(password, salt);
     }
 };

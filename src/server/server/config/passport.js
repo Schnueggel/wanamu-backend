@@ -5,7 +5,7 @@
 
 var passport = require('koa-passport'),
     LocalStrategy = require('passport-local').Strategy,
-    bcrypt = require('../config/bcryptjs'),
+    bcrypt = require('../config/bcrypt.js'),
     User = require('../model/user.js'),
     config = require('../config'),
     co = require('co');
@@ -20,7 +20,17 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-    User.findById(id);
+    co(function*(){
+        var user = yield User.findById(id);
+
+        if (user === null) {
+            return done(null, false);
+        }
+        done(null, user);
+    }).catch(function(err){
+        console.error(err);
+        done(null, false, {message: 'Could not find User'});
+    });
 });
 // ==========================================================================
 // Use this after passport initilaize for login on development and testing
@@ -54,16 +64,25 @@ function* strategy(username, password, done){
         try{
 
             user = yield User.findBy({email: username});
-
         } catch(err) {
             console.error(err);
+            return done(null, false, {message: 'User not found'});
         }
+
     }
+
     if (user === null) {
-        return done(null, false, { message: 'Incorrect username.' });
+        return done(null, false, { message: 'Incorrect username' });
     }
 
 
+    var isMatch = yield bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+        return done(null, false, { message: 'Wrong Username or password' });
+    }
+
+    done(null, user);
 }
 
 module.exports = passport;
