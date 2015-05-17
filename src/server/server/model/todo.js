@@ -66,9 +66,11 @@ module.exports = todo = {
 
         todolist.todos.push(todo);
 
-        return yield User.findAndModify({ _id: userid }, { $set: {
+        user = yield User.findAndModify({ _id: userid }, { $set: {
             todolists : user.todolists
         }});
+        console.log(user);
+        return yield User.findOne(userid);
 
     }
 };
