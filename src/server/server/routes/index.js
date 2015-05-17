@@ -3,21 +3,33 @@ var co = require('co'),
     TodoController = require('../controller/todo.js'),
     AuthController = require('../controller/auth.js');
 
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * Auth Middleware
+ * ######################################################################################
+ * ######################################################################################
+ */
+function* auth(next){
+    if (!this.isAuthenticated()) {
+        this.status = 403;
+        this.body = { success: false }
+    } else {
+        yield next;
+    }
+}
+
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * ROUTES
+ * ######################################################################################
+ * ######################################################################################
+ */
 module.exports = function(app){
-    app.use(route.post('/todo/:userid/:todolist', auth(TodoController.create)));
-    app.use(route.post('/auth/login', AuthController.login))
+    app.use(route.post('/auth/login', AuthController.login));
+    app.use(auth);
+    app.use(route.post('/todo/:userid/:todolist', TodoController.create));
 };
 
 
-function auth(fn){
-    return function* () {
-        if (!this.isAuthenticated()) {
-            this.status = 403;
-            this.body = { success: false }
-        } else {
-            console.log(fn);
-            console.log(arguments);
-            yield* fn.apply(this, arguments);
-        }
-    };
-}
