@@ -1,4 +1,4 @@
-# Nautic Online Rewrite in Node.JS
+# TODOIT Backend
 
 ## Install
 In order to run this application you need to make an alias and run the node command with `--harmony_generators` flag or use 
@@ -13,17 +13,13 @@ Use `gulp build` to build only.
 Use `gulp test` to start tests.
    
 ## Development
-For development create a MYSQL database at localhost and create a user and database named `nautic_dev` 
-with password `nautic_dev`
+For development create a MongoDb database at localhost without password and username
 
    use `gulp build-development-database` to build the development database.
+   
 ## Application structure
 
 The application source code is located in `src`.
-
-The frontend code is located in:
-
-`src/app`
 
 The backend code is located in:
 
@@ -38,46 +34,22 @@ The frontend is made with Angular.
 
 ### Docs:
 
-Sequelize (Database ORM):
 
-<http://docs.sequelizejs.com/en/latest/docs/getting-started/>
+Koa:
 
-Express:
-
-<http://expressjs.com/api.html>
+<https://github.com/koajs/koa>
 
 ## Build
 
 We use gulp to control the build process of the application.
 
-The frontend will be packed with Webpack and all client side javascript code will result in a single index.js file placed in `dist/app`.
-
-### Typescript
-
-Its also possible to write typescript for frontend code creating files with a `.ts` extension.
-
-### ES6
- To use ES6 we included babel into the build process. Files that use ES6 features need the extension `.es6.js`
 
 ## Tests
 The application gets tested in two ways. To start all tests you can use:
 
 `gulp test`
 
-or
 
-`npm test`
-
-### Frontend
-The frontend gets tested with Jasmine using Karma and PhantomJS to run the tests. The test file are in:
-
-`test/jasmin`
-
-To start the test on the command line you can use: 
-
-`gulp test-jasmine`
-
-### Backend
 The backend test are made with mocha. The mocha test files are in:
 
 `test/mocha`
@@ -88,7 +60,7 @@ To start the tests on the command line you can use:
 
 ## Database
 
-All data is stored in a MySQL Database.
+All data is stored in a Mongo Database.
 
 ## Mockups
 
