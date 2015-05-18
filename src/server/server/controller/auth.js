@@ -20,13 +20,15 @@ module.exports = {
 function* login(next) {
     var ctx = this
     yield* passport.authenticate('local', function*(err, user, info) {
-        if (err) throw err
+        if (err) {
+            throw err;
+        }
         if (user === false) {
             ctx.status = 401
-            ctx.body = { success: false }
+            ctx.body = { success: false };
         } else {
             yield ctx.login(user)
-            ctx.body = { success: true }
+            ctx.body = { success: true };
         }
     }).call(this, next);
 }

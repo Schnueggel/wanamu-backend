@@ -29,7 +29,6 @@
   "dependencies": {
     "bcryptjs": "^2.1.0",
     "co": "^4.5.4",
-    "co-monk": "^1.0.0",
     "koa": "^0.20.0",
     "koa-bodyparser": "^2.0.0",
     "koa-cors": "0.0.14",
@@ -37,10 +36,12 @@
     "koa-passport": "^1.1.6",
     "koa-route": "^2.4.1",
     "koa-session": "^3.1.0",
-    "monk": "^1.0.1",
+    "mysql": "^2.6.2",
     "nconf": "^0.7.1",
     "passport": "^0.2.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "sequelize": "^3.0.0",
+    "validator": "^3.39.0"
   },
   "devDependencies": {
     "del": "^1.1.1",

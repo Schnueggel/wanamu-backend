@@ -1,6 +1,8 @@
 {
     "debug": true,
-    "mongo":  {
-        "url": "localhost:27017/todoit-develop"
+    "mysql":  {
+        "user": "todoit_dev",
+        "password": "todoit_dev",
+        "database": "todoit_dev"
     }
 }

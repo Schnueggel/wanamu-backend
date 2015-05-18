@@ -1,6 +1,8 @@
 {
     "debug": false,
-    "mongo":  {
-        "url": "localhost:27017/todoit"
+    "mysql":  {
+        "user": "todoit",
+        "password": "todoit",
+        "database": "todoit"
     }
 }

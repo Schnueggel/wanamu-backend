@@ -2,29 +2,45 @@
  * Created by Christian on 5/17/2015.
  */
 
-var TodoCollection = require('../model/todo.js'),
-    ErrorUtil = require('../util/error.js'),
-    co = require('co');
+var TodoList = require('../model/todolist'),
+    Todo = require('../model/todo'),
+    ErrorUtil = require('../util/error');
 
-function* create(userid, todolist){
+function* create(todolistname){
     var input = this.request.body || {},
         result = {
             data: [],
+            success: false,
             error: null
-        }
+        },
+        user = this.req.user,
+        todo;
+
+    var todolist = yield TodoList.findOne({where: { name: todolistname, UserId: user.id} });
+
+    if (todolist === null) {
+        result.error = new ErrorUtil.TodoListNotFound();
+        this.body = result;
+        return;
+    }
+
     try {
-        var todo = yield TodoCollection.create(userid, todolist, input);
-        result.data.push(todo);
+        todo = yield Todo.create(input);
+        yield todolist.addTodos([todo]);
+        todo = yield todo.reload();
+        result.success = true;
+        result.data = todo.get({plain: true});
     } catch (err) {
-        if (err instanceof ErrorUtil.ModelValidationError) {
+        console.error(err);
+        if (err instanceof Todo.Sequelize.ValidationError) {
             this.status = 422;
             result.error = err;
-        } else if (err instanceof  ErrorUtil.UserNotFound) {
-            result.error = err;
         } else {
-            result.error = new Error('Unable to create todolist');
+            this.status = 500;
+            result.error = new Error('Unable to create todo');
         }
     }
+
     this.body = result;
 }
 

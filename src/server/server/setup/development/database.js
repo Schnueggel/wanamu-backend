@@ -1,37 +1,67 @@
 /**
- * Created by Christian on 5/17/2015.
+ * Created by Christian on 5/10/2015.
  */
+'use strict';
 
-// ==========================================================================
-// Delete config from cache to reload it in case NODE_ENV has change
-// ==========================================================================
-delete require.cache[require.resolve('../../config/index.js')];
-
-var mongo = require('../../config/mongo.js'),
-    User = null,
+var User = require('../../model/user.js'),
+    TodoList = require('../../model/todolist.js'),
+    Todo = require('../../model/todo'),
     co = require('co');
 
-module.exports = function(cb) {
-    mongo.get('users').drop(function(){
-        User = require('../../model/user.js');
-        co(setup).then(function(){
-            cb();
-        }).catch(function(err){
-            cb();
-            console.error(err);
-            throw err;
-        });
-    });
-};
+/**
+ * Starts the database setup
+ * @returns {Promise}
+ */
+function start() {
+    return co(setup);
+}
 
-function* setup() {
-    yield User.create({
-        _id: '555907c34f7de3fc25171ed2',
+/**
+ * Setup complete database
+ */
+function* setup(){
+    yield* createUsers();
+    yield* createTodoList();
+    yield* createTodos();
+    console.log('data created');
+}
+
+
+function* createUsers() {
+    var user = yield User.create({
         email: 'test@email.de',
+        firstname: 'firstName',
+        lastname: 'lastName',
         password: 'abcdefghijk',
-        firstname: 'firstname',
-        lastname: 'lastname',
-        salutation: User.SALUTATION_MR
+        salutation: 'mr'
+    }, { isNewRecord: true });
+    console.log('done');
+}
+
+function* createTodoList() {
+    var user = yield User.findOne({where:{email:'test@email.de'}});
+
+    yield user.createTodoList({
+        name: 'default'
     });
 }
 
+function* createTodos() {
+    var user = yield User.findOne({where:{email:'test@email.de'}});
+
+    var todolist = yield TodoList.findOne({where: {name: 'default', UserId: user.id}});
+
+    var todo1 = Todo.build({
+        title: 'Make dog cake'
+    });
+    var todo2 = Todo.build({
+        title: 'Make cat cake'
+    });
+    yield todo1.save();
+    yield todo2.save();
+
+
+    yield todolist.addTodos([todo1, todo2]);
+}
+
+module.exports = start();

@@ -3,9 +3,7 @@
 /**
  * Created by Christian on 4/27/2015.
  */
-var mongo = require('./server/config/mongo.js'),
-    config = require('./server/config'),
-    co = require('co'),
+var config = require('./server/config'),
     logger = require('koa-logger'),
     cors = require('koa-cors'),
     bodyParser = require('koa-bodyparser'),

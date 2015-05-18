@@ -38,7 +38,7 @@ function TodoListNotFound (message) {
     this.message = message ||  'No valid todolist could be found.';
 }
 
-TodoListNotFound.prototype = TodoItError;
+TodoListNotFound.prototype = TodoItError.prototype;
 
 /**
  *
@@ -50,7 +50,7 @@ function UserNotFound (message) {
     this.message = message ||  'No valid user could be found.';
 }
 
-UserNotFound.prototype = TodoItError;
+UserNotFound.prototype = TodoItError.prototype;
 
 /**
  *
@@ -62,7 +62,7 @@ function UserPasswordNotCreated (message) {
     this.message = message ||  'Unable to create user password.';
 }
 
-UserPasswordNotCreated.prototype = TodoItError;
+UserPasswordNotCreated.prototype = TodoItError.prototype;
 
 /**
  *
@@ -74,7 +74,7 @@ function UserAlreadyExists (message) {
     this.message = message || 'User already exists.';
 }
 
-UserAlreadyExists.prototype = new Error();
+UserAlreadyExists.prototype = TodoItError.prototype;
 
 /**
  * Error on Model Validation
@@ -90,7 +90,7 @@ function ModelValidationError (message, errors, model) {
     this.model = model;
 }
 
-ModelValidationError.prototype = TodoItError;
+ModelValidationError.prototype = TodoItError.prototype;
 
 /**
  *
@@ -104,4 +104,4 @@ function ModelValidationFieldError (field, message) {
     this.field = field;
 }
 
-ModelValidationFieldError.prototype = TodoItError;
+ModelValidationFieldError.prototype = TodoItError.prototype;

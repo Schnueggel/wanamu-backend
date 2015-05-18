@@ -1,8 +1,7 @@
 /**
  * Created by Christian on 5/16/2015.
  */
-var bcrypt = require('bcryptjs'),
-    co = require('co');
+var bcrypt = require('bcryptjs');
 
 var bc;
 

@@ -1,99 +1,126 @@
-/**
- * Created by Christian on 5/15/2015.
- */
-
-var mongo = require('../config/mongo.js'),
-    bcrypt = require('../config/bcrypt.js'),
+var sequelize = require('../config/sequelize'),
+    ErrorUtil = require('../util/error'),
+    TodoList = require('./todolist'),
     co = require('co'),
-    todolist = require('../model/todolist.js'),
-    ErrorUtil = require('../util/error.js'),
-    wrap = require('co-monk');
-
-var monkcoll =  mongo.get('users');
-var User = wrap(monkcoll);
-
-User.index('email', { unique: true });
+    bcrypt = require('../config/bcrypt');
 
 /**
- * ######################################################################################
- * ######################################################################################
- * CUSTOM EXTENSIONS
- * ######################################################################################
- * ######################################################################################
+ * User Model
+ * @type {*|{}|Model}
  */
-User.SALUTATION_MR = 'mr';
-User.SALUTATION_MRS = 'mrs';
-User.salutations = [User.SALUTATION_MR, User.SALUTATION_MRS];
-User.defaultTodoListName = 'default';
-
-
-/**
- * Creates a new user
- * @param {Object} input
- * @returns {*}
- */
-User.create = function* (input) {
-    var data = input || {};
-
-    validateData(data);
-
-    data.password = yield bcrypt.hashAndSalt(data.password);
-
-    if (!data.password && data.password.length !== 60) {
-        throw new ErrorUtil.UserPasswordNotCreated();
-    }
-
-    data.todolists = {};
-    var tdlist = new todolist.TodoList(User.defaultTodoListName);
-    data.todolists[User.defaultTodoListName] = tdlist;
-
-    try {
-        var user = yield User.insert(data);
-    } catch (err) {
-        if (err.name === 'MongoError' && err.code === 11000) {
-            throw new ErrorUtil.UserAlreadyExists();
+var User = sequelize.define('User', {
+    id : {
+        type: sequelize.Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    email: {
+        type: sequelize.Sequelize.STRING(40),
+        allowNull: false,
+        unique: true,
+        validate: {
+            isEmail: {
+                msg: 'Valid Email is nessecary.'
+            }
         }
-        throw err;
+    },
+    salutation: {
+        type: sequelize.Sequelize.ENUM('mr', 'mrs'),
+        allowNull: false
+    },
+    title: {
+        type: sequelize.Sequelize.STRING(15),
+        allowNull: true
+    },
+    firstname: {
+        type: sequelize.Sequelize.STRING(50),
+        allowNull: false
+    },
+    lastname: {
+        type: sequelize.Sequelize.STRING(50),
+        allowNull: false
+    },
+    password: {
+        type: sequelize.Sequelize.CHAR(60).BINARY,
+        allowNull: false,
+        validate: {
+            min: 8
+        }
+    },
+    website: {
+        type: sequelize.Sequelize.STRING(50),
+        validate: {
+            isUrl: {
+                msg: 'If Website is given. It must be valid url'
+            }
+        }
+    },
+    birthday: {
+        type: sequelize.Sequelize.DATE,
+        defaultValue: null,
+        validate: {
+            isAfter: {
+                args: '1900-01-01',
+                msg: 'Birthday before 1900-01-01 are not allowed'
+            }
+        }
+    },
+    banned: {
+        type: sequelize.Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    }}, {
+    // ==========================================================================
+    // OPTIONS
+    // ==========================================================================
+    paranoid: true,
+
+    hooks: {
+        beforeBulkCreate: co.wrap(beforeBulkCreate),
+        beforeCreate: co.wrap(beforeCreate)
+    },
+
+    instanceMethods: {
+        comparePassword: comparePassword
     }
+});
 
-    return user;
-};
-
-/**
- * ######################################################################################
- * ######################################################################################
- * HELPER FUNCTIONS
- * ######################################################################################
- * ######################################################################################
- */
-function validateData(data) {
-
-    var err = []
-
-    if (!data.password) {
-        err.push({field: 'password', message: 'Field cannot be empty'});
-    } else if (data.password.length < 8) {
-        err.push({field: 'password', message: 'Min length 8'});
-    }
-
-    if (!data.firstname) {
-        err.push({field: 'firstname', message: 'Field cannot be empty'});
-    }
-
-    if (!data.lastname) {
-        err.push({field: 'lastname', message: 'Field cannot be empty'});
-    }
-
-    if (!data.salutation) {
-        err.push({field: 'salutation', message: 'Field cannot be empty'});
-    } else if (User.salutations.indexOf(data.salutation) === -1) {
-        err.push({field: 'salutation', message: 'Invalid value'});
-    }
-    if (err.length > 0 ) {
-        throw new ErrorUtil.ModelValidationError(null, err, 'User');
-
-    }
-
-}
+User.hasMany(TodoList);
 
 module.exports = User;
+
+/**
+ * ######################################################################################
+ * ######################################################################################
+ * Helper Functions
+ * ######################################################################################
+ * ######################################################################################
+ */
+
+function* beforeBulkCreate (users, options){
+    for(var i = 0; i < users.length; i++) {
+        yield* beforeCreate(users[i], options);
+    }
+}
+/**
+ * After Create Hook
+ * @param user
+ * @param options
+ * @param fn only exists if the signature of the hook has a third argument but co.wrap(afterCreate) creates function(){}
+ *
+ */
+function* beforeCreate(user, options){
+    // ==========================================================================
+    // Create Salt
+    // ==========================================================================
+    try {
+        user.password = yield bcrypt.hashAndSalt(user.password);
+    } catch(err) {
+        throw new ErrorUtil.UserPasswordNotCreated();
+    }
+}
+
+function comparePassword(passwordCandidate) {
+    var userPassword = this.password;
+    return bcrypt.compare(passwordCandidate, userPassword);
+}

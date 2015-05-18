@@ -1,30 +1,32 @@
-/**
- * Created by Christian on 5/17/2015.
- */
+var sequelize = require('../config/sequelize'),
+    Todo = require('./todo');
 
 /**
- *
- * @param {String} name
- * @param {Object} [options]
- * @constructor
+ * TodoList Model
+ * @type {*|{}|Model}
  */
-var TodoList = function(name, options) {
-    var data = options || {};
+var TodoList = sequelize.define('TodoList', {
+    id : {
+        type: sequelize.Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    description: {
+        type: sequelize.Sequelize.TEXT,
+        allowNull: true
+    },
+    name: {
+        type: sequelize.Sequelize.STRING(55),
+        allowNull: false
+    }}, {
+    // ==========================================================================
+    // OPTIONS
+    // ==========================================================================
+    paranoid: true
+});
 
-    this.name = name;
-    this.created = data.created || Date.now();
-    if (Array.isArray(data.todos)) {
-        this.todos = data.todos;
-    }
-};
-
-TodoList.prototype.name = null;
-TodoList.prototype.todos = [];
+TodoList.belongsToMany(Todo, {through: 'TodoListTodo', unique: true});
+Todo.belongsToMany(TodoList, {through: 'TodoListTodo', unique: true});
 
 
-module.exports = {
-    TodoList: TodoList,
-    create: function *() {
-        throw new Error('Not supported yet');
-    }
-};
+module.exports = TodoList;

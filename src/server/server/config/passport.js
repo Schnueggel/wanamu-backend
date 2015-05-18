@@ -19,7 +19,7 @@ passport.use(new LocalStrategy(
  * Save user id in session
  */
 passport.serializeUser(function(user, done) {
-    done(null, user._id);
+    done(null, user.id);
 });
 
 /**
@@ -27,10 +27,11 @@ passport.serializeUser(function(user, done) {
  * find it under app.req.user (this.req.user) in koa app middleware
  */
 passport.deserializeUser(function(id, done) {
+
     co(function*(){
         var user = yield User.findById(id);
 
-        if (user === null) {
+        if (user === null || user.id !== id) {
             return done(null, false);
         }
         done(null, user);
@@ -51,17 +52,10 @@ function* strategy(username, password, done){
 
     var user;
 
-    if (config.isDevelopment() || config.isTest()) {
-        user = yield User.findOne({email: 'test@email.de'});
-
-    } else {
-        try{
-            user = yield User.findOne({email: username});
-        } catch(err) {
-            console.error(err);
-            return done(null, false, {message: 'User not found'});
-        }
-
+    try{
+        user = yield User.findOne({where: {email: username}});
+    } catch(err) {
+        return done(null, false, {message: 'User not found'});
     }
 
     if (user === null) {

@@ -13,7 +13,7 @@ var co = require('co'),
 function* auth(next){
     if (!this.isAuthenticated()) {
         this.status = 403;
-        this.body = { success: false }
+        this.body = { success: false };
     } else {
         yield next;
     }
@@ -29,7 +29,7 @@ function* auth(next){
 module.exports = function(app){
     app.use(route.post('/auth/login', AuthController.login));
     app.use(auth);
-    app.use(route.post('/todo/:userid/:todolist', TodoController.create));
+    app.use(route.post('/todo/:todolist', TodoController.create));
 };
 
 

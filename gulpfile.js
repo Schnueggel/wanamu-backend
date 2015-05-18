@@ -210,18 +210,47 @@ gulp.task('prepare-mocha-tests', function(cb){
 // ==========================================================================
 gulp.task('build-development-database', function (cb) {
     process.env.NODE_ENV = 'development';
-    process.env.DEBUG='monk:*';
-    var scriptpath = path.join(srcServerPath, 'server', 'setup', 'development', 'database.js');
-    require(scriptpath)(cb);
+    var modelpath = path.join(distServerPath, 'server', 'model'),
+        sequelize = require(path.join(distServerPath, 'server', 'config', 'sequelize'));
+
+    requireFolder(modelpath);
+
+    process.env.NODE_ENV = 'development';
+    sequelize.query('SET FOREIGN_KEY_CHECKS = 0').then(function(){
+        sequelize.sync({'force': true})
+            .then(function(){
+                var devDbSetupScript = path.join(distServerPath, 'server', 'setup', 'development', 'database.js');
+                require(devDbSetupScript).then(function(){
+                    cb();
+                })
+                .catch(function(err) {
+                    throw err;
+                });
+            });
+    });
 });
 // ==========================================================================
 // Builds the test database
 // ==========================================================================
 gulp.task('build-test-database',['build-server'], function (cb) {
-    process.env.DEBUG='monk:*';
     process.env.NODE_ENV = 'test';
-    var scriptpath = path.join(srcServerPath, 'server', 'setup', 'test', 'database.js');
-    require(scriptpath)(cb);
+    var modelpath = path.join(distServerPath, 'server', 'model'),
+        sequelize = require(path.join(distServerPath, 'server', 'config', 'sequelize'));
+
+    requireFolder(modelpath);
+
+    process.env.NODE_ENV = 'test';
+    sequelize.query('SET FOREIGN_KEY_CHECKS = 0').then(function(){
+        sequelize.sync({'force': true}).then(function(){
+            var testDbSetupScript = path.join(distServerPath, 'server', 'setup', 'test', 'database.js');
+            require(testDbSetupScript).then(function(){
+                cb();
+            }).catch(function(err) {
+                console.error(err);
+                cb();
+            });
+        });
+    });
 });
 // ==========================================================================
 // Builds the production database

@@ -7,7 +7,23 @@
     "debug": false,
     "forceloginOnDev": false,
     "debug": true,
-    "mongo":  {
-        "url": "localhost:27017/todoit"
+    "mysql": {
+        "port": 3306,
+        "host": "localhost",
+        "user": "todoit",
+        "password": "todoit",
+        "database": "todoit"
+    },
+    "sequelize": {
+        "host": "localhost",
+        "dialect": "mysql",
+        "define": {
+            "collate": "utf8_general_ci"
+        },
+        "pool": {
+            "max": 5,
+            "min": 0,
+            "idle": 10000
+        }
     }
 }
