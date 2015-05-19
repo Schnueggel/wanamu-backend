@@ -15,7 +15,7 @@ module.exports = {
  * Gets a single todolist
  */
 function* createUser() {
-    var user = this.req.user,
+    var input = this.request.body || {},
         result = {
             error: null,
             success: false,
@@ -31,6 +31,22 @@ function* createUser() {
 function* updateUser(id) {
     var input = this.request.body || {},
         user = this.req.user,
+        result = {
+            count: 0,
+            error: null,
+            success: false,
+            data: []
+        };
+
+    this.body = result;
+}
+
+
+/**
+ * Gets a single todolist
+ */
+function* getUser(id) {
+    var user = this.req.user,
         result = {
             count: 0,
             error: null,

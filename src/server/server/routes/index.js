@@ -2,6 +2,7 @@ var co = require('co'),
     route = require('koa-route'),
     TodoController = require('../controller/todo'),
     TodoListController = require('../controller/todolist'),
+    UserController = require('../controller/user'),
     AuthController = require('../controller/auth');
 
 /**
@@ -52,6 +53,12 @@ module.exports = function(app){
     app.use(route.get('/todolist/:id', TodoListController.get));
     app.use(route.get('/todolist', TodoListController.list));
     app.use(route.delete('/todolist/:id', TodoListController.delete));
+    // ==========================================================================
+    // USER
+    // ==========================================================================
+    app.use(route.put('/user/:id', UserController.update));
+    app.use(route.post('/user', UserController.create));
+    app.use(route.get('/user/:id', UserController.get));
 };
 
 
