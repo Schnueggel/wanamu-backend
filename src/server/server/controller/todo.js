@@ -71,15 +71,15 @@ function* update(id){
         data = input.data || {},
         todo;
 
-    console.log(data);
+    this.body = result;
     // ==========================================================================
     // Try to find the given todo
     // ==========================================================================
     var todo = yield Todo.findById(id);
 
     if (todo === null) {
+        this.status = 404;
         result.error = new ErrorUtil.TodoNotFound();
-        this.body = result;
         return;
     }
 
@@ -104,7 +104,6 @@ function* update(id){
         if (!user.isAdmin() && (!user.id || todolist.UserId !== user.id)) {
             this.status = 403;
             result.error = new ErrorUtil.AccessViolation();
-            this.body = result;
             return;
         }
 
@@ -122,11 +121,70 @@ function* update(id){
             result.error = new Error('Unable to create todo');
         }
     }
+}
+
+/**
+ * Update Action
+ * @param id
+ */
+function* deleteTodo(id){
+    var input = this.request.body || {},
+        result = {
+            data: [],
+            success: false,
+            error: null
+        },
+        user = this.req.user,
+        todolist,
+        data = input.data || {},
+        todo;
 
     this.body = result;
+
+    // ==========================================================================
+    // Try to find the given todo
+    // ==========================================================================
+    var todo = yield Todo.findById(id);
+
+    if (todo === null) {
+        this.status = 404;
+        result.error = new ErrorUtil.TodoNotFound();
+        return;
+    }
+
+    try {
+        // ==========================================================================
+        // Try to find the TodoList of this Todo_ to get the user
+        // TODO We mainly need the userid here perhaps we should store it in the user model
+        // ==========================================================================
+        todolist = yield TodoList.findById(todo.TodoListId);
+
+        // ==========================================================================
+        // Check if user owns this todo
+        // ==========================================================================
+        if (!user.isAdmin() && (!user.id || todolist.UserId !== user.id)) {
+            this.status = 403;
+            result.error = new ErrorUtil.AccessViolation();
+            return;
+        }
+
+        yield todo.destroy();
+        result.success = true;
+        return;
+    } catch (err) {
+        console.error(err);
+        if (err instanceof Todo.sequelize.ValidationError) {
+            this.status = 422;
+            result.error = err;
+        } else {
+            this.status = 500;
+            result.error = new Error('Unable to create todo');
+        }
+    }
 }
 
 module.exports = {
+    delete: deleteTodo,
     update: update,
     create: create
 };

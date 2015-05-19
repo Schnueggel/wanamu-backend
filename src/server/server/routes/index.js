@@ -19,7 +19,9 @@ var co = require('co'),
 function* auth(next){
     if (!this.isAuthenticated()) {
         this.status = 403;
-        this.body = { success: false };
+        this.body = {
+            success: false
+        };
     } else {
         yield next;
     }
@@ -43,6 +45,7 @@ module.exports = function(app){
     // ==========================================================================
     app.use(route.post('/todo', TodoController.create));
     app.use(route.put('/todo/:id', TodoController.update));
+    app.use(route.delete('/todo/:id', TodoController.delete));
     // ==========================================================================
     // TODOLIST
     // ==========================================================================
