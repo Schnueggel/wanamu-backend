@@ -24,6 +24,10 @@ var User = sequelize.define('User', {
             }
         }
     },
+    group: {
+        type: sequelize.Sequelize.ENUM('admin', 'user'),
+        defaultValue: 'user'
+    },
     salutation: {
         type: sequelize.Sequelize.ENUM('mr', 'mrs'),
         allowNull: false
