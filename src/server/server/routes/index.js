@@ -51,6 +51,7 @@ module.exports = function(app){
     // ==========================================================================
     app.use(route.get('/todolist/:id', TodoListController.get));
     app.use(route.get('/todolist', TodoListController.list));
+    app.use(route.delete('/todolist/:id', TodoListController.delete));
 };
 
 

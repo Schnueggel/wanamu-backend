@@ -6,6 +6,15 @@ var TodoList = require('../model/todolist'),
     Todo = require('../model/todo'),
     ErrorUtil = require('../util/error');
 
+module.exports = {
+    delete: deleteTodo,
+    update: update,
+    create: create
+};
+
+/**
+ * Create Action
+ */
 function* create(){
     var input = this.request.body || {},
         result = {
@@ -124,7 +133,7 @@ function* update(id){
 }
 
 /**
- * Update Action
+ * Delete Action
  * @param id
  */
 function* deleteTodo(id){
@@ -182,9 +191,3 @@ function* deleteTodo(id){
         }
     }
 }
-
-module.exports = {
-    delete: deleteTodo,
-    update: update,
-    create: create
-};

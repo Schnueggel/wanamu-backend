@@ -15,7 +15,8 @@ module.exports = {
     ModelValidationFieldError : ModelValidationFieldError,
     TodoListNotFound : TodoListNotFound,
     TodoAlreadyExists : TodoAlreadyExists,
-    UserNotFound : UserNotFound
+    UserNotFound : UserNotFound,
+    TodoListDefaultNoDelete : TodoListDefaultNoDelete
 };
 
 
@@ -29,6 +30,20 @@ function TodoAlreadyExists (message) {
     this.name = 'TodoAlreadyExists';
     this.message = message ||  'Todo with the same title already exists';
 }
+
+TodoAlreadyExists.prototype = TodoItError.prototype;
+
+/**
+ *
+ * @param {String} [message]
+ * @constructor
+ */
+function TodoListDefaultNoDelete (message) {
+    this.name = 'TodoListDefaultNoDelete';
+    this.message = message ||  'Default TodoList cannot be deleted';
+}
+
+TodoListDefaultNoDelete.prototype = TodoItError.prototype;
 
 /**
  *

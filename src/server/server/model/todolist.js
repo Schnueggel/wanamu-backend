@@ -23,6 +23,10 @@ var TodoList = sequelize.define('TodoList', {
         type: sequelize.Sequelize.TEXT,
         allowNull: true
     },
+    type: {
+        type: sequelize.Sequelize.ENUM('default', 'custom'),
+        defaultValue: 'default'
+    },
     name: {
         type: sequelize.Sequelize.STRING(55),
         allowNull: false
@@ -38,6 +42,15 @@ var TodoList = sequelize.define('TodoList', {
          */
         getVisibleFields: function(){
             return [ 'id', 'description', 'name', 'createdAt', 'updatedAt', 'UserId']
+        }
+    },
+    instanceMethods: {
+        /**
+         * Check is this is the default list
+         * @returns {boolean}
+         */
+        isDefault : function() {
+            return this.type === 'default';
         }
     },
     indexes : [

@@ -5,8 +5,9 @@ var TodoList = require('../model/todolist'),
     co = require('co');
 
 module.exports = {
-    get: getTodolist,
-    list: listTodolist
+    get : getTodolist,
+    list : listTodolist,
+    delete : deleteTodoList
 };
 
 
@@ -90,4 +91,62 @@ function* listTodolist() {
     result.count = todolistresult.count;
 
     result.success = true;
+}
+
+
+/**
+ * Delete Action
+ * @param id
+ */
+function* deleteTodoList(id){
+    var result = {
+            data: [],
+            success: false,
+            error: null
+        },
+        user = this.req.user,
+        todolist;
+
+    this.body = result;
+
+    // ==========================================================================
+    // Try to find the given todo
+    // ==========================================================================
+    todolist = yield TodoList.findById(id);
+
+    if (todolist === null) {
+        this.status = 404;
+        result.error = new ErrorUtil.TodoListNotFound();
+        return;
+    }
+
+    if (todolist.isDefault()) {
+        this.status = 403;
+        result.error = new ErrorUtil.TodoListDefaultNoDelete();
+        return;
+    }
+
+    try {
+        // ==========================================================================
+        // Check if user owns this todo
+        // ==========================================================================
+        if (!user.isAdmin() && (!user.id || todolist.UserId !== user.id)) {
+            this.status = 403;
+            result.error = new ErrorUtil.AccessViolation();
+            return;
+        }
+
+        yield todolist.destroy();
+        result.success = true;
+        return;
+    } catch (err) {
+        console.error(err);
+        if (err instanceof Todo.sequelize.ValidationError) {
+            this.status = 422;
+            result.error = err;
+        } else {
+            this.status = 500;
+            result.error = new Error('Unable to create todo');
+        }
+    }
 }
