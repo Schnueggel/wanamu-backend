@@ -66,3 +66,13 @@ All data is stored in a Mongo Database.
 
 Are at:  <https://projects.invisionapp.com/d/main#/projects/3485192>
 
+
+## Status Codes
+
+This status code are use in the application
+
+401 If User is not Authenticated
+403 If User does not have the permission to do this action
+422 If data validation went wrong
+404 Entity not found
+500 On an unexpected error
