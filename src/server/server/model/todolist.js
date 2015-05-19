@@ -6,6 +6,14 @@ var sequelize = require('../config/sequelize'),
  * @type {*|{}|Model}
  */
 var TodoList = sequelize.define('TodoList', {
+    /**
+     * ######################################################################################
+     * ######################################################################################
+     * !!! When you add field. Think of fields that should be visible to the user and add them
+     * to the classMethods getVisibleFields
+     * ######################################################################################
+     * ######################################################################################
+     */
     id : {
         type: sequelize.Sequelize.INTEGER,
         primaryKey: true,
@@ -22,7 +30,25 @@ var TodoList = sequelize.define('TodoList', {
     // ==========================================================================
     // OPTIONS
     // ==========================================================================
-    paranoid: true
+    paranoid: true,
+    classMethods: {
+        /**
+         * Returns a list of fields that should be visible to users
+         * @returns {string[]}
+         */
+        getVisibleFields: function(){
+            return [ 'id', 'description', 'name', 'createdAt', 'updatedAt', 'UserId']
+        }
+    },
+    indexes : [
+        // ==========================================================================
+        // Make todolist name unique per user
+        // ==========================================================================
+        {
+            unique: true,
+            fields: ['name', 'UserId']
+        }
+    ]
 });
 
 TodoList.hasMany(Todo);

@@ -92,7 +92,13 @@ var User = sequelize.define('User', {
     }
 });
 
-User.hasMany(TodoList);
+User.hasMany(TodoList, {
+    // ==========================================================================
+    // We prevent UserId foreignKey in TodoList from beeing null
+    // ==========================================================================
+    onDelete: 'CASCADE',
+    foreignKey: {allowNull: false }
+});
 
 module.exports = User;
 

@@ -1,7 +1,8 @@
 var co = require('co'),
     route = require('koa-route'),
-    TodoController = require('../controller/todo.js'),
-    AuthController = require('../controller/auth.js');
+    TodoController = require('../controller/todo'),
+    TodoListController = require('../controller/todolist'),
+    AuthController = require('../controller/auth');
 
 /**
  * ######################################################################################
@@ -28,9 +29,20 @@ function* auth(next){
  */
 module.exports = function(app){
     app.use(route.post('/auth/login', AuthController.login));
+    // ==========================================================================
+    // Everything after here must be authenticated
+    // ==========================================================================
     app.use(auth);
+    // ==========================================================================
+    // TODOS
+    // ==========================================================================
     app.use(route.post('/todo', TodoController.create));
     app.use(route.put('/todo/:id', TodoController.update));
+    // ==========================================================================
+    // TODOLIST
+    // ==========================================================================
+    app.use(route.get('/todolist/:id', TodoListController.get));
+    app.use(route.get('/todolist', TodoListController.list));
 };
 
 

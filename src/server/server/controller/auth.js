@@ -24,7 +24,10 @@ function* login(next) {
             throw err;
         }
         if (user === false) {
-            ctx.status = 401
+            // ==========================================================================
+            // 401 for not Authenticated
+            // ==========================================================================
+            ctx.status = 401;
             ctx.body = { success: false };
         } else {
             yield ctx.login(user)

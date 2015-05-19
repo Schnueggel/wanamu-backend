@@ -40,7 +40,7 @@ function* create(){
         yield todolist.addTodo(todo);
         todo = yield todo.reload();
         result.success = true;
-        result.data = todo.get({plain: true});
+        result.data.push(todo.get({plain: true}));
     } catch (err) {
         console.error(err);
         if (err instanceof Todo.sequelize.ValidationError) {
@@ -111,7 +111,7 @@ function* update(id){
         yield todo.updateAttributes(data, options );
         todo = yield todo.reload();
         result.success = true;
-        result.data = todo.get({plain: true});
+        result.data.push(todo.get({plain: true}));
     } catch (err) {
         console.error(err);
         if (err instanceof Todo.sequelize.ValidationError) {
@@ -125,7 +125,6 @@ function* update(id){
 
     this.body = result;
 }
-
 
 module.exports = {
     update: update,
