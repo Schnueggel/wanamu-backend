@@ -11,6 +11,11 @@ var co = require('co'),
  * ######################################################################################
  * ######################################################################################
  */
+
+/**
+ * Every middleware after this one can only be accessed by an authenticated user
+ * @param {Function} next
+ */
 function* auth(next){
     if (!this.isAuthenticated()) {
         this.status = 403;
