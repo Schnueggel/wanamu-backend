@@ -7,6 +7,8 @@ TodoItError.prototype = new Error();
 
 module.exports = {
     TodoItError : TodoItError,
+    TodoNotFound: TodoNotFound,
+    AccessViolation: AccessViolation,
     UserPasswordNotCreated : UserPasswordNotCreated,
     UserAlreadyExists : UserAlreadyExists,
     ModelValidationError : ModelValidationError,
@@ -40,6 +42,29 @@ function TodoListNotFound (message) {
 
 TodoListNotFound.prototype = TodoItError.prototype;
 
+/**
+ *
+ * @param {String} [message]
+ * @constructor
+ */
+function TodoNotFound (message) {
+    this.name = 'TodoNotFound';
+    this.message = message ||  'No valid todo could be found.';
+}
+
+TodoNotFound.prototype = TodoItError.prototype;
+
+/**
+ *
+ * @param {String} [message]
+ * @constructor
+ */
+function AccessViolation (message) {
+    this.name = 'AccessViolation';
+    this.message = message ||  'Not enough permission';
+}
+
+AccessViolation.prototype = TodoItError.prototype;
 /**
  *
  * @param {String} [message]

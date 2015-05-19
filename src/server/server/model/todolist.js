@@ -25,8 +25,6 @@ var TodoList = sequelize.define('TodoList', {
     paranoid: true
 });
 
-TodoList.belongsToMany(Todo, {through: 'TodoListTodo', unique: true});
-Todo.belongsToMany(TodoList, {through: 'TodoListTodo', unique: true});
-
+TodoList.hasMany(Todo);
 
 module.exports = TodoList;

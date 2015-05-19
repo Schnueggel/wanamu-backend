@@ -85,7 +85,10 @@ var User = sequelize.define('User', {
     },
 
     instanceMethods: {
-        comparePassword: comparePassword
+        comparePassword: comparePassword,
+        isAdmin: function() {
+            return this.group === 'admin';
+        }
     }
 });
 

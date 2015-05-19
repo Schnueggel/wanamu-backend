@@ -10,7 +10,7 @@ var Todo = sequelize.define('Todo', {
         primaryKey: true,
         autoIncrement: true
     },
-    desciption: {
+    description: {
         type: sequelize.Sequelize.TEXT,
         allowNull: true
     },
@@ -29,9 +29,16 @@ var Todo = sequelize.define('Todo', {
     // ==========================================================================
     // OPTIONS
     // ==========================================================================
-    paranoid: true
+    paranoid: true,
+    classMethods: {
+        getUpdateableFields : function(){
+            return ['description', 'color', 'title', 'alarm'];
+        }
+    }
 });
 
+function beforeUpdate(user){
 
+}
 
 module.exports = Todo;
