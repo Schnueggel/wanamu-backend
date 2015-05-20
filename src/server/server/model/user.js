@@ -79,13 +79,19 @@ var User = sequelize.define('User', {
     // OPTIONS
     // ==========================================================================
     paranoid: true,
-
+    // ==========================================================================
+    // HOOKS
+    // ==========================================================================
     hooks: {
         beforeBulkCreate: co.wrap(beforeBulkCreate),
         beforeCreate: co.wrap(beforeCreate),
         beforeUpdate: co.wrap(beforeUpdate)
     },
+    // ==========================================================================
+    // Class Methods
+    // ==========================================================================
     classMethods : {
+        hashPassword: hashPassword,
         /**
          * Helper function to get a list of  the fields
          * @returns {String[]}
@@ -98,19 +104,46 @@ var User = sequelize.define('User', {
         },
         /**
          * Fields that can be written when creating this model
+         * @params {boolean} isAdmin
          * @returns {String[]}
          */
-        getCreateFields: function() {
-            return  _.without(this.getAttribKeys(), 'createdAt', 'updatedAt', 'deletedAt', 'banned');
+        getCreateFields: function(isAdmin) {
+            var without = ['id', 'createdAt', 'updatedAt', 'deletedAt', 'banned'];
+            if (!isAdmin) {
+                without = without.concat(['group']);
+            }
+            return  _.difference(this.getAttribKeys(), without);
+        },
+        /**
+         * Fields that can be written when updating this model
+         * @params {boolean} isAdmin
+         * @returns {String[]}
+         */
+        getUpdateFields: function(isAdmin) {
+            var without = ['id', 'createdAt', 'updatedAt'];
+
+            if (!isAdmin) {
+                without = without.concat(['banned', 'group', 'deletedAt']);
+            }
+            return  _.difference(this.getAttribKeys(), without);
         },
         /**
          * Returns a list of fields that should be visible to users
+         * @params {boolean} isAdmin
          * @returns {string[]}
          */
-        getVisibleFields: function(){
-            return [ 'id', 'birthday', 'website', 'lastname', 'firstname', 'title', 'createdAt', 'email', 'salutation'];
+        getVisibleFields: function(isAdmin){
+            var without = ['password'];
+
+            if (!isAdmin) {
+                without = without.concat(['banned', 'deletedAt', 'updatedAt']);
+            }
+            return _.difference(this.getAttribKeys(),  without);
         }
     },
+    // ==========================================================================
+    // INSTANCE METHODS
+    // ==========================================================================
     instanceMethods: {
         comparePassword: comparePassword,
         isAdmin: function() {
@@ -163,6 +196,12 @@ function* beforeCreate(user, options){
  * @param options
  */
 function* beforeUpdate(user, options){
+    // ==========================================================================
+    // Check if password should be updated. If so we encrypt it
+    // ==========================================================================
+    if (options.fields && options.fields.indexOf('password') === -1) {
+        return;
+    }
     yield hashPassword(user);
 }
 
