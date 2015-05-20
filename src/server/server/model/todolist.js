@@ -41,7 +41,7 @@ var TodoList = sequelize.define('TodoList', {
          * @returns {string[]}
          */
         getVisibleFields: function(){
-            return [ 'id', 'description', 'name', 'createdAt', 'updatedAt', 'UserId']
+            return [ 'id', 'description', 'name', 'createdAt', 'updatedAt', 'UserId'];
         }
     },
     instanceMethods: {

@@ -1,6 +1,7 @@
 var sequelize = require('../config/sequelize'),
     ErrorUtil = require('../util/error'),
     TodoList = require('./todolist'),
+    _ = require('lodash'),
     co = require('co'),
     bcrypt = require('../config/bcrypt');
 
@@ -70,9 +71,9 @@ var User = sequelize.define('User', {
         }
     },
     banned: {
-        type: sequelize.Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
+        type: sequelize.Sequelize.DATE,
+        allowNull: true,
+        defaultValue: null
     }}, {
     // ==========================================================================
     // OPTIONS
@@ -81,9 +82,35 @@ var User = sequelize.define('User', {
 
     hooks: {
         beforeBulkCreate: co.wrap(beforeBulkCreate),
-        beforeCreate: co.wrap(beforeCreate)
+        beforeCreate: co.wrap(beforeCreate),
+        beforeUpdate: co.wrap(beforeUpdate)
     },
-
+    classMethods : {
+        /**
+         * Helper function to get a list of  the fields
+         * @returns {String[]}
+         */
+        getAttribKeys: function() {
+            if (this.$attribkeys === undefined) {
+                this.$attribkeys = _.keys(this.attributes);
+            }
+            return this.$attribkeys;
+        },
+        /**
+         * Fields that can be written when creating this model
+         * @returns {String[]}
+         */
+        getCreateFields: function() {
+            return  _.without(this.getAttribKeys(), 'createdAt', 'updatedAt', 'deletedAt', 'banned');
+        },
+        /**
+         * Returns a list of fields that should be visible to users
+         * @returns {string[]}
+         */
+        getVisibleFields: function(){
+            return [ 'id', 'birthday', 'website', 'lastname', 'firstname', 'title', 'createdAt', 'email', 'salutation'];
+        }
+    },
     instanceMethods: {
         comparePassword: comparePassword,
         isAdmin: function() {
@@ -110,22 +137,40 @@ module.exports = User;
  * ######################################################################################
  */
 
+/**
+ * Before Bulk create
+ * @param users
+ * @param options
+ */
 function* beforeBulkCreate (users, options){
     for(var i = 0; i < users.length; i++) {
         yield* beforeCreate(users[i], options);
     }
 }
 /**
- * After Create Hook
+ * Before Create Hook
  * @param user
  * @param options
  * @param fn only exists if the signature of the hook has a third argument but co.wrap(afterCreate) creates function(){}
  *
  */
 function* beforeCreate(user, options){
-    // ==========================================================================
-    // Create Salt
-    // ==========================================================================
+    yield hashPassword(user);
+}
+/**
+ * Before Update Hook
+ * @param user
+ * @param options
+ */
+function* beforeUpdate(user, options){
+    yield hashPassword(user);
+}
+
+/**
+ * Hashs the user password
+ * @param user
+ */
+function* hashPassword(user) {
     try {
         user.password = yield bcrypt.hashAndSalt(user.password);
     } catch(err) {

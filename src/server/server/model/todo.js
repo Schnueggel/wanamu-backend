@@ -5,6 +5,13 @@ var sequelize = require('../config/sequelize');
  * @type {*|{}|Model}
  */
 var Todo = sequelize.define('Todo', {
+    /**
+     * ######################################################################################
+     * ######################################################################################
+     * !!! When you add or remove fields updated the class and instance methods
+     * ######################################################################################
+     * ######################################################################################
+     */
     id : {
         type: sequelize.Sequelize.INTEGER,
         primaryKey: true,
@@ -33,6 +40,9 @@ var Todo = sequelize.define('Todo', {
     classMethods: {
         getUpdateableFields : function(){
             return ['description', 'color', 'title', 'alarm'];
+        },
+        getVisibleFields : function() {
+            return ['id','description', 'color', 'title', 'alarm', 'createdAt'];
         }
     }
 });
