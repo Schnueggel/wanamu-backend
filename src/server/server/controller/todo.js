@@ -27,6 +27,7 @@ function* create(){
         data = input.data || {},
         todo;
 
+    this.body = result;
     var todolist = yield TodoList.findOne({where: { name: todolistname, UserId: user.id} });
 
     if (todolist === null) {
@@ -60,8 +61,6 @@ function* create(){
             result.error = new Error('Unable to create todo');
         }
     }
-
-    this.body = result;
 }
 
 /**
@@ -145,7 +144,6 @@ function* deleteTodo(id){
         },
         user = this.req.user,
         todolist,
-        data = input.data || {},
         todo;
 
     this.body = result;
