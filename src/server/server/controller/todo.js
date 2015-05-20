@@ -136,8 +136,7 @@ function* update(id){
  * @param id
  */
 function* deleteTodo(id){
-    var input = this.request.body || {},
-        result = {
+    var result = {
             data: [],
             success: false,
             error: null
