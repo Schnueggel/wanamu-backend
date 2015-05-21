@@ -13,7 +13,7 @@ var config = require('./server/config'),
     app = require('koa')();
 
 app.init = co.wrap(function *() {
-    if (config.isTest()) {
+    if (!config.isTest()) {
         app.use(logger());
     }
 
@@ -34,13 +34,13 @@ app.init = co.wrap(function *() {
 
     require('./server/routes')(app);
 
-
-    console.log('TodoIt backend listening on port ' + config.get('port'));
     // ==========================================================================
     // We store the http server object. Koa uses nodes http.Server
     // This is useful to close connection for tests
     // ==========================================================================
     app.server = app.listen(config.get('port'));
+
+    console.log('TodoIt backend listening on port ' + config.get('port'));
 });
 
 module.exports = app;

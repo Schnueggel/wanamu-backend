@@ -89,6 +89,40 @@ describe('Test User Controller', function () {
         });
     });
 
+    it('Should update user', function(done){
+        assert(_.isNumber(userid));
+
+        co(function *() {
+            var res = yield request
+                .put('/user/' + userid)
+                .type('json')
+                .send({
+                    data: {
+                        firstname: 'hotdog',
+                        lastname: 'kitcat',
+                        salutation: 'mr'
+                    }
+                })
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end();
+
+            assert(typeof res.body, 'object');
+            assert(res.body.success, true);
+            assert(_.isArray(res.body.data));
+            assert(res.body.data.length, 1);
+            assert(typeof res.body.data[0], 'object');
+            assert(typeof res.body.data[0].firstname, 'hotdog');
+            assert(typeof res.body.data[0].firstname, 'kitcat');
+
+        }).then(function(){
+            done();
+        }).catch(function(err){
+            done(err);
+        });
+    });
+
     it('Should Get User', function (done) {
         assert(_.isNumber(userid));
         co(function*(){
@@ -115,10 +149,3 @@ describe('Test User Controller', function () {
     });
 });
 
-/**
- * ######################################################################################
- * ######################################################################################
- * Helper functions
- * ######################################################################################
- * ######################################################################################
- */
