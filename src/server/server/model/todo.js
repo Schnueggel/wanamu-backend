@@ -1,4 +1,5 @@
-var sequelize = require('../config/sequelize');
+var sequelize = require('../config/sequelize'),
+    _ = require('lodash');
 
 /**
  * TodoModel
@@ -38,17 +39,37 @@ var Todo = sequelize.define('Todo', {
     // ==========================================================================
     paranoid: true,
     classMethods: {
-        getUpdateableFields : function(){
+        /**
+         * Helper function to get a list of  the fields
+         * @returns {String[]}
+         */
+        getAttribKeys: function() {
+            if (this.$attribkeys === undefined) {
+                this.$attribkeys = _.keys(this.attributes);
+            }
+            return this.$attribkeys;
+        },
+        /**
+         *
+         * @returns {string[]}
+         */
+        getUpdateFields : function(){
             return ['description', 'color', 'title', 'alarm'];
         },
-        getVisibleFields : function() {
-            return ['id','description', 'color', 'title', 'alarm', 'createdAt'];
+
+        /**
+         * @param isAdmin
+         * @returns {string[]}
+         */
+        getVisibleFields : function(isAdmin) {
+            var without = [];
+
+            if (!isAdmin) {
+                without = without.concat(['deletedAt']);
+            }
+            return  _.difference(this.getAttribKeys(),  without);
         }
     }
 });
-
-function beforeUpdate(user){
-
-}
 
 module.exports = Todo;

@@ -45,6 +45,7 @@
     "validator": "^3.39.0"
   },
   "devDependencies": {
+    "co-supertest": "0.0.10",
     "del": "^1.1.1",
     "gulp": "^3.8.11",
     "gulp-develop-server": "^0.4.2",
@@ -58,6 +59,7 @@
     "merge2": "^0.3.5",
     "raw-loader": "^0.5.1",
     "run-sequence": "^1.1.0",
-    "sinon": "^1.14.1"
+    "sinon": "^1.14.1",
+    "supertest": "^1.0.1"
   }
 }

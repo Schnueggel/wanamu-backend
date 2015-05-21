@@ -106,8 +106,7 @@ function* updateUser(id) {
         isAdmin = this.req.user.isAdmin(),
         visibleFields = User.getUpdateFields(isAdmin),
         user,
-        data = input.data || {},
-        todo;
+        data = input.data || {};
 
     this.body = result;
 
@@ -172,8 +171,7 @@ function* updateUser(id) {
  * Gets a single user by his id
  */
 function* getUser(id) {
-    var id = parseInt(id, 10),
-        user,
+    var user,
         data,
         result = {
             count: 0,
@@ -181,6 +179,7 @@ function* getUser(id) {
             success: false,
             data: []
         };
+    id = parseInt(id, 10);
 
     this.body = result;
 
@@ -206,9 +205,9 @@ function* getUser(id) {
         result.error = new ErrorUtil.UserNotFound();
         return;
     }
-
+    result.success = true;
     data = user.get({plain: true});
-    result.data = data;
+    result.data.push(data);
 }
 
 /**
@@ -237,11 +236,10 @@ function filterOptions(isAdmin, todolists, todos) {
     if (todolists) {
         var todolistoptions = {
             model: TodoList,
-            include: []
+            include: [],
+            attributes: TodoList.getVisibleFields(isAdmin)
         };
-        if (!isAdmin) {
-            todolistoptions.attributes = TodoList.getVisibleFields();
-        }
+
         options.include.push(todolistoptions);
 
         // ==========================================================================
@@ -250,11 +248,10 @@ function filterOptions(isAdmin, todolists, todos) {
         // ==========================================================================
         if (todos) {
             var todooptions = {
-                model: Todo
+                model: Todo,
+                attributes: Todo.getVisibleFields(isAdmin)
             };
-            if (!isAdmin) {
-                todooptions.attributes = Todo.getVisibleFields();
-            }
+
             todolistoptions.include.push(todooptions);
         }
     }
