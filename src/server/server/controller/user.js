@@ -13,11 +13,7 @@ module.exports = {
     // ==========================================================================
     create: createUser,
     update: updateUser,
-    get: getUser,
-    // ==========================================================================
-    // Helper functions
-    // ==========================================================================
-    filterOptions: filterOptions
+    get: getUser
 };
 
 /**
@@ -173,6 +169,7 @@ function* updateUser(id) {
 function* getUser(id) {
     var user,
         data,
+        isAdmin = this.req.user.isAdmin(),
         result = {
             count: 0,
             error: null,
@@ -183,20 +180,40 @@ function* getUser(id) {
 
     this.body = result;
 
-    if (!this.req.user.isAdmin() && this.req.user.id !== id) {
+    if (!isAdmin && this.req.user.id !== id) {
         this.status = 403;
         result.error = new ErrorUtil.AccessViolation();
         return;
     }
 
-    var options = filterOptions(this.req.user.isAdmin(), true, true);
-
-    options.attributes = User.getVisibleFields(this.req.user.isAdmin());
-
-    options.where = {
-        id : id,
-        banned : null
+    // ==========================================================================
+    // We include all todos and todolists on the user query
+    // ==========================================================================
+    var options = {
+        where : {
+            id : id
+        },
+        include: [
+            {
+                model: TodoList,
+                include: [
+                    {
+                        model: Todo,
+                        attributes: Todo.getVisibleFields(isAdmin)
+                    }
+                ],
+                attributes: TodoList.getVisibleFields(isAdmin)
+            }
+        ],
+        attributes : User.getVisibleFields(isAdmin)
     };
+
+    // ==========================================================================
+    // Non admins should not see banned users
+    // ==========================================================================
+    if (!isAdmin){
+        options.banned = null;
+    }
 
     user = yield User.findOne(options);
 
@@ -208,53 +225,4 @@ function* getUser(id) {
     result.success = true;
     data = user.get({plain: true});
     result.data.push(data);
-}
-
-/**
- * ######################################################################################
- * ######################################################################################
- * Helper functions
- * ######################################################################################
- * ######################################################################################
- */
-
-/**
- * Creates query options for the User model
- * @param {boolean} isAdmin set true if owner of the query is an admin
- * @param {boolean} todolists include todolist in the result
- * @param {boloean} todos include todods in the todolist. Only possible when todolists is true
- * @returns {options|{schema, schemaDelimiter}|{}|*}
- */
-function filterOptions(isAdmin, todolists, todos) {
-    var options = {
-        include:[]
-    };
-
-    // ==========================================================================
-    // TodoListModel query options
-    // ==========================================================================
-    if (todolists) {
-        var todolistoptions = {
-            model: TodoList,
-            include: [],
-            attributes: TodoList.getVisibleFields(isAdmin)
-        };
-
-        options.include.push(todolistoptions);
-
-        // ==========================================================================
-        // TodoModel query options
-        // Only possible if todolists is true
-        // ==========================================================================
-        if (todos) {
-            var todooptions = {
-                model: Todo,
-                attributes: Todo.getVisibleFields(isAdmin)
-            };
-
-            todolistoptions.include.push(todooptions);
-        }
-    }
-
-    return options;
 }
