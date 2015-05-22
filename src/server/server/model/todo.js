@@ -51,10 +51,22 @@ var Todo = sequelize.define('Todo', {
         },
         /**
          *
+         * @returns {*|string[]}
+         */
+        getCreateFields: function() {
+            return this.getUpdateFields();
+        },
+        /**
+         *
          * @returns {string[]}
          */
-        getUpdateFields : function(){
-            return ['description', 'color', 'title', 'alarm'];
+        getUpdateFields : function(isAdmin){
+            var without = [];
+
+            if (!isAdmin) {
+                without = without.concat(['deletedAt']);
+            }
+            return  _.difference(this.getAttribKeys(),  without);
         },
 
         /**
