@@ -52,6 +52,7 @@ var Todo = sequelize.define('Todo', {
         /**
          * @param {boolean} isAdmin
          * @returns {*|string[]}
+         * @name Todo.getCreateFields
          */
         getCreateFields: function(isAdmin) {
             return this.getUpdateFields(isAdmin);
@@ -59,6 +60,7 @@ var Todo = sequelize.define('Todo', {
         /**
          * @param {boolean} isAdmin
          * @returns {string[]}
+         * @name Todo.getUpdateFields
          */
         getUpdateFields : function(isAdmin){
             var without = [];
@@ -72,6 +74,7 @@ var Todo = sequelize.define('Todo', {
         /**
          * @param {boolean} isAdmin
          * @returns {string[]}
+         * @name Todo.getVisibleFields
          */
         getVisibleFields : function(isAdmin) {
             var without = [];
@@ -83,26 +86,5 @@ var Todo = sequelize.define('Todo', {
         }
     }
 });
-
-/**
- * Returns all visible fields
- * @param {boolean} isAdmin
- * @returns {string[]}
- * @name Todo.getVisibleFields
- */
-
-/**
- * Returns all fields that are allowed for update
- * @param {boolean} isAdmin
- * @returns {string[]}
- * @name Todo.getUpdateFields
- */
-
-/**
- * Returns all fields that are allowed for creation
- * @param {boolean} isAdmin
- * @returns {string[]}
- * @name Todo.getCreateFields
- */
 
 module.exports = Todo;

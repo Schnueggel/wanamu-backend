@@ -127,8 +127,10 @@ describe('Test Todolist Controller', function () {
             assert.equal(res.body.success, true);
             assert(_.isArray(res.body.data));
             assert.equal(res.body.data.length, 1);
-            assert(res.body.data[0].name, 'default');
-
+            assert.equal(res.body.data[0].name, 'default');
+            assert(_.isArray(res.body.data[0].Todos));
+            assert(res.body.data[0].Todos.length > 1);
+            assert(typeof res.body.data[0].Todos[0].title, 'string');
         }).then(function () {
             done();
         }).catch(function (err) {

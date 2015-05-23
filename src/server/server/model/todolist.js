@@ -73,12 +73,13 @@ var TodoList = sequelize.define('TodoList', {
          * @returns {string[]}
          */
         getVisibleFields : function(isAdmin) {
-            var without = [];
+            var without = [],
+                attribkeys = this.getAttribKeys();
 
             if (!isAdmin) {
                 without = without.concat(['deletedAt']);
             }
-            return  _.difference(this.getAttribKeys(),  without);
+            return  _.difference(attribkeys,  without);
         }
     },
     instanceMethods: {

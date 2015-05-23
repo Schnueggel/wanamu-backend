@@ -4,7 +4,6 @@ var TodoList = require('../model/todolist'),
     ErrorUtil = require('../util/error'),
     Todo = require('../model/todo');
 
-
 /**
  * TODO implement
  */
@@ -21,6 +20,7 @@ function* getTodolist(id) {
         todolist,
         isAdmin = user.isAdmin(),
         resultdata,
+        todolistVisibleFields = TodoList.getVisibleFields(isAdmin),
         result = {
             error: null,
             success: false,
@@ -30,8 +30,8 @@ function* getTodolist(id) {
     this.body = result;
 
     todolist = yield TodoList.findById(id, {
-        attributes: TodoList.getVisibleFields(isAdmin),
-        include: [{ all: true, nested: true }]
+        attributes: todolistVisibleFields,
+        include: [{ model: Todo, attributes: Todo.getVisibleFields(isAdmin)}]
     });
 
     if (!todolist) {
@@ -48,8 +48,11 @@ function* getTodolist(id) {
 
     // ==========================================================================
     // Filter the output data
+    // We have to add the virtual fields Todos to the list. Else Todos will not be
+    // included. Because its not a normal attribute of the TodoList model.
     // ==========================================================================
-    resultdata = _.pick(todolist.get({plain: true}), TodoList.getVisibleFields(isAdmin));
+    todolistVisibleFields.push('Todos')
+    resultdata = _.pick(todolist.get({plain: true}), todolistVisibleFields);
 
     result.success = true;
     result.data.push(resultdata);
