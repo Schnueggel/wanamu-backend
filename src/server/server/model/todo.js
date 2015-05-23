@@ -50,14 +50,14 @@ var Todo = sequelize.define('Todo', {
             return this.$attribkeys;
         },
         /**
-         *
+         * @param {boolean} isAdmin
          * @returns {*|string[]}
          */
-        getCreateFields: function() {
-            return this.getUpdateFields();
+        getCreateFields: function(isAdmin) {
+            return this.getUpdateFields(isAdmin);
         },
         /**
-         *
+         * @param {boolean} isAdmin
          * @returns {string[]}
          */
         getUpdateFields : function(isAdmin){
@@ -70,7 +70,7 @@ var Todo = sequelize.define('Todo', {
         },
 
         /**
-         * @param isAdmin
+         * @param {boolean} isAdmin
          * @returns {string[]}
          */
         getVisibleFields : function(isAdmin) {

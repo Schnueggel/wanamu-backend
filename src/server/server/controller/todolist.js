@@ -2,6 +2,7 @@
 
 var TodoList = require('../model/todolist'),
     ErrorUtil = require('../util/error'),
+    Todo = require('../model/todo'),
     co = require('co');
 
 module.exports = {
@@ -15,9 +16,10 @@ module.exports = {
  * Gets a single todolist
  */
 function* getTodolist(id) {
-    var id = id || 'default',
-        user = this.req.user,
+    var user = this.req.user,
         todolist,
+        isAdmin = user.isAdmin(),
+        resultdata,
         result = {
             error: null,
             success: false,
@@ -37,26 +39,39 @@ function* getTodolist(id) {
         return;
     }
 
-    if (!user.isAdmin() && todolist.UserId !== user.id) {
+    if (!isAdmin && todolist.UserId !== user.id) {
         this.status = 403;
         result.error = new ErrorUtil.AccessViolation();
         return;
     }
 
+    // ==========================================================================
+    // Filter the output data
+    // ==========================================================================
+    resultdata = _.pick(todolist.get({plain: true}), TodoList.getVisibleFields(isAdmin));
+
     result.success = true;
-    result.data.push(todolist.get({plain: true}));
+    result.data.push(resultdata);
 }
 
 /**
  * Gets a single todolist
+ *
+ * Can accept following input:
+ * {
+ *    userid: <int> //only by admins to select todolists from a user
+ *    includetodos: <boolean, false> //if the true query will include todos off the selected todolists. Default: false
+ * }
  */
 function* listTodolist() {
-    var id = id || 'default',
-        input = this.request.body || {},
+    var input = this.request.body || {},
         limit = input.limit || 100,
         offset = input.offset || 0,
         user = this.req.user,
         todolistresult,
+        isAdmin = user.isAdmin(),
+        include  = [],
+        id = user.id,
         result = {
             count: 0,
             error: null,
@@ -66,9 +81,19 @@ function* listTodolist() {
 
     this.body = result;
 
+    // ==========================================================================
+    // If is admin and userid is set we select those todolists
+    // ==========================================================================
+    if (isAdmin && input.userid) {
+        id = input.userid;
+    }
+
+    if (input.includetodos === true) {
+        include = [{model: Todo, attributes: Todo.getVisibleFields(isAdmin)}];
+    }
     todolistresult = yield TodoList.findAndCountAll({
         where: {
-            UserId: user.id
+            UserId: id
         },
         offset: offset,
         limit: limit

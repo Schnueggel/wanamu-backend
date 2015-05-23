@@ -37,6 +37,7 @@ function* createUser() {
         user,
         todolist,
         isAdmin = false,
+        resultdata,
         data = input.data || {};
 
     this.body = result;
@@ -71,12 +72,16 @@ function* createUser() {
 
         yield user.addTodoList(todolist);
 
-        user = yield user.reload({
-            attributes: User.getVisibleFields(isAdmin)
-        });
+        user = yield user.reload();
 
         result.success = true;
-        result.data.push(user.get({plain: true}));
+        // ==========================================================================
+        // Filter the resulting data
+        // Only visible fields will be sent to the user
+        // ==========================================================================
+        resultdata = _.pick(user.get({plain: true}), Todo.getVisibleFields(isAdmin));
+
+        result.data.push(resultdata);
     } catch (err) {
         console.error(err);
         if (err instanceof Todo.sequelize.ValidationError) {
@@ -100,8 +105,8 @@ function* updateUser(id) {
             error: null
         },
         isAdmin = this.req.user.isAdmin(),
-        visibleFields = User.getUpdateFields(isAdmin),
         user,
+        resultdata,
         data = input.data || {};
 
     this.body = result;
@@ -143,14 +148,16 @@ function* updateUser(id) {
     try {
         yield user.updateAttributes(data, options);
 
-        user = yield user.reload({
-            attributes: visibleFields
-        });
+        user = yield user.reload();
 
-        user.password = undefined;
+        // ==========================================================================
+        // Filter the resulting data
+        // Only visible fields will be sent to the user
+        // ==========================================================================
+        resultdata = _.pick(user.get({plain: true}), Todo.getVisibleFields(isAdmin));
 
         result.success = true;
-        result.data.push(user.get({plain: true}));
+        result.data.push(resultdata);
     } catch (err) {
         console.error(err);
         if (err instanceof Todo.sequelize.ValidationError) {

@@ -108,6 +108,7 @@ function* update(id){
         isAdmin = user.isAdmin(),
         todolist,
         options,
+        resultdata,
         data = input.data || {},
         todo;
 
@@ -128,8 +129,6 @@ function* update(id){
     // ==========================================================================
     data = _.pick(data, Todo.getUpdateFields(isAdmin));
 
-    options = {fields: Todo.getUpdateFields(isAdmin)};
-
     try {
         // ==========================================================================
         // Try to find the TodoList of this Todo_ to get the user
@@ -146,10 +145,25 @@ function* update(id){
             return;
         }
 
-        yield todo.updateAttributes(data, options );
+        // ==========================================================================
+        // Set the Query options
+        // ==========================================================================
+        options = {fields: Todo.getUpdateFields(isAdmin)};
+
+        yield todo.updateAttributes(data, options);
+        // ==========================================================================
+        // Reload the data to get the values of generated fields like updated aso.
+        // ==========================================================================
         todo = yield todo.reload();
+        // ==========================================================================
+        // Filter the resulting data
+        // Only visible fields will be sent to the user
+        // ==========================================================================
+        resultdata = _.pick(todo.get({plain: true}), Todo.getVisibleFields(isAdmin));
+
         result.success = true;
-        result.data.push(todo.get({plain: true}));
+
+        result.data.push(resultdata);
 
     } catch (err) {
         console.error(err);

@@ -37,11 +37,48 @@ var TodoList = sequelize.define('TodoList', {
     paranoid: true,
     classMethods: {
         /**
-         * Returns a list of fields that should be visible to users
+         * Helper function to get a list of  the fields
+         * @returns {String[]}
+         */
+        getAttribKeys: function() {
+            if (this.$attribkeys === undefined) {
+                this.$attribkeys = _.keys(this.attributes);
+            }
+            return this.$attribkeys;
+        },
+        /**
+         * @param {boolean} isAdmin
+         * @returns {*|string[]}
+         */
+        getCreateFields: function(isAdmin) {
+            return this.getUpdateFields(isAdmin);
+        },
+        /**
+         * @param {boolean} isAdmin
          * @returns {string[]}
          */
-        getVisibleFields: function(){
-            return [ 'id', 'description', 'name', 'createdAt', 'updatedAt', 'UserId'];
+        getUpdateFields : function(isAdmin){
+            var without = [],
+                attribskeys = this.getAttribKeys();
+            if (!isAdmin) {
+                without = without.concat(['deletedAt', 'UserId']);
+            } else {
+                attribskeys.push('UserId');
+            }
+            return  _.difference(attribskeys,  without);
+        },
+
+        /**
+         * @param {boolean} isAdmin
+         * @returns {string[]}
+         */
+        getVisibleFields : function(isAdmin) {
+            var without = [];
+
+            if (!isAdmin) {
+                without = without.concat(['deletedAt']);
+            }
+            return  _.difference(this.getAttribKeys(),  without);
         }
     },
     instanceMethods: {
