@@ -2,15 +2,16 @@
 
 var TodoList = require('../model/todolist'),
     ErrorUtil = require('../util/error'),
-    Todo = require('../model/todo'),
-    co = require('co');
+    Todo = require('../model/todo');
 
-module.exports = {
-    get : getTodolist,
-    list : listTodolist,
-    delete : deleteTodoList
-};
 
+/**
+ * TODO implement
+ */
+function* createTodolist() {
+    yield null;
+    throw new Error('Not Implemented yet');
+}
 
 /**
  * Gets a single todolist
@@ -29,7 +30,7 @@ function* getTodolist(id) {
     this.body = result;
 
     todolist = yield TodoList.findById(id, {
-        attributes: TodoList.getVisibleFields(),
+        attributes: TodoList.getVisibleFields(isAdmin),
         include: [{ all: true, nested: true }]
     });
 
@@ -58,10 +59,13 @@ function* getTodolist(id) {
  * Gets a single todolist
  *
  * Can accept following input:
+ *
+ * ```js
  * {
  *    userid: <int> //only by admins to select todolists from a user
  *    includetodos: <boolean, false> //if the true query will include todos off the selected todolists. Default: false
  * }
+ * ```
  */
 function* listTodolist() {
     var input = this.request.body || {},
@@ -96,19 +100,13 @@ function* listTodolist() {
             UserId: id
         },
         offset: offset,
-        limit: limit
-    }, {
-        raw: true,
-        attributes: TodoList.getVisibleFields(),
-        // ==========================================================================
-        // TODO hide not visible Todo fields
-        // ==========================================================================
-        include: [{all: true, nested: true}]
+        limit: limit,
+        include : include,
+        attributes: TodoList.getVisibleFields(isAdmin),
+        raw: true
     });
 
     if (!todolistresult) {
-        this.status = 404;
-        result.success = true;
         return;
     }
 
@@ -121,7 +119,16 @@ function* listTodolist() {
 
 /**
  * Delete Action
- * @param id
+ *
+ * Sends the folling errors:
+ *
+ * Error.TodoListNotFound, 404
+ * Error.TodoListDefaultNoDelete 403
+ * Error.AccessViolation 403
+ * Error.ValidationError 422
+ * Error 500
+ *
+ * @param {int} id
  */
 function* deleteTodoList(id){
     var result = {
@@ -130,6 +137,7 @@ function* deleteTodoList(id){
             error: null
         },
         user = this.req.user,
+        isAdmin = user.isAdmin(),
         todolist;
 
     this.body = result;
@@ -145,22 +153,23 @@ function* deleteTodoList(id){
         return;
     }
 
+
     if (todolist.isDefault()) {
         this.status = 403;
         result.error = new ErrorUtil.TodoListDefaultNoDelete();
         return;
     }
 
-    try {
-        // ==========================================================================
-        // Check if user owns this todo
-        // ==========================================================================
-        if (!user.isAdmin() && (!user.id || todolist.UserId !== user.id)) {
-            this.status = 403;
-            result.error = new ErrorUtil.AccessViolation();
-            return;
-        }
+    // ==========================================================================
+    // Check if user owns this todo
+    // ==========================================================================
+    if (!isAdmin && todolist.UserId !== user.id) {
+        this.status = 403;
+        result.error = new ErrorUtil.AccessViolation();
+        return;
+    }
 
+    try {
         yield todolist.destroy();
         result.success = true;
         return;
@@ -175,3 +184,11 @@ function* deleteTodoList(id){
         }
     }
 }
+
+
+module.exports = {
+    get : getTodolist,
+    list : listTodolist,
+    delete : deleteTodoList,
+    create : createTodolist
+};

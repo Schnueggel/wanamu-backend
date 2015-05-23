@@ -3,7 +3,7 @@ var sequelize = require('../config/sequelize'),
 
 /**
  * TodoList Model
- * @type {*|{}|Model}
+ * @type {Model}
  */
 var TodoList = sequelize.define('TodoList', {
     /**
@@ -102,5 +102,26 @@ var TodoList = sequelize.define('TodoList', {
 });
 
 TodoList.hasMany(Todo);
+
+/**
+ * Returns all visible fields
+ * @param {boolean} isAdmin
+ * @returns {string[]}
+ * @name TodoList.getVisibleFields
+ */
+
+/**
+ * Returns all fields that are allowed for update
+ * @param {boolean} isAdmin
+ * @returns {string[]}
+ * @name TodoList.getUpdateFields
+ */
+
+/**
+ * Returns all fields that are allowed for creation
+ * @param {boolean} isAdmin
+ * @returns {string[]}
+ * @name TodoList.getCreateFields
+ */
 
 module.exports = TodoList;

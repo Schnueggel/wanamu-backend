@@ -10,7 +10,6 @@ var request = require('co-supertest').agent('http://localhost:3000'),
 
 describe('Test Todolist Controller', function () {
 
-    var todoid;
     // ==========================================================================
     // Before test we start the server
     // ==========================================================================
@@ -59,22 +58,13 @@ describe('Test Todolist Controller', function () {
     });
 
     // ==========================================================================
-    // We create a todolist in the default todolost
+    // We  a todolist in the default todolost
     // ==========================================================================
-    it('Should create todolist', function(done){
+    it('Should list Todolists for the logged in User', function(done){
         co(function *() {
             var res = yield request
-                .post('/todolist')
+                .get('/todolist')
                 .type('json')
-                .send({
-                    todolistid: 1,
-                    data: {
-                        title: 'Feed dog',
-                        description: 'Give him some food',
-                        alarm: '2015-01-01 15:30',
-                        color: '#456789'
-                    }
-                })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
@@ -85,9 +75,8 @@ describe('Test Todolist Controller', function () {
             assert(_.isArray(res.body.data));
             assert(res.body.data.length, 1);
             assert(typeof res.body.data[0], 'object');
-            assert(res.body.data[0].title, 'Feed dog');
+            assert(res.body.data[0].name, 'default');
 
-            todoid = res.body.data[0].id;
         }).then(function(){
             done();
         }).catch(function(err){
@@ -95,12 +84,10 @@ describe('Test Todolist Controller', function () {
         });
     });
 
-    it('Should update todo', function(done){
-        assert(_.isNumber(todoid));
-
+    it('Should not delete default Todolist', function(done){
         co(function *() {
             var res = yield request
-                .put('/todo/' + todoid)
+                .delete('/todolist/1')
                 .type('json')
                 .send({
                     data: {
@@ -110,15 +97,15 @@ describe('Test Todolist Controller', function () {
                 })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200)
+                .expect(403)
                 .end();
 
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
+            assert.equal(typeof res.body, 'object');
+            assert.equal(res.body.success, false);
             assert(_.isArray(res.body.data));
-            assert(res.body.data.length, 1);
-            assert(typeof res.body.data[0], 'object');
-            assert(res.body.data[0].title, 'Feed the cat');
+            assert.equal(res.body.data.length, 0);
+            assert.equal(typeof res.body.error, 'object');
+            assert.equal(res.body.error.name, 'TodoListDefaultNoDelete');
         }).then(function(){
             done();
         }).catch(function(err){
@@ -126,21 +113,21 @@ describe('Test Todolist Controller', function () {
         });
     });
 
-    it('Should Delete Todo', function (done) {
-        assert(_.isNumber(todoid));
+    it('Should Get Todolist', function (done) {
         co(function*(){
             var res = yield request
-                .delete('/todo/' + todoid)
+                .get('/todolist/1')
                 .type('json')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end();
 
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
+            assert.equal(typeof res.body, 'object');
+            assert.equal(res.body.success, true);
             assert(_.isArray(res.body.data));
-            assert.equal(res.body.data.length, 0);
+            assert.equal(res.body.data.length, 1);
+            assert(res.body.data[0].name, 'default');
 
         }).then(function () {
             done();

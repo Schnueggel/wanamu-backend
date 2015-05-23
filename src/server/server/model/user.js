@@ -163,6 +163,28 @@ User.hasMany(TodoList, {
 module.exports = User;
 
 /**
+ * Returns all visible fields
+ * @param {boolean} isAdmin
+ * @returns {string[]}
+ * @name User.getVisibleFields
+ */
+
+/**
+ * Returns all fields that are allowed for update
+ * @param {boolean} isAdmin
+ * @returns {string[]}
+ * @name User.getUpdateFields
+ */
+
+/**
+ * Returns all fields that are allowed for creation
+ * @param {boolean} isAdmin
+ * @returns {string[]}
+ * @name User.getCreateFields
+ */
+
+
+/**
  * ######################################################################################
  * ######################################################################################
  * Helper Functions
