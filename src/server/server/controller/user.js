@@ -79,7 +79,7 @@ function* createUser() {
         // Filter the resulting data
         // Only visible fields will be sent to the user
         // ==========================================================================
-        resultdata = _.pick(user.get({plain: true}), Todo.getVisibleFields(isAdmin));
+        resultdata = user.getVisibleData();
 
         result.data.push(resultdata);
     } catch (err) {
@@ -154,7 +154,7 @@ function* updateUser(id) {
         // Filter the resulting data
         // Only visible fields will be sent to the user
         // ==========================================================================
-        resultdata = _.pick(user.get({plain: true}), Todo.getVisibleFields(isAdmin));
+        resultdata = user.getVisibleData();
 
         result.success = true;
         result.data.push(resultdata);
@@ -219,17 +219,18 @@ function* getUser(id) {
     // Non admins should not see banned users
     // ==========================================================================
     if (!isAdmin){
-        options.banned = null;
+        options.where.banned = null;
     }
 
     user = yield User.findOne(options);
 
-    if (!user || user.banned) {
+    if (!user) {
         this.status = 404;
         result.error = new ErrorUtil.UserNotFound();
         return;
     }
     result.success = true;
-    data = user.get({plain: true});
+
+    data = user.getVisibleData();
     result.data.push(data);
 }

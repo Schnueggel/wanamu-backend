@@ -7,7 +7,7 @@ var sequelize = require('../config/sequelize'),
 
 /**
  * User Model
- * @type {*|{}|Model}
+ * @type {Model}
  */
 var User = sequelize.define('User', {
     id : {
@@ -30,7 +30,7 @@ var User = sequelize.define('User', {
         defaultValue: 'user'
     },
     salutation: {
-        type: sequelize.Sequelize.ENUM('mr', 'mrs'),
+        type: sequelize.Sequelize.ENUM('mr', 'mrs', 'neutrum', 'human'),
         allowNull: false
     },
     title: {
@@ -106,6 +106,7 @@ var User = sequelize.define('User', {
          * Fields that can be written when creating this model
          * @params {boolean} isAdmin
          * @returns {String[]}
+         * @name User.getCreateFields
          */
         getCreateFields: function(isAdmin) {
             var without = ['id', 'createdAt', 'updatedAt', 'deletedAt', 'banned'];
@@ -118,6 +119,7 @@ var User = sequelize.define('User', {
          * Fields that can be written when updating this model
          * @params {boolean} isAdmin
          * @returns {String[]}
+         * @name User.getUpdateFields
          */
         getUpdateFields: function(isAdmin) {
             var without = ['id', 'createdAt', 'updatedAt'];
@@ -131,6 +133,7 @@ var User = sequelize.define('User', {
          * Returns a list of fields that should be visible to users
          * @params {boolean} isAdmin
          * @returns {string[]}
+         * @name User.getVisibleFields
          */
         getVisibleFields: function(isAdmin){
             var without = ['password'];
@@ -148,6 +151,13 @@ var User = sequelize.define('User', {
         comparePassword: comparePassword,
         isAdmin: function() {
             return this.group === 'admin';
+        },
+        /**
+         * Get the visible data depending on the usergroup
+         * @returns {Object}
+         */
+        getVisibleData: function(){
+           return _.pick(this.get({plain: true}), User.getVisibleFields(this.isAdmin()));
         }
     }
 });

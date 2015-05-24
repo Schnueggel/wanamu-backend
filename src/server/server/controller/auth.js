@@ -5,6 +5,7 @@
 var UsersCollection = require('../model/user.js'),
     Util = require('../util/util.js'),
     passport = require ('../config/passport.js'),
+    _ = require('lodash'),
     co = require('co');
 
 module.exports = {
@@ -31,7 +32,10 @@ function* login(next) {
             ctx.body = { success: false };
         } else {
             yield ctx.login(user)
-            ctx.body = { success: true };
+            ctx.body = {
+                success: true,
+                data: [user.getVisibleData()]
+            };
         }
     }).call(this, next);
 }
