@@ -2,7 +2,8 @@
  * Created by Christian on 5/21/2015.
  */
 
-var request = require('co-supertest').agent('http://localhost:3000'),
+var config = require('../../../dist/server/server/config'),
+    request = require('co-supertest').agent('http://localhost:' + config.get('port')),
     app = require('../../../dist/server/server.js'),
     assert = require('assert'), co = require('co'),
     _ = require('lodash');
