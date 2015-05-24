@@ -72,6 +72,10 @@ module.exports = function(app){
     // ==========================================================================
     app.use(route.put('/user/:id', UserController.update));
     app.use(route.get('/user/:id', UserController.get));
+    // ==========================================================================
+    // AUTH
+    // ==========================================================================
+    app.use(route.post('/auth/logout', AuthController.logout));
 };
 
 
