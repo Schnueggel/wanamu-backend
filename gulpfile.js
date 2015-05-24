@@ -1,5 +1,13 @@
 'use strict';
+/**
+ * The main flow of the build proccess is to move file from src folder to
+ * dist folder.
+ * The dist folder contains the finished app
+ */
 
+// ==========================================================================
+// Start node with harmony flag
+// ==========================================================================
 require('harmonize')();
 /**
  * ######################################################################################
