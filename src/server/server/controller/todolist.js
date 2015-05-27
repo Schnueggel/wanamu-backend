@@ -29,10 +29,22 @@ function* getTodolist(id) {
 
     this.body = result;
 
-    todolist = yield TodoList.findById(id, {
-        attributes: todolistVisibleFields,
-        include: [{ model: Todo, attributes: Todo.getVisibleFields(isAdmin)}]
-    });
+    if (id === 'default') {
+        todolist = yield TodoList.findOne({
+            where : {
+                UserId: user.id,
+                type: id
+            },
+            attributes: todolistVisibleFields,
+            include: [{ model: Todo, attributes: Todo.getVisibleFields(isAdmin)}]
+        });
+    } else {
+        todolist = yield TodoList.findById(id, {
+            attributes: todolistVisibleFields,
+            include: [{ model: Todo, attributes: Todo.getVisibleFields(isAdmin)}]
+        });
+    }
+
 
     if (!todolist) {
         this.status = 404;
