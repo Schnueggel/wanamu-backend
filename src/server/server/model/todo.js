@@ -26,6 +26,10 @@ var Todo = sequelize.define('Todo', {
         type: sequelize.Sequelize.STRING(255),
         allowNull: false
     },
+    order: {
+        type: sequelize.Sequelize.INTEGER,
+        defaultValue: 1
+    },
     color: {
         type: sequelize.Sequelize.STRING(10),
         allowNull: true
