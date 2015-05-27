@@ -6,6 +6,8 @@
 var passport = require('koa-passport'),
     LocalStrategy = require('passport-local').Strategy,
     bcrypt = require('../config/bcrypt.js'),
+    TodoList = require('../model/todolist'),
+    Todo = require('../model/todo'),
     User = require('../model/user.js'),
     config = require('../config'),
     co = require('co');
@@ -29,7 +31,24 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(id, done) {
 
     co(function*(){
-        var user = yield User.findById(id);
+        var user = yield User.findOne({
+            where: {
+                id: id
+            },
+            include: [
+                {
+                    model: TodoList,
+                    include: [
+                        {
+                            model: Todo,
+                            attributes: Todo.getVisibleFields(false)
+                        }
+                    ],
+                    attributes: TodoList.getVisibleFields(false)
+                }
+            ],
+            attributes : User.getVisibleFields(false)
+        });
 
         if (user === null || user.id !== id) {
             return done(null, false);
