@@ -157,7 +157,9 @@ var User = sequelize.define('User', {
          * @returns {Object}
          */
         getVisibleData: function(){
-           return _.pick(this.get({plain: true}), User.getVisibleFields(this.isAdmin()));
+            var fields = User.getVisibleFields(this.isAdmin());
+            fields.push('TodoLists');
+            return _.pick(this.get({plain: true}), fields);
         }
     }
 });

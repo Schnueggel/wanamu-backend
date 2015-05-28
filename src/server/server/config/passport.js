@@ -69,11 +69,32 @@ passport.deserializeUser(function(id, done) {
  */
 function* strategy(username, password, done){
 
-    var user;
+    var user,
+        userfields = User.getVisibleFields(false);
+
+    //We need the password field for auth
+    userfields.push('password');
 
     try{
-        user = yield User.findOne({where: {email: username}});
+        user = yield User.findOne({
+            where: {
+                email: username
+            },
+            include: [
+                {
+                    model: TodoList,
+                    include: [
+                        {
+                            model: Todo,
+                            attributes: Todo.getVisibleFields(false)
+                        }
+                    ],
+                    attributes: TodoList.getVisibleFields(false)
+                }
+            ]
+        });
     } catch(err) {
+        console.error(err);
         return done(null, false, {message: 'User not found'});
     }
 

@@ -29,7 +29,9 @@ function* login(next) {
             // 401 for not Authenticated
             // ==========================================================================
             ctx.status = 401;
-            ctx.body = { success: false };
+            ctx.body = {
+                success: false
+            };
         } else {
             yield ctx.login(user)
             ctx.body = {
