@@ -51,6 +51,7 @@ function* login(next) {
 function* logout(next) {
     this.logout();
     this.body = {
-        success: true
+        success: true,
+        data: []
     };
 }

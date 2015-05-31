@@ -63,7 +63,7 @@ function* getTodolist(id) {
     // We have to add the virtual fields Todos to the list. Else Todos will not be
     // included. Because its not a normal attribute of the TodoList model.
     // ==========================================================================
-    todolistVisibleFields.push('Todos')
+    todolistVisibleFields.push('Todos');
     resultdata = _.pick(todolist.get({plain: true}), todolistVisibleFields);
 
     result.success = true;

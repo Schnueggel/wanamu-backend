@@ -41,6 +41,20 @@ var User = sequelize.define('User', {
         type: sequelize.Sequelize.STRING(50),
         allowNull: false
     },
+    DefaultTodoList: {
+        type:  sequelize.Sequelize.INTEGER,
+        allowNull: true
+        /**
+         * TODO post creation of foreignkey creation is necessary because UserModel is created first
+        references: {
+            // This is a reference to another model
+            model: 'todolists',// Hack, Model seems not to work: TodoList,
+
+            // This is the column name of the referenced model
+            key: 'id'
+        }
+         */
+    },
     lastname: {
         type: sequelize.Sequelize.STRING(50),
         allowNull: false
@@ -160,9 +174,28 @@ var User = sequelize.define('User', {
             var fields = User.getVisibleFields(this.isAdmin());
             fields.push('TodoLists');
             return _.pick(this.get({plain: true}), fields);
+        },
+        /**
+         *
+         * @param {TodoList} todolist
+         * @param {Object} [options]
+         * @return {Promise}
+         */
+        setDefaultTodoList: function*(todolist, options) {
+            return yield this.update({
+                DefaultTodoList: todolist.id
+            }, options);
+        },
+        /**
+         * @param {Object} [options]
+         * @returns {Promise}
+         */
+        getDefaultTodoList: function*(options) {
+            return yield TodoList.findById(this.DefaultTodoList, options);
         }
     }
 });
+
 
 User.hasMany(TodoList, {
     // ==========================================================================

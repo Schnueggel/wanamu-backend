@@ -1,5 +1,6 @@
 {
     "debug": true,
+    "port": 3002,
     "mysql":  {
         "user": "todoit_test",
         "password": "todoit_test",

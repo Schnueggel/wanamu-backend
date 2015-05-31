@@ -35,15 +35,16 @@ function* createUsers() {
         password: 'abcdefghijk',
         salutation: 'mr'
     }, { isNewRecord: true });
-    console.log('done');
 }
 
 function* createTodoList() {
     var user = yield User.findOne({where:{email:'test@email.de'}});
 
-    yield user.createTodoList({
+    var todolist = yield user.createTodoList({
         name: 'default'
     });
+
+    yield user.setDefaultTodoList(todolist);
 }
 
 function* createTodos() {
