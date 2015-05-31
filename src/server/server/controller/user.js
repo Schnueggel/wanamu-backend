@@ -57,9 +57,11 @@ function* createUser() {
     // Filter not allowed fields
     // ==========================================================================
     data = _.pick(data, User.getCreateFields(isAdmin));
+    var transaction = yield User.sequelize.transaction({isolationLevel: 'READ COMMITTED' });
 
     try {
-        user = yield User.create(data);
+
+        user = yield User.create(data, {transaction: transaction});
 
         // ==========================================================================
         // Creating the default todolist.
@@ -68,9 +70,12 @@ function* createUser() {
         todolist = yield TodoList.create({
             UserId: user.id,
             name: 'default'
-        });
+        }, {transaction: transaction});
 
-        yield user.addTodoList(todolist);
+        //yield user.setDefaultTodoList(todolist, {transaction: transaction});
+
+        yield user.addTodoList(todolist, {transaction: transaction});
+        transaction.commit();
 
         user = yield user.reload();
 
@@ -82,8 +87,10 @@ function* createUser() {
         resultdata = user.getVisibleData();
 
         result.data.push(resultdata);
+
     } catch (err) {
-        console.error(err);
+        console.error(err.stack);
+        transaction.rollback();
         if (err instanceof Todo.sequelize.ValidationError) {
             this.status = 422;
             result.error = err;
