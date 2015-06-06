@@ -6,6 +6,7 @@
 var User = require('../../model/user.js'),
     TodoList = require('../../model/todolist.js'),
     Todo = require('../../model/todo'),
+    Setting = require('../../model/setting'),
     co = require('co');
 
 /**
@@ -26,7 +27,6 @@ function* setup(){
     console.log('data created');
 }
 
-
 function* createUsers() {
     var user = yield User.create({
         email: 'test@email.de',
@@ -35,7 +35,11 @@ function* createUsers() {
         password: 'abcdefghijk',
         salutation: 'mr'
     }, { isNewRecord: true });
-    console.log('done');
+
+    var settings = yield Setting.create({
+        UserId : user.id,
+        color1 : 'green'
+    }, { isNewRecord: true });
 }
 
 function* createTodoList() {
@@ -44,6 +48,8 @@ function* createTodoList() {
     yield user.createTodoList({
         name: 'default'
     });
+
+    yield user.setDefaultTodoList(todolist);
 }
 
 function* createTodos() {

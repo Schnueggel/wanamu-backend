@@ -6,6 +6,7 @@
 var User = require('../../model/user.js'),
     TodoList = require('../../model/todolist.js'),
     Todo = require('../../model/todo'),
+    Setting = require('../../model/setting'),
     co = require('co');
 
 /**
@@ -34,6 +35,11 @@ function* createUsers() {
         lastname: 'lastName',
         password: 'abcdefghijk',
         salutation: 'mr'
+    }, { isNewRecord: true });
+
+    var settings = yield Setting.create({
+        UserId : user.id,
+        color1 : 'green'
     }, { isNewRecord: true });
 }
 

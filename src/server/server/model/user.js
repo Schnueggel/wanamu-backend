@@ -1,6 +1,8 @@
 var sequelize = require('../config/sequelize'),
     ErrorUtil = require('../util/error'),
     TodoList = require('./todolist'),
+    Todo = require('./todo'),
+    Setting = require('./setting'),
     _ = require('lodash'),
     co = require('co'),
     bcrypt = require('../config/bcrypt');
@@ -156,6 +158,29 @@ var User = sequelize.define('User', {
                 without = without.concat(['banned', 'deletedAt', 'updatedAt']);
             }
             return _.difference(this.getAttribKeys(),  without);
+        },
+        /**
+         *
+         * @param {boolean} isAdmin
+         * @returns {*[]}
+         * @name User.getIncludeAllOption
+         */
+        getIncludeAllOption : function(isAdmin) {
+            return [
+                {
+                    model: Setting
+                },
+                {
+                    model: TodoList,
+                    include: [
+                        {
+                            model: Todo,
+                            attributes: Todo.getVisibleFields(isAdmin)
+                        }
+                    ],
+                    attributes: TodoList.getVisibleFields(isAdmin)
+                }
+            ]
         }
     },
     // ==========================================================================
@@ -173,6 +198,7 @@ var User = sequelize.define('User', {
         getVisibleData: function(){
             var fields = User.getVisibleFields(this.isAdmin());
             fields.push('TodoLists');
+            fields.push('Settings');
             return _.pick(this.get({plain: true}), fields);
         },
         /**
@@ -203,6 +229,10 @@ User.hasMany(TodoList, {
     // ==========================================================================
     onDelete: 'CASCADE',
     foreignKey: {allowNull: false }
+});
+
+User.hasOne(Setting, {
+    onDelete: 'CASCADE'
 });
 
 module.exports = User;

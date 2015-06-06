@@ -1,4 +1,14 @@
-# TODOIT Backend
+# Wanamu Backend
+
+##Setup
+
+###Development
+You must create a local mysql instance
+See the development and test.json in src/server/server/config/json for tablenames and username
+
+The following npm package should be installed global
+
+gulp
 
 ## Install
 In order to run this application you need to make an alias and run the node command with `--harmony_generators` flag or use 

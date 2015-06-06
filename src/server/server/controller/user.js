@@ -3,6 +3,7 @@
 var TodoList = require('../model/todolist'),
     User = require('../model/user'),
     Todo = require('../model/todo'),
+    Setting = require('../model/setting'),
     ErrorUtil = require('../util/error'),
     _ = require('lodash'),
     co = require('co');
@@ -57,6 +58,7 @@ function* createUser() {
     // Filter not allowed fields
     // ==========================================================================
     data = _.pick(data, User.getCreateFields(isAdmin));
+
     var transaction = yield User.sequelize.transaction({isolationLevel: 'READ COMMITTED' });
 
     try {
@@ -72,12 +74,21 @@ function* createUser() {
             name: 'default'
         }, {transaction: transaction});
 
-        //yield user.setDefaultTodoList(todolist, {transaction: transaction});
+        console.log(todolist.id);
+
+        yield user.setDefaultTodoList(todolist, {transaction: transaction});
+
+        yield Setting.create({
+            UserId : user.id
+        }, { isNewRecord: true, transaction: transaction });
 
         yield user.addTodoList(todolist, {transaction: transaction});
+
         transaction.commit();
 
-        user = yield user.reload();
+        user = yield user.reload({
+            include: User.getIncludeAllOption(false)
+        });
 
         result.success = true;
         // ==========================================================================
@@ -155,7 +166,9 @@ function* updateUser(id) {
     try {
         yield user.updateAttributes(data, options);
 
-        user = yield user.reload();
+        user = yield user.reload({
+            include: User.getIncludeAllOption(isAdmin)
+        });
 
         // ==========================================================================
         // Filter the resulting data
@@ -207,18 +220,7 @@ function* getUser(id) {
         where : {
             id : id
         },
-        include: [
-            {
-                model: TodoList,
-                include: [
-                    {
-                        model: Todo,
-                        attributes: Todo.getVisibleFields(isAdmin)
-                    }
-                ],
-                attributes: TodoList.getVisibleFields(isAdmin)
-            }
-        ],
+        include: User.getIncludeAllOption(isAdmin),
         attributes : User.getVisibleFields(isAdmin)
     };
 
