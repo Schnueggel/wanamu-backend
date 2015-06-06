@@ -198,7 +198,7 @@ var User = sequelize.define('User', {
         getVisibleData: function(){
             var fields = User.getVisibleFields(this.isAdmin());
             fields.push('TodoLists');
-            fields.push('Settings');
+            fields.push('Setting');
             return _.pick(this.get({plain: true}), fields);
         },
         /**

@@ -35,19 +35,7 @@ passport.deserializeUser(function(id, done) {
             where: {
                 id: id
             },
-            include: [
-                {
-                    model: TodoList,
-                    include: [
-                        {
-                            model: Todo,
-                            attributes: Todo.getVisibleFields(false)
-                        }
-                    ],
-                    attributes: TodoList.getVisibleFields(false)
-                }
-            ],
-            attributes : User.getVisibleFields(false)
+            include: User.getIncludeAllOption(false)
         });
 
         if (user === null || user.id !== id) {
@@ -80,18 +68,8 @@ function* strategy(username, password, done){
             where: {
                 email: username
             },
-            include: [
-                {
-                    model: TodoList,
-                    include: [
-                        {
-                            model: Todo,
-                            attributes: Todo.getVisibleFields(false)
-                        }
-                    ],
-                    attributes: TodoList.getVisibleFields(false)
-                }
-            ]
+            include: User.getIncludeAllOption(false),
+            attributes : userfields
         });
     } catch(err) {
         console.error(err);
