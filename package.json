@@ -1,5 +1,5 @@
 {
-  "name": "wanamu backend",
+  "name": "wanamu-backend",
   "version": "1.0.0",
   "description": "Another Todo App",
   "main": "index.js",
@@ -35,7 +35,7 @@
     "koa-logger": "^1.2.2",
     "koa-passport": "^1.1.6",
     "koa-route": "^2.4.1",
-    "koa-session": "^3.1.0",
+    "koa-session": "^3.1.1",
     "lodash": "^3.9.1",
     "mysql": "^2.6.2",
     "nconf": "^0.7.1",
