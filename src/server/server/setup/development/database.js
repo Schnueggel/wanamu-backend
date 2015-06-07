@@ -38,8 +38,7 @@ function* createUsers() {
     }, { isNewRecord: true });
 
     var settings = yield Setting.create({
-        UserId : user.id,
-        color1 : 'green'
+        UserId : user.id
     }, { isNewRecord: true });
 }
 

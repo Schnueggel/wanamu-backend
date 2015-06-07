@@ -3,11 +3,7 @@
  */
 'use strict';
 
-var User = require('../../model/user.js'),
-    TodoList = require('../../model/todolist.js'),
-    Todo = require('../../model/todo'),
-    Setting = require('../../model/setting'),
-    co = require('co');
+module.exports =  require('../development/database');
 
 /**
  * Starts the database setup
@@ -37,8 +33,7 @@ function* createUsers() {
     }, { isNewRecord: true });
 
     var settings = yield Setting.create({
-        UserId : user.id,
-        color1 : 'green'
+        UserId : user.id
     }, { isNewRecord: true });
 }
 
@@ -70,4 +65,4 @@ function* createTodos() {
     yield todolist.addTodos([todo1, todo2]);
 }
 
-module.exports = start();
+//module.exports = start();

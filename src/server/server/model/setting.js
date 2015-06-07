@@ -24,22 +24,27 @@ var Setting = sequelize.define('Setting', {
     },
     color1: {
         type: sequelize.Sequelize.STRING(10),
+        defaultValue : 'yellow',
         allowNull: true
     },
     color2: {
         type: sequelize.Sequelize.STRING(10),
+        defaultValue : 'green',
         allowNull: true
     },
     color3: {
         type: sequelize.Sequelize.STRING(10),
+        defaultValue : 'blue',
         allowNull: true
     },
     color4: {
         type: sequelize.Sequelize.STRING(10),
+        defaultValue : 'black',
         allowNull: true
     },
     color5: {
         type: sequelize.Sequelize.STRING(10),
+        defaultValue : 'gray',
         allowNull: true
     }}, {
     // ==========================================================================
