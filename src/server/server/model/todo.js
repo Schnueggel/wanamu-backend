@@ -31,7 +31,8 @@ var Todo = sequelize.define('Todo', {
         defaultValue: 1
     },
     color: {
-        type: sequelize.Sequelize.STRING(10),
+        type: sequelize.Sequelize.ENUM('color1', 'color2', 'color3', 'color4', 'color5'),
+        defaultValue : 'color1',
         allowNull: true
     },
     alarm: {
