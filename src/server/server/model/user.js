@@ -43,7 +43,7 @@ var User = sequelize.define('User', {
         type: sequelize.Sequelize.STRING(50),
         allowNull: false
     },
-    DefaultTodoList: {
+    DefaultTodoListId: {
         type:  sequelize.Sequelize.INTEGER,
         allowNull: true
         /**
@@ -209,7 +209,7 @@ var User = sequelize.define('User', {
          */
         setDefaultTodoList: function*(todolist, options) {
             return yield this.update({
-                DefaultTodoList: todolist.id
+                DefaultTodoListId: todolist.id
             }, options);
         },
         /**
@@ -217,7 +217,7 @@ var User = sequelize.define('User', {
          * @returns {Promise}
          */
         getDefaultTodoList: function*(options) {
-            return yield TodoList.findById(this.DefaultTodoList, options);
+            return yield TodoList.findById(this.DefaultTodoListId, options);
         }
     }
 });
