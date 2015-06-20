@@ -24,17 +24,17 @@ var Setting = sequelize.define('Setting', {
     },
     color1: {
         type: sequelize.Sequelize.STRING(30),
-        defaultValue : 'rgba(255, 223, 2, 0.61)', // yellow
+        defaultValue : 'rgba(255, 223, 2, 0.8)', // yellow
         allowNull: true
     },
     color2: {
         type: sequelize.Sequelize.STRING(30),
-        defaultValue : 'rgba(0, 128, 0, 0.68)', // green
+        defaultValue : 'rgba(0, 128, 0, 0.8)', // green
         allowNull: true
     },
     color3: {
         type: sequelize.Sequelize.STRING(30),
-        defaultValue : 'rgba(0, 90, 255, 0.59)', // blue
+        defaultValue : 'rgba(0, 90, 255, 0.8)', // blue
         allowNull: true
     },
     color4: {
@@ -44,7 +44,7 @@ var Setting = sequelize.define('Setting', {
     },
     color5: {
         type: sequelize.Sequelize.STRING(30),
-        defaultValue : 'rgba(255, 0, 0, 0.63)', // red
+        defaultValue : 'rgba(255, 0, 0, 0.8)', // red
         allowNull: true
     }}, {
     // ==========================================================================
