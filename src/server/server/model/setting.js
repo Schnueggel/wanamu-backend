@@ -23,28 +23,28 @@ var Setting = sequelize.define('Setting', {
         allowNull: true
     },
     color1: {
-        type: sequelize.Sequelize.STRING(10),
-        defaultValue : 'yellow',
+        type: sequelize.Sequelize.STRING(30),
+        defaultValue : 'rgba(255, 223, 2, 0.61)', // yellow
         allowNull: true
     },
     color2: {
-        type: sequelize.Sequelize.STRING(10),
-        defaultValue : 'green',
+        type: sequelize.Sequelize.STRING(30),
+        defaultValue : 'rgba(0, 128, 0, 0.68)', // green
         allowNull: true
     },
     color3: {
-        type: sequelize.Sequelize.STRING(10),
-        defaultValue : 'blue',
+        type: sequelize.Sequelize.STRING(30),
+        defaultValue : 'rgba(0, 90, 255, 0.59)', // blue
         allowNull: true
     },
     color4: {
-        type: sequelize.Sequelize.STRING(10),
-        defaultValue : 'black',
+        type: sequelize.Sequelize.STRING(30),
+        defaultValue : 'rgba(0, 0, 0, 0.8)', // black
         allowNull: true
     },
     color5: {
-        type: sequelize.Sequelize.STRING(10),
-        defaultValue : 'gray',
+        type: sequelize.Sequelize.STRING(30),
+        defaultValue : 'rgba(255, 0, 0, 0.63)', // red
         allowNull: true
     }}, {
     // ==========================================================================

@@ -66,7 +66,6 @@ function* createTodos() {
     yield todo1.save();
     yield todo2.save();
 
-
     yield todolist.addTodos([todo1, todo2]);
 }
 
