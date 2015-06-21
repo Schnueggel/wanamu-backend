@@ -71,7 +71,7 @@ var Todo = sequelize.define('Todo', {
             var without = [];
 
             if (!isAdmin) {
-                without = without.concat(['deletedAt']);
+                without = without.concat([]);
             }
             return  _.difference(this.getAttribKeys(),  without);
         },
@@ -85,7 +85,7 @@ var Todo = sequelize.define('Todo', {
             var without = [];
 
             if (!isAdmin) {
-                without = without.concat(['deletedAt']);
+                without = without.concat([]);
             }
             return  _.difference(this.getAttribKeys(),  without);
         }
