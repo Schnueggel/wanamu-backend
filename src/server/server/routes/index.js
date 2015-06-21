@@ -21,7 +21,8 @@ function* auth(next){
     if (!this.isAuthenticated()) {
         this.status = 403;
         this.body = {
-            success: false
+            success: false,
+            error : 'Not logged in'
         };
     } else {
         yield next;
