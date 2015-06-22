@@ -68,10 +68,10 @@ var Todo = sequelize.define('Todo', {
          * @name Todo.getUpdateFields
          */
         getUpdateFields : function(isAdmin){
-            var without = [];
+            var without = ['id'];
 
             if (!isAdmin) {
-                without = without.concat([]);
+                without = without.concat(['createdAt', 'updatedAt']);
             }
             return  _.difference(this.getAttribKeys(),  without);
         },
