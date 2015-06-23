@@ -101,7 +101,8 @@ var User = sequelize.define('User', {
     hooks: {
         beforeBulkCreate: co.wrap(beforeBulkCreate),
         beforeCreate: co.wrap(beforeCreate),
-        beforeUpdate: co.wrap(beforeUpdate)
+        beforeUpdate: co.wrap(beforeUpdate),
+        afterFind: co.wrap(afterFind)
     },
     // ==========================================================================
     // Class Methods
@@ -212,6 +213,24 @@ var User = sequelize.define('User', {
                 DefaultTodoListId: todolist.id
             }, options);
         },
+        filterOut : function(user) {
+            if (!_.isArray(user.TodoLists)) {
+                return user;
+            }
+            _.forEach(user.TodoLists, function(todolist) {
+                if (_.isFunction(todolist.filterOut)) {
+                    todolist.filterOut(todolist);
+                }
+                if (_.isArray(todolist.Todos)) {
+                   _.forEach(todolist.Todos, function(todo) {
+                       if (_.isFunction(todo.filterOut)) {
+                           todo.filterOut(todo);
+                       }
+                   });
+                }
+            });
+            return user;
+        },
         /**
          * @param {Object} [options]
          * @returns {Promise}
@@ -302,6 +321,10 @@ function* beforeUpdate(user, options){
     yield hashPassword(user);
 }
 
+function* afterFind(user) {
+    user.filterOut(user);
+    return;
+}
 /**
  * Hashs the user password
  * @param user

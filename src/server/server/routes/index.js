@@ -76,7 +76,7 @@ module.exports = function(app){
     // ==========================================================================
     // AUTH
     // ==========================================================================
-    app.use(route.post('/auth/logout', AuthController.logout));
+    app.use(route.post('/auth/logout', AuthController.dologout));
 };
 
 

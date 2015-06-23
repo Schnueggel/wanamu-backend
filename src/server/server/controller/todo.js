@@ -5,7 +5,7 @@
 var TodoList = require('../model/todolist'),
     Todo = require('../model/todo'),
     ErrorUtil = require('../util/error')
-    _ = require('lodash');
+_ = require('lodash');
 
 
 module.exports = {
@@ -17,7 +17,7 @@ module.exports = {
 /**
  * Create Action
  */
-function* create(){
+function* create() {
     var input = this.request.body || {},
         result = {
             data: [],
@@ -30,7 +30,7 @@ function* create(){
         options = {},
         data = input.data || {},
         resultdata,
-        queryOptions = {where: { id: todolistid, UserId: user.id} },
+        queryOptions = {where: {id: todolistid, UserId: user.id}},
         todo;
 
     // ==========================================================================
@@ -41,7 +41,7 @@ function* create(){
 
     this.body = result;
 
-    if ( !_.isNumber(todolistid)) {
+    if (!_.isNumber(todolistid)) {
         this.status = 422;
         console.error('Todolist id is not a number: ' + todolistid);
         result.error = new ErrorUtil.TodoListNotFound();
@@ -97,7 +97,7 @@ function* create(){
  * Update Action
  * @param id
  */
-function* update(id){
+function* update(id) {
     var input = this.request.body || {},
         result = {
             data: [],
@@ -181,7 +181,7 @@ function* update(id){
  * Delete Action
  * @param id
  */
-function* deleteTodo(id){
+function* deleteTodo(id) {
     var result = {
             data: [],
             success: false,

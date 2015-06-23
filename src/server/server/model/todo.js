@@ -1,5 +1,6 @@
 var sequelize = require('../config/sequelize'),
-    _ = require('lodash');
+    _ = require('lodash'),
+    co = require('co');
 
 /**
  * TodoModel
@@ -13,7 +14,7 @@ var Todo = sequelize.define('Todo', {
      * ######################################################################################
      * ######################################################################################
      */
-    id : {
+    id: {
         type: sequelize.Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
@@ -30,25 +31,49 @@ var Todo = sequelize.define('Todo', {
         type: sequelize.Sequelize.INTEGER,
         defaultValue: 1
     },
+    repeat: {
+        type: sequelize.Sequelize.BOOLEAN,
+        allowNull: true
+    },
+    repeatWeekly: {
+        type: sequelize.Sequelize.STRING,
+        allowNull: true
+    },
+    repeatMonthly: {
+        type: sequelize.Sequelize.STRING,
+        allowNull: true
+    },
+    repeatYearly: {
+        type: sequelize.Sequelize.STRING,
+        allowNull: true
+    },
     color: {
         type: sequelize.Sequelize.ENUM('color1', 'color2', 'color3', 'color4', 'color5'),
-        defaultValue : 'color1',
+        defaultValue: 'color1',
         allowNull: true
     },
     alarm: {
         type: sequelize.Sequelize.DATE,
         allowNull: true
-    }}, {
+    }
+}, {
     // ==========================================================================
     // OPTIONS
     // ==========================================================================
     paranoid: true,
+    // ==========================================================================
+    // HOOKS
+    // ==========================================================================
+    hooks: {
+        afterFind: co.wrap(afterFind),
+        beforeValidate: co.wrap(beforeValidate)
+    },
     classMethods: {
         /**
          * Helper function to get a list of  the fields
          * @returns {String[]}
          */
-        getAttribKeys: function() {
+        getAttribKeys: function () {
             if (this.$attribkeys === undefined) {
                 this.$attribkeys = _.keys(this.attributes);
             }
@@ -59,7 +84,7 @@ var Todo = sequelize.define('Todo', {
          * @returns {*|string[]}
          * @name Todo.getCreateFields
          */
-        getCreateFields: function(isAdmin) {
+        getCreateFields: function (isAdmin) {
             return this.getUpdateFields(isAdmin);
         },
         /**
@@ -67,13 +92,13 @@ var Todo = sequelize.define('Todo', {
          * @returns {string[]}
          * @name Todo.getUpdateFields
          */
-        getUpdateFields : function(isAdmin){
+        getUpdateFields: function (isAdmin) {
             var without = ['id'];
 
             if (!isAdmin) {
                 without = without.concat(['createdAt', 'updatedAt']);
             }
-            return  _.difference(this.getAttribKeys(),  without);
+            return _.difference(this.getAttribKeys(), without);
         },
 
         /**
@@ -81,15 +106,48 @@ var Todo = sequelize.define('Todo', {
          * @returns {string[]}
          * @name Todo.getVisibleFields
          */
-        getVisibleFields : function(isAdmin) {
+        getVisibleFields: function (isAdmin) {
             var without = [];
 
             if (!isAdmin) {
                 without = without.concat([]);
             }
-            return  _.difference(this.getAttribKeys(),  without);
+            return _.difference(this.getAttribKeys(), without);
+        }
+    },
+    instanceMethods: {
+        filterOut: function (todo) {
+            _.forEach(['repeatWeekly', 'repeatMonthly', 'repeatYearly'], function (v) {
+                if (_.isString(todo[v]) && todo[v].length > 0) {
+                    todo[v] = todo[v].split(',');
+                } else {
+                    todo[v] = [];
+                }
+            });
+            return todo;
+        },
+        filterIn: function (todo) {
+            if (_.isArray(todo.repeatWeekly)) {
+                todo.repeatWeekly = todo.repeatWeekly.join(',');
+            }
+            if (_.isArray(todo.repeatMonthly)) {
+                todo.repeatMonthly = todo.repeatMonthly.join(',');
+            }
+            if (_.isArray(todo.repeatYearly)) {
+                todo.repeatYearly = todo.repeatYearly.join(',');
+            }
+            return todo;
         }
     }
 });
+function* beforeValidate(todo) {
+    todo.filterIn(todo);
+    return;
+}
+function* afterFind(todo) {
+    todo.filterOut(todo);
+    return;
+}
+
 
 module.exports = Todo;

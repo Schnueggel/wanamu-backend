@@ -10,7 +10,7 @@ var UsersCollection = require('../model/user.js'),
 
 module.exports = {
     login: login,
-    logout: logout
+    dologout: dologout
 };
 
 /**
@@ -48,7 +48,7 @@ function* login(next) {
  * @param req
  * @param res
  */
-function* logout(next) {
+function* dologout(next) {
     this.logout();
     this.body = {
         success: true,
