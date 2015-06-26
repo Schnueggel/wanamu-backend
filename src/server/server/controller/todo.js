@@ -188,6 +188,7 @@ function* deleteTodo(id) {
             error: null
         },
         user = this.req.user,
+        isAdmin = user.isAdmin(),
         todolist,
         todo;
 
@@ -221,7 +222,18 @@ function* deleteTodo(id) {
         }
 
         yield todo.destroy();
+
+        todo = yield todo.reload({
+            paranoid: false
+        });
+        // ==========================================================================
+        // Filter the resulting data
+        // Only visible fields will be sent to the user
+        // ==========================================================================
+        resultdata = _.pick(todo.get({plain: true}), Todo.getVisibleFields(isAdmin));
+
         result.success = true;
+        result.data = resultdata;
 
     } catch (err) {
         console.error(err);
