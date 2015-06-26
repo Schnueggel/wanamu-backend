@@ -66,7 +66,8 @@ var Todo = sequelize.define('Todo', {
     // ==========================================================================
     hooks: {
         afterFind: co.wrap(afterFind),
-        beforeValidate: co.wrap(beforeValidate)
+        beforeValidate: co.wrap(beforeValidate),
+        beforeDestroy: co.wrap(beforeDestroy)
     },
     classMethods: {
         /**
@@ -140,12 +141,21 @@ var Todo = sequelize.define('Todo', {
         }
     }
 });
+
+function* beforeDestroy(todo) {
+    todo.filterIn(todo);
+    return;
+}
+
 function* beforeValidate(todo) {
     todo.filterIn(todo);
     return;
 }
 function* afterFind(todo) {
-    todo.filterOut(todo);
+    if (todo) {
+        todo.filterOut(todo);
+    }
+
     return;
 }
 

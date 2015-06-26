@@ -233,7 +233,7 @@ function* deleteTodo(id) {
         resultdata = _.pick(todo.get({plain: true}), Todo.getVisibleFields(isAdmin));
 
         result.success = true;
-        result.data = resultdata;
+        result.data.push(resultdata);
 
     } catch (err) {
         console.error(err);
