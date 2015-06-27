@@ -192,6 +192,7 @@ function* updateUser(id) {
 
 /**
  * Gets a single user by his id
+ * If id === 'current' it returns the current authed user
  */
 function* getUser(id) {
     var user,
@@ -203,7 +204,11 @@ function* getUser(id) {
             success: false,
             data: []
         };
-    id = parseInt(id, 10);
+    if (id === 'current') {
+        id = this.req.user.id;
+    } else {
+        id = parseInt(id, 10);
+    }
 
     this.body = result;
 
