@@ -143,12 +143,16 @@ var Todo = sequelize.define('Todo', {
 });
 
 function* beforeDestroy(todo) {
-    todo.filterIn(todo);
+    if (todo) {
+        todo.filterIn(todo);
+    }
     return;
 }
 
 function* beforeValidate(todo) {
-    todo.filterIn(todo);
+    if (todo) {
+        todo.filterIn(todo);
+    }
     return;
 }
 function* afterFind(todo) {

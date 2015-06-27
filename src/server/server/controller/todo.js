@@ -26,11 +26,11 @@ function* create() {
         },
         user = this.req.user,
         isAdmin = user.isAdmin(),
-        todolistid = input.todolistid,
         options = {},
         data = input.data || {},
+        todolistid = data.TodoListId || '',
         resultdata,
-        queryOptions = {where: {id: todolistid, UserId: user.id}},
+        queryOptions = {where: {id: todolistid}},
         todo;
 
     // ==========================================================================
@@ -52,7 +52,7 @@ function* create() {
     // Admin can create todos on every todolist
     // ==========================================================================
     if (!isAdmin) {
-        delete queryOptions.where.UserId;
+        queryOptions.where.UserId = user.id;
     }
 
     // ==========================================================================
@@ -71,10 +71,9 @@ function* create() {
 
         todo = yield Todo.create(data, options);
 
-        yield todolist.addTodo(todo);
-
         todo = yield todo.reload();
         result.success = true;
+
         // ==========================================================================
         // Filter the resulting data
         // Only visible fields will be sent to the user
