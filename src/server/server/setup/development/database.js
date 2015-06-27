@@ -58,10 +58,14 @@ function* createTodos() {
     var todolist = yield TodoList.findOne({where: {name: 'default', UserId: user.id}});
 
     var todo1 = Todo.build({
-        title: 'Make dog cake'
+        title: 'Make dog cake',
+        repeatWeekly: ['mo', 'we'],
+        alarm : new Date()
     });
     var todo2 = Todo.build({
-        title: 'Make cat cake'
+        title: 'Make cat cake',
+        repeatWeekly: ['mo', 'we'],
+        alarm : new Date()
     });
     yield todo1.save();
     yield todo2.save();
