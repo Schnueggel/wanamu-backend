@@ -204,10 +204,11 @@ function* getUser(id) {
             success: false,
             data: []
         };
-    if (id === 'current') {
+
+    id = parseInt(id, 10);
+
+    if (id === 0) {
         id = this.req.user.id;
-    } else {
-        id = parseInt(id, 10);
     }
 
     this.body = result;
