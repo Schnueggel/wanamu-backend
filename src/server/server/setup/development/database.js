@@ -59,11 +59,13 @@ function* createTodos() {
 
     var todo1 = Todo.build({
         title: 'Make dog cake',
+        repeat: true,
         repeatWeekly: ['mo', 'we'],
         alarm : new Date()
     });
     var todo2 = Todo.build({
         title: 'Make cat cake',
+        repeat: true,
         repeatWeekly: ['mo', 'we'],
         alarm : new Date()
     });
