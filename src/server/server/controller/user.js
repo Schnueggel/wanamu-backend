@@ -4,6 +4,7 @@ var TodoList = require('../model/todolist'),
     User = require('../model/user'),
     Todo = require('../model/todo'),
     Setting = require('../model/setting'),
+    Profile = require('../model/profile'),
     ErrorUtil = require('../util/error'),
     _ = require('lodash'),
     co = require('co');
@@ -74,13 +75,17 @@ function* createUser() {
             name: 'default'
         }, {transaction: transaction});
 
-        console.log(todolist.id);
 
         yield user.setDefaultTodoList(todolist, {transaction: transaction});
 
-        yield Setting.create({
-            UserId : user.id
-        }, { isNewRecord: true, transaction: transaction });
+        var settingdata = _.pick(data.Setting || {}, Setting.getCreateFields(isAdmin));
+        settingdata.UserId = user.id;
+        yield Setting.create( settingdata, { isNewRecord: true, transaction: transaction } );
+
+        var profiledata = _.pick(data.Profile || {}, Profile.getCreateFields(isAdmin));
+        profiledata.UserId = user.id;
+
+        yield Profile.create( profiledata,{ isNewRecord: true, transaction: transaction } );
 
         yield user.addTodoList(todolist, {transaction: transaction});
 

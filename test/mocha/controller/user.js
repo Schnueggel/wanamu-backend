@@ -42,9 +42,11 @@ describe('Test User Controller', function () {
                     data: {
                         email: 'dog@email.de',
                         password: 'abcdefghijk',
-                        firstname: 'dog',
-                        lastname: 'cat',
-                        salutation: 'mr'
+                        profile : {
+                           firstname: 'dog',
+                           lastname: 'cat',
+                           salutation: 'mr'
+                        }
                     }
                 })
                 .set('Accept', 'application/json')
@@ -98,9 +100,11 @@ describe('Test User Controller', function () {
                 .type('json')
                 .send({
                     data: {
-                        firstname: 'hotdog',
-                        lastname: 'kitcat',
-                        salutation: 'mr'
+                        profile: {
+                            firstname: 'hotdog',
+                            lastname: 'kitcat',
+                            salutation: 'mr'
+                        }
                     }
                 })
                 .set('Accept', 'application/json')

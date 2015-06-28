@@ -19,7 +19,7 @@ module.exports = {
  * @param res
  */
 function* login(next) {
-    var ctx = this
+    var ctx = this;
     yield* passport.authenticate('local', function*(err, user, info) {
         if (err) {
             throw err;
@@ -33,7 +33,7 @@ function* login(next) {
                 success: false
             };
         } else {
-            yield ctx.login(user)
+            yield ctx.login(user);
             ctx.body = {
                 success: true,
                 data: [user.getVisibleData()]

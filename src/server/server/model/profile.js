@@ -1,11 +1,12 @@
 var sequelize = require('../config/sequelize'),
-    _ = require('lodash');
+    _ = require('lodash'),
+    co = require('co');
 
 /**
- * SettingModel
+ * Profile
  * @type {*|{}|Model}
  */
-var Setting = sequelize.define('Setting', {
+var Profile = sequelize.define('Profile', {
     /**
      * ######################################################################################
      * ######################################################################################
@@ -18,39 +19,50 @@ var Setting = sequelize.define('Setting', {
         primaryKey: true,
         autoIncrement: true
     },
-    face: {
-        type: sequelize.Sequelize.STRING(10),
+    salutation: {
+        type: sequelize.Sequelize.ENUM('mr', 'mrs', 'neutrum', 'human'),
+        allowNull: false
+    },
+    title: {
+        type: sequelize.Sequelize.STRING(15),
         allowNull: true
     },
-    color1: {
-        type: sequelize.Sequelize.STRING(30),
-        defaultValue : 'rgba(255, 223, 2, 0.8)', // yellow
-        allowNull: true
+    firstname: {
+        type: sequelize.Sequelize.STRING(50),
+        allowNull: false
     },
-    color2: {
-        type: sequelize.Sequelize.STRING(30),
-        defaultValue : 'rgba(0, 128, 0, 0.8)', // green
-        allowNull: true
+    lastname: {
+        type: sequelize.Sequelize.STRING(50),
+        allowNull: false
     },
-    color3: {
-        type: sequelize.Sequelize.STRING(30),
-        defaultValue : 'rgba(0, 90, 255, 0.8)', // blue
-        allowNull: true
+
+    website: {
+        type: sequelize.Sequelize.STRING(50),
+        validate: {
+            isUrl: {
+                msg: 'If Website is given. It must be valid url'
+            }
+        }
     },
-    color4: {
-        type: sequelize.Sequelize.STRING(30),
-        defaultValue : 'rgba(0, 0, 0, 0.8)', // black
-        allowNull: true
-    },
-    color5: {
-        type: sequelize.Sequelize.STRING(30),
-        defaultValue : 'rgba(255, 0, 0, 0.8)', // red
-        allowNull: true
-    }}, {
+    birthday: {
+        type: sequelize.Sequelize.DATE,
+        defaultValue: null,
+        validate: {
+            isAfter: {
+                args: '1900-01-01',
+                msg: 'Birthday before 1900-01-01 are not allowed'
+            }
+        }
+    }},{
     // ==========================================================================
     // OPTIONS
     // ==========================================================================
+    // ==========================================================================
+    // OPTIONS
+    // ==========================================================================
+    paranoid: true,
     classMethods: {
+
         /**
          * Helper function to get a list of  the fields
          * @returns {String[]}
@@ -64,7 +76,7 @@ var Setting = sequelize.define('Setting', {
         /**
          * @param {boolean} isAdmin
          * @returns {*|string[]}
-         * @name Todo.getCreateFields
+         * @name Setting.getCreateFields
          */
         getCreateFields: function(isAdmin) {
             return this.getUpdateFields(isAdmin);
@@ -72,7 +84,7 @@ var Setting = sequelize.define('Setting', {
         /**
          * @param {boolean} isAdmin
          * @returns {string[]}
-         * @name Todo.getUpdateFields
+         * @name Setting.getUpdateFields
          */
         getUpdateFields : function(isAdmin){
             var without = [];
@@ -83,7 +95,7 @@ var Setting = sequelize.define('Setting', {
         /**
          * @param {boolean} isAdmin
          * @returns {string[]}
-         * @name Todo.getVisibleFields
+         * @name Setting.getVisibleFields
          */
         getVisibleFields : function(isAdmin) {
             var without = [];
@@ -96,4 +108,4 @@ var Setting = sequelize.define('Setting', {
     }
 });
 
-module.exports = Setting;
+module.exports = Profile;

@@ -6,6 +6,7 @@
 var User = require('../../model/user.js'),
     TodoList = require('../../model/todolist.js'),
     Todo = require('../../model/todo'),
+    Profile = require('../../model/profile'),
     Setting = require('../../model/setting'),
     co = require('co');
 
@@ -21,30 +22,40 @@ function start() {
  * Setup complete database
  */
 function* setup(){
+    console.log('Setup');
     yield* createUsers();
+    console.log('USER created');
     yield* createTodoList();
+    console.log('TODOLIST created');
     yield* createTodos();
-    console.log('data created');
+    console.log('TODO created');
 }
-
 
 function* createUsers() {
     var user = yield User.create({
         email: 'test@email.de',
+        password: 'abcdefghijk'
+    }, { isNewRecord: true });
+    console.log('user created');
+    var profile = yield Profile.create({
+        UserId : user.id,
         firstname: 'firstName',
         lastname: 'lastName',
-        password: 'abcdefghijk',
         salutation: 'mr'
     }, { isNewRecord: true });
-
     var settings = yield Setting.create({
         UserId : user.id
     }, { isNewRecord: true });
 }
 
 function* createTodoList() {
-    var user = yield User.findOne({where:{email:'test@email.de'}});
+    var test = yield User.findById(1);
 
+    var user = yield User.findOne({
+        where:{
+            email:'test@email.de'
+        }
+    });
     var todolist = yield user.createTodoList({
         name: 'default'
     });
@@ -53,7 +64,11 @@ function* createTodoList() {
 }
 
 function* createTodos() {
-    var user = yield User.findOne({where:{email:'test@email.de'}});
+    var user = yield User.findOne({
+        where:{
+            email:'test@email.de'
+        }
+    });
 
     var todolist = yield TodoList.findOne({where: {name: 'default', UserId: user.id}});
 

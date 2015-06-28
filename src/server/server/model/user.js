@@ -2,10 +2,11 @@ var sequelize = require('../config/sequelize'),
     ErrorUtil = require('../util/error'),
     TodoList = require('./todolist'),
     Todo = require('./todo'),
-    Setting = require('./setting'),
-    _ = require('lodash'),
     co = require('co'),
-    bcrypt = require('../config/bcrypt');
+    _ = require('lodash'),
+    bcrypt = require('../config/bcrypt'),
+    Profile = require('./profile'),
+    Setting = require('./setting');
 
 /**
  * User Model
@@ -17,31 +18,9 @@ var User = sequelize.define('User', {
         primaryKey: true,
         autoIncrement: true
     },
-    email: {
-        type: sequelize.Sequelize.STRING(40),
-        allowNull: false,
-        unique: true,
-        validate: {
-            isEmail: {
-                msg: 'Valid Email is nessecary.'
-            }
-        }
-    },
     group: {
         type: sequelize.Sequelize.ENUM('admin', 'user'),
         defaultValue: 'user'
-    },
-    salutation: {
-        type: sequelize.Sequelize.ENUM('mr', 'mrs', 'neutrum', 'human'),
-        allowNull: false
-    },
-    title: {
-        type: sequelize.Sequelize.STRING(15),
-        allowNull: true
-    },
-    firstname: {
-        type: sequelize.Sequelize.STRING(50),
-        allowNull: false
     },
     DefaultTodoListId: {
         type:  sequelize.Sequelize.INTEGER,
@@ -57,33 +36,21 @@ var User = sequelize.define('User', {
         }
          */
     },
-    lastname: {
-        type: sequelize.Sequelize.STRING(50),
-        allowNull: false
+    email: {
+        type: sequelize.Sequelize.STRING(40),
+        allowNull: false,
+        unique: true,
+        validate: {
+            isEmail: {
+                msg: 'Valid Email is nessecary.'
+            }
+        }
     },
     password: {
         type: sequelize.Sequelize.CHAR(60).BINARY,
         allowNull: false,
         validate: {
             min: 8
-        }
-    },
-    website: {
-        type: sequelize.Sequelize.STRING(50),
-        validate: {
-            isUrl: {
-                msg: 'If Website is given. It must be valid url'
-            }
-        }
-    },
-    birthday: {
-        type: sequelize.Sequelize.DATE,
-        defaultValue: null,
-        validate: {
-            isAfter: {
-                args: '1900-01-01',
-                msg: 'Birthday before 1900-01-01 are not allowed'
-            }
         }
     },
     banned: {
@@ -172,6 +139,9 @@ var User = sequelize.define('User', {
                     model: Setting
                 },
                 {
+                    model: Profile
+                },
+                {
                     model: TodoList,
                     include: [
                         {
@@ -181,7 +151,7 @@ var User = sequelize.define('User', {
                     ],
                     attributes: TodoList.getVisibleFields(isAdmin)
                 }
-            ]
+            ];
         }
     },
     // ==========================================================================
@@ -200,6 +170,7 @@ var User = sequelize.define('User', {
             var fields = User.getVisibleFields(this.isAdmin());
             fields.push('TodoLists');
             fields.push('Setting');
+            fields.push('Profile');
             return _.pick(this.get({plain: true}), fields);
         },
         /**
@@ -217,6 +188,7 @@ var User = sequelize.define('User', {
             if (!_.isArray(user.TodoLists)) {
                 return user;
             }
+
             _.forEach(user.TodoLists, function(todolist) {
                 if (_.isFunction(todolist.filterOut)) {
                     todolist.filterOut(todolist);
@@ -254,28 +226,12 @@ User.hasOne(Setting, {
     onDelete: 'CASCADE'
 });
 
+
+User.hasOne(Profile, {
+    onDelete: 'CASCADE'
+});
+
 module.exports = User;
-
-/**
- * Returns all visible fields
- * @param {boolean} isAdmin
- * @returns {string[]}
- * @name User.getVisibleFields
- */
-
-/**
- * Returns all fields that are allowed for update
- * @param {boolean} isAdmin
- * @returns {string[]}
- * @name User.getUpdateFields
- */
-
-/**
- * Returns all fields that are allowed for creation
- * @param {boolean} isAdmin
- * @returns {string[]}
- * @name User.getCreateFields
- */
 
 
 /**
@@ -285,6 +241,7 @@ module.exports = User;
  * ######################################################################################
  * ######################################################################################
  */
+
 
 /**
  * Before Bulk create
@@ -321,10 +278,6 @@ function* beforeUpdate(user, options){
     yield hashPassword(user);
 }
 
-function* afterFind(user) {
-    user.filterOut(user);
-    return;
-}
 /**
  * Hashs the user password
  * @param user
@@ -340,4 +293,9 @@ function* hashPassword(user) {
 function comparePassword(passwordCandidate) {
     var userPassword = this.password;
     return bcrypt.compare(passwordCandidate, userPassword);
+}
+
+function* afterFind(user) {
+    user.filterOut(user);
+    return;
 }

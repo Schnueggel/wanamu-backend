@@ -64,13 +64,15 @@ function* strategy(username, password, done){
     userfields.push('password');
 
     try{
-        user = yield User.findOne({
-            where: {
+        var options = {
+            where : {
                 email: username
             },
             include: User.getIncludeAllOption(false),
             attributes : userfields
-        });
+        };
+
+        user = yield User.findOne(options);
     } catch(err) {
         console.error(err);
         return done(null, false, {message: 'User not found'});
