@@ -35,7 +35,10 @@ var Profile = sequelize.define('Profile', {
         type: sequelize.Sequelize.STRING(50),
         allowNull: false
     },
-
+    face: {
+        type: sequelize.Sequelize.STRING(10),
+        allowNull: true
+    },
     website: {
         type: sequelize.Sequelize.STRING(50),
         validate: {

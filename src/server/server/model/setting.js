@@ -18,10 +18,6 @@ var Setting = sequelize.define('Setting', {
         primaryKey: true,
         autoIncrement: true
     },
-    face: {
-        type: sequelize.Sequelize.STRING(10),
-        allowNull: true
-    },
     color1: {
         type: sequelize.Sequelize.STRING(30),
         defaultValue : 'rgba(255, 223, 2, 0.8)', // yellow
