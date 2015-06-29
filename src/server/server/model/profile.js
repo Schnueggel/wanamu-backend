@@ -60,10 +60,6 @@ var Profile = sequelize.define('Profile', {
     // ==========================================================================
     // OPTIONS
     // ==========================================================================
-    // ==========================================================================
-    // OPTIONS
-    // ==========================================================================
-    paranoid: true,
     classMethods: {
 
         /**
@@ -96,7 +92,7 @@ var Profile = sequelize.define('Profile', {
             var without = ['id', 'UserId'];
 
             if (!isAdmin) {
-                without.concat(['deletedAt', 'updatedAt', 'createdAt']);
+                without.concat([ 'updatedAt', 'createdAt']);
             }
 
             return  _.difference(this.getAttribKeys(),  without);
@@ -111,7 +107,7 @@ var Profile = sequelize.define('Profile', {
             var without = [];
 
             if (!isAdmin) {
-                without = without.concat(['deletedAt']);
+                without = without.concat([]);
             }
             return  _.difference(this.getAttribKeys(),  without);
         }

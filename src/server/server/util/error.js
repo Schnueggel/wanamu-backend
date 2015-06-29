@@ -17,8 +17,21 @@ module.exports = {
     TodoAlreadyExists : TodoAlreadyExists,
     UserNotFound : UserNotFound,
     ProfileNotFound : ProfileNotFound,
-    TodoListDefaultNoDelete : TodoListDefaultNoDelete
+    TodoListDefaultNoDelete : TodoListDefaultNoDelete,
+    NotFound : NotFound
 };
+
+/**
+ *
+ * @param {String} [message]
+ * @constructor
+ */
+function NotFound (message) {
+    this.name = 'NotFound';
+    this.message = message ||  'The request data could not be found';
+}
+
+NotFound.prototype = TodoItError.prototype;
 
 /**
  *

@@ -13,7 +13,7 @@ var config = require('./server/config'),
     app = require('koa')();
 
 app.init = co.wrap(function *() {
-    if (config.isTest()) {
+    if (!config.isTest()) {
         app.use(logger());
     }
 

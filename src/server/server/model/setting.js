@@ -60,7 +60,7 @@ var Setting = sequelize.define('Setting', {
         /**
          * @param {boolean} isAdmin
          * @returns {*|string[]}
-         * @name Todo.getCreateFields
+         * @name Setting.getCreateFields
          */
         getCreateFields: function(isAdmin) {
             return this.getUpdateFields(isAdmin);
@@ -68,10 +68,14 @@ var Setting = sequelize.define('Setting', {
         /**
          * @param {boolean} isAdmin
          * @returns {string[]}
-         * @name Todo.getUpdateFields
+         * @name Setting.getUpdateFields
          */
         getUpdateFields : function(isAdmin){
-            var without = [];
+            var without = ['id', 'UserId'];
+
+            if (!isAdmin) {
+                without.concat(['updatedAt', 'createdAt']);
+            }
 
             return  _.difference(this.getAttribKeys(),  without);
         },
@@ -79,14 +83,11 @@ var Setting = sequelize.define('Setting', {
         /**
          * @param {boolean} isAdmin
          * @returns {string[]}
-         * @name Todo.getVisibleFields
+         * @name Setting.getVisibleFields
          */
         getVisibleFields : function(isAdmin) {
             var without = [];
 
-            if (!isAdmin) {
-                without = without.concat(['deletedAt']);
-            }
             return  _.difference(this.getAttribKeys(),  without);
         }
     }
