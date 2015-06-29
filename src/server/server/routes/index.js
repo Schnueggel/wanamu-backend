@@ -4,6 +4,7 @@ var co = require('co'),
     TodoListController = require('../controller/todolist'),
     UserController = require('../controller/user'),
     ProfileController = require('../controller/profile'),
+    SettingController = require('../controller/setting'),
     AuthController = require('../controller/auth');
 
 /**
@@ -83,6 +84,11 @@ module.exports = function(app){
     // =============================================================================================
     app.use(route.put('/profile/:id', ProfileController.update));
     app.use(route.get('/profile/:id', ProfileController.get));
+    // =============================================================================================
+    // Settings
+    // =============================================================================================
+    app.use(route.put('/setting/:id', SettingController.update));
+    app.use(route.get('/setting/:id', SettingController.get));
 };
 
 
