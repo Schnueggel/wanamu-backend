@@ -69,8 +69,10 @@ var TodoList = sequelize.define('TodoList', {
         },
 
         /**
+         * Returns all visible fields
          * @param {boolean} isAdmin
          * @returns {string[]}
+         * @name TodoList.getVisibleFields
          */
         getVisibleFields : function(isAdmin) {
             var without = [],
@@ -103,13 +105,6 @@ var TodoList = sequelize.define('TodoList', {
 });
 
 TodoList.hasMany(Todo);
-
-/**
- * Returns all visible fields
- * @param {boolean} isAdmin
- * @returns {string[]}
- * @name TodoList.getVisibleFields
- */
 
 /**
  * Returns all fields that are allowed for update

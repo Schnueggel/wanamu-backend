@@ -21,13 +21,10 @@ module.exports = {
 /**
  * ######################################################################################
  * ######################################################################################
- * ACTIONS
+ * Create a new User. The given userdata must contain a field Profile with firstname, lastname
+ * and salutation
  * ######################################################################################
  * ######################################################################################
- */
-
-/**
- * Gets a single todolist
  */
 function* createUser() {
     var input = this.request.body || {},
@@ -44,10 +41,14 @@ function* createUser() {
 
     this.body = result;
 
-    if (this.isAuthenticated() && this.req.user.isAdmin()) {
-        isAdmin = true;
+    // ==========================================================================
+    // A logged in user cannot create a new user only Admin can do this
+    // ==========================================================================
+    if (this.isAuthenticated() && !this.req.user.isAdmin()) {
+        this.status = 403;
+        result.error = new ErrorUtil.AccessViolation('Please logout before creating a new User');
+        return;
     }
-
     // ==========================================================================
     // Group can only be set by the admin
     // ==========================================================================
@@ -58,13 +59,16 @@ function* createUser() {
     // ==========================================================================
     // Filter not allowed fields
     // ==========================================================================
-    data = _.pick(data, User.getCreateFields(isAdmin));
+    var userdata = _.pick(data, User.getCreateFields(isAdmin));
 
+    // ==========================================================================
+    // We create the user with in an transaction because many sub tasks occur
+    // ==========================================================================
     var transaction = yield User.sequelize.transaction({isolationLevel: 'READ COMMITTED' });
 
     try {
 
-        user = yield User.create(data, {transaction: transaction});
+        user = yield User.create(userdata, {transaction: transaction});
 
         // ==========================================================================
         // Creating the default todolist.
@@ -75,22 +79,30 @@ function* createUser() {
             name: 'default'
         }, {transaction: transaction});
 
-
         yield user.setDefaultTodoList(todolist, {transaction: transaction});
-
+        // ==========================================================================
+        // On creation time of user setting data is not needed but a related model will be created
+        // ==========================================================================
         var settingdata = _.pick(data.Setting || {}, Setting.getCreateFields(isAdmin));
         settingdata.UserId = user.id;
         yield Setting.create( settingdata, { isNewRecord: true, transaction: transaction } );
-
+        // ==========================================================================
+        // On creation time of User Profile data is necessary
+        // ==========================================================================
         var profiledata = _.pick(data.Profile || {}, Profile.getCreateFields(isAdmin));
         profiledata.UserId = user.id;
 
         yield Profile.create( profiledata,{ isNewRecord: true, transaction: transaction } );
 
+        // ==========================================================================
+        // Default todolist is needed
+        // ==========================================================================
         yield user.addTodoList(todolist, {transaction: transaction});
 
         transaction.commit();
-
+        // ==========================================================================
+        // Reload the user data to get all autocreated values like updatedAt
+        // ==========================================================================
         user = yield user.reload({
             include: User.getIncludeAllOption(false)
         });
@@ -107,7 +119,10 @@ function* createUser() {
     } catch (err) {
         console.error(err.stack);
         transaction.rollback();
-        if (err instanceof Todo.sequelize.ValidationError) {
+        // ==========================================================================
+        // TODO test validation errors
+        // ==========================================================================
+        if (err instanceof User.sequelize.ValidationError) {
             this.status = 422;
             result.error = err;
         } else {
@@ -162,7 +177,7 @@ function* updateUser(id) {
     var options = {};
 
     // ==========================================================================
-    // If no password is set we dont update it
+    // If no password is set we don't update it
     // ==========================================================================
     if (!data.password) {
         options.fields = _.without(User.getAttribKeys(), 'password');
@@ -194,10 +209,13 @@ function* updateUser(id) {
         }
     }
 }
-
 /**
+ * ######################################################################################
+ * ######################################################################################
  * Gets a single user by his id
- * If id === 'current' it returns the current authed user
+ * If id === 0 it returns the current authed user
+ * ######################################################################################
+ * ######################################################################################
  */
 function* getUser(id) {
     var user,

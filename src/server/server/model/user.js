@@ -296,6 +296,9 @@ function comparePassword(passwordCandidate) {
 }
 
 function* afterFind(user) {
-    user.filterOut(user);
+    if (user) {
+        user.filterOut(user);
+    }
+
     return;
 }

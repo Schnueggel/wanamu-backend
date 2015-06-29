@@ -4,7 +4,9 @@
 
 var request = require('../../../dist/server/server/config/mocha').request,
     app = require('../../../dist/server/server.js'),
-    assert = require('assert'), co = require('co'),
+    supertest = require('co-supertest'),
+    assert = require('assert'),
+    co = require('co'),
     _ = require('lodash');
 
 
@@ -32,8 +34,34 @@ describe('Test User Controller', function () {
         app.server.close(done);
     });
 
+    // =============================================================================================
+    // Normally at this point we should be logged in because session is will not destroy on server restart
+    // =============================================================================================
+    it('Should logout', function(done){
+
+        co(function *() {
+
+            var res = yield request
+                .post('/auth/logout')
+                .type('json')
+                .send({})
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end();
+
+            assert(typeof res.body, 'object');
+            assert.equal(res.body.success, true);
+
+        }).then(function(){
+            done();
+        }).catch(function(err){
+            done(err);
+        });
+    });
 
     it('Should create user', function(done){
+
         co(function *() {
             var res = yield request
                 .post('/user')
@@ -42,7 +70,7 @@ describe('Test User Controller', function () {
                     data: {
                         email: 'dog@email.de',
                         password: 'abcdefghijk',
-                        profile : {
+                        Profile : {
                            firstname: 'dog',
                            lastname: 'cat',
                            salutation: 'mr'
@@ -67,6 +95,7 @@ describe('Test User Controller', function () {
             done(err);
         });
     });
+
 
     it('Should login', function(done){
         co(function *() {
@@ -100,7 +129,7 @@ describe('Test User Controller', function () {
                 .type('json')
                 .send({
                     data: {
-                        profile: {
+                        Profile: {
                             firstname: 'hotdog',
                             lastname: 'kitcat',
                             salutation: 'mr'
@@ -143,8 +172,8 @@ describe('Test User Controller', function () {
             assert(_.isArray(res.body.data));
             assert(res.body.data.length, 1);
             assert(res.body.data[0].id, userid);
-            assert(res.body.data[0].firstname, 'dog');
-            assert(res.body.data[0].lastname, 'cat');
+            assert(res.body.data[0].Profile.firstname, 'dog');
+            assert(res.body.data[0].Profile.lastname, 'cat');
         }).then(function () {
             done();
         }).catch(function (err) {

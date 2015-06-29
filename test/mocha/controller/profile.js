@@ -1,16 +1,12 @@
-/**
- * Created by Christian on 5/21/2015.
- */
-
 var request = require('../../../dist/server/server/config/mocha').request,
     app = require('../../../dist/server/server.js'),
     assert = require('assert'), co = require('co'),
     _ = require('lodash');
 
 
-describe('Test Todo Controller', function () {
+describe('Test Profile Controller', function () {
 
-    var todoid;
+    var profile;
     // ==========================================================================
     // Before test we start the server
     // ==========================================================================
@@ -26,7 +22,7 @@ describe('Test Todo Controller', function () {
     });
 
     // ==========================================================================
-    // After each test we end the server
+    // After the test we end the server
     // ==========================================================================
     after(function (done) {
         app.server.close(done);
@@ -50,7 +46,39 @@ describe('Test Todo Controller', function () {
                 .end();
 
             assert(res.body.success, true);
+            assert(_.isPlainObject(res.body));
+            assert(_.isArray(res.body.data));
+            assert(_.isPlainObject(res.body.data[0].Profile));
+            assert( _.isNumber(res.body.data[0].Profile.id));
 
+            profile = res.body.data[0].Profile;
+        }).then(function(){
+            done();
+        }).catch(function(err){
+            done(err);
+        });
+    });
+
+
+    it('Should get profile', function(done){
+        assert(_.isPlainObject(profile));
+
+        co(function *() {
+            var res = yield request
+                .get('/profile/' + profile.id)
+                .type('json')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end();
+
+            assert(_.isPlainObject(res.body));
+            assert(res.body.success, true);
+            assert(_.isArray(res.body.data));
+            assert(res.body.data.length, 1);
+            assert(_.isPlainObject(res.body.data[0]));
+            assert(res.body.data[0].firstname, profile.firstname);
+            assert(res.body.data[0].lastname, profile.lastname);
         }).then(function(){
             done();
         }).catch(function(err){
@@ -61,18 +89,16 @@ describe('Test Todo Controller', function () {
     // ==========================================================================
     // We create a todo_ in the default todolost
     // ==========================================================================
-    it('Should create todo', function(done){
+    it('Should update', function(done){
         co(function *() {
             var res = yield request
-                .post('/todo')
+                .put('/profile/' + profile.id)
                 .type('json')
                 .send({
                     data: {
-                        title: 'Feed dog',
-                        description: 'Give him some food',
-                        alarm: '2015-01-01 15:30',
-                        color: '#456789',
-                        TodoListId: 1
+                        lastname: 'cat',
+                        firstname: 'dog',
+                        salutation: 'mr'
                     }
                 })
                 .set('Accept', 'application/json')
@@ -85,66 +111,13 @@ describe('Test Todo Controller', function () {
             assert(_.isArray(res.body.data));
             assert(res.body.data.length, 1);
             assert(typeof res.body.data[0], 'object');
-            assert(res.body.data[0].title, 'Feed dog');
+            assert(res.body.data[0].firstname, 'cat');
+            assert(res.body.data[0].lastname, 'dog');
+            assert(res.body.data[0].salutation, 'mr');
 
-            todoid = res.body.data[0].id;
         }).then(function(){
             done();
         }).catch(function(err){
-            done(err);
-        });
-    });
-
-    it('Should update todo', function(done){
-        assert(_.isNumber(todoid));
-
-        co(function *() {
-            var res = yield request
-                .put('/todo/' + todoid)
-                .type('json')
-                .send({
-                    data: {
-                        title: 'Feed the cat',
-                        alarm: '2014-05-05'
-                    }
-                })
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(200)
-                .end();
-
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert(res.body.data.length, 1);
-            assert(typeof res.body.data[0], 'object');
-            assert(res.body.data[0].title, 'Feed the cat');
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
-    });
-
-    it('Should Delete Todo', function (done) {
-        assert(_.isNumber(todoid));
-        co(function*(){
-            var res = yield request
-                .delete('/todo/' + todoid)
-                .type('json')
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /json/)
-                .expect(200)
-                .end();
-
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert.equal(res.body.data.length, 1);
-
-        }).then(function () {
-            done();
-        }).catch(function (err) {
             done(err);
         });
     });

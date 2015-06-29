@@ -43,13 +43,11 @@ function* login(next) {
 }
 
 /**
- * Gets a single todolist
- * Needs request.params.id field
- * @param req
- * @param res
+ * Logs the user out
+ * @param next
  */
 function* dologout(next) {
-    this.logout();
+    this.logOut();
     this.body = {
         success: true,
         data: []

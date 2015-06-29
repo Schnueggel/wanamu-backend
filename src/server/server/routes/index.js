@@ -3,6 +3,7 @@ var co = require('co'),
     TodoController = require('../controller/todo'),
     TodoListController = require('../controller/todolist'),
     UserController = require('../controller/user'),
+    ProfileController = require('../controller/profile'),
     AuthController = require('../controller/auth');
 
 /**
@@ -77,6 +78,11 @@ module.exports = function(app){
     // AUTH
     // ==========================================================================
     app.use(route.post('/auth/logout', AuthController.dologout));
+    // =============================================================================================
+    // Profile
+    // =============================================================================================
+    app.use(route.put('/profile/:id', ProfileController.update));
+    app.use(route.get('/profile/:id', ProfileController.get));
 };
 
 

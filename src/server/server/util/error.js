@@ -16,10 +16,21 @@ module.exports = {
     TodoListNotFound : TodoListNotFound,
     TodoAlreadyExists : TodoAlreadyExists,
     UserNotFound : UserNotFound,
+    ProfileNotFound : ProfileNotFound,
     TodoListDefaultNoDelete : TodoListDefaultNoDelete
 };
 
+/**
+ *
+ * @param {String} [message]
+ * @constructor
+ */
+function ProfileNotFound (message) {
+    this.name = 'ProfileNotFound';
+    this.message = message ||  'The request Profile could not be found';
+}
 
+ProfileNotFound.prototype = TodoItError.prototype;
 
 /**
  *

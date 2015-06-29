@@ -65,7 +65,9 @@ var Profile = sequelize.define('Profile', {
 
         /**
          * Helper function to get a list of  the fields
+         * @name Profile.getAttributeKeys
          * @returns {String[]}
+         *
          */
         getAttribKeys: function() {
             if (this.$attribkeys === undefined) {
@@ -76,7 +78,7 @@ var Profile = sequelize.define('Profile', {
         /**
          * @param {boolean} isAdmin
          * @returns {*|string[]}
-         * @name Setting.getCreateFields
+         * @name Profile.getCreateFields
          */
         getCreateFields: function(isAdmin) {
             return this.getUpdateFields(isAdmin);
@@ -84,10 +86,15 @@ var Profile = sequelize.define('Profile', {
         /**
          * @param {boolean} isAdmin
          * @returns {string[]}
-         * @name Setting.getUpdateFields
+         * @name Profile.getUpdateFields
          */
         getUpdateFields : function(isAdmin){
-            var without = [];
+
+            var without = ['id', 'UserId'];
+
+            if (!isAdmin) {
+                without.concat(['deletedAt', 'updatedAt', 'createdAt']);
+            }
 
             return  _.difference(this.getAttribKeys(),  without);
         },
@@ -95,7 +102,7 @@ var Profile = sequelize.define('Profile', {
         /**
          * @param {boolean} isAdmin
          * @returns {string[]}
-         * @name Setting.getVisibleFields
+         * @name Profile.getVisibleFields
          */
         getVisibleFields : function(isAdmin) {
             var without = [];

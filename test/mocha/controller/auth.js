@@ -8,7 +8,7 @@ var request = require('../../../dist/server/server/config/mocha').request,
     _ = require('lodash');
 
 
-describe('Test User Controller', function () {
+describe('Test Auth Controller', function () {
 
     // ==========================================================================
     // Before test we start the server
@@ -107,6 +107,50 @@ describe('Test User Controller', function () {
             done();
         }).catch(function (err) {
            done(err);
+        });
+    });
+
+    it('Should login', function(done){
+        co(function *() {
+            var res = yield request
+                .post('/auth/login')
+                .type('form')
+                .send({
+                    username: 'test@email.de',
+                    password: 'abcdefghijk'
+                })
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end();
+
+            assert(res.body.success, true);
+
+        }).then(function(){
+            done();
+        }).catch(function(err){
+            done(err);
+        });
+    });
+
+    it('Should logout', function(done){
+
+        co(function *() {
+            var res = yield request
+                .post('/auth/logout')
+                .type('json')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end();
+
+            assert(typeof res.body, 'object');
+            assert.equal(res.body.success, true);
+
+        }).then(function(){
+            done();
+        }).catch(function(err){
+            done(err);
         });
     });
 });
