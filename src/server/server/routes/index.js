@@ -21,7 +21,7 @@ var co = require('co'),
  */
 function* auth(next){
     if (!this.isAuthenticated()) {
-        this.status = 403;
+        this.status = 401;
         this.body = {
             success: false,
             error : 'Not logged in'
