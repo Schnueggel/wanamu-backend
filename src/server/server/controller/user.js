@@ -6,6 +6,7 @@ var TodoList = require('../model/todolist'),
     Setting = require('../model/setting'),
     Profile = require('../model/profile'),
     ErrorUtil = require('../util/error'),
+    bcrypt = require ('bcryptjs'),
     _ = require('lodash'),
     co = require('co');
 
@@ -55,7 +56,7 @@ function* createUser() {
     if (!isAdmin) {
         data.group = 'user';
     }
-
+    var salt = bcrypt.genSaltSync(10);
     // ==========================================================================
     // Filter not allowed fields
     // ==========================================================================
@@ -67,7 +68,6 @@ function* createUser() {
     var transaction = yield User.sequelize.transaction({isolationLevel: 'READ COMMITTED' });
 
     try {
-
         user = yield User.create(userdata, {transaction: transaction});
 
         // ==========================================================================

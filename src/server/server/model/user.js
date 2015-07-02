@@ -53,6 +53,15 @@ var User = sequelize.define('User', {
             min: 8
         }
     },
+    confirmed : {
+        type : sequelize.Sequelize.INTEGER,
+        defaultValue : 0
+    },
+    confirmhash : {
+        type : sequelize.Sequelize.STRING,
+        allowNull : true,
+        unique : true
+    },
     banned: {
         type: sequelize.Sequelize.DATE,
         allowNull: true,
@@ -120,7 +129,7 @@ var User = sequelize.define('User', {
          * @name User.getVisibleFields
          */
         getVisibleFields: function(isAdmin){
-            var without = ['password'];
+            var without = ['password', 'confirmhash'];
 
             if (!isAdmin) {
                 without = without.concat(['banned', 'deletedAt', 'updatedAt']);
@@ -261,6 +270,7 @@ function* beforeBulkCreate (users, options){
  *
  */
 function* beforeCreate(user, options){
+    user.confirmhash =  yield bcrypt.hashAndSalt(user.email, 4);
     yield hashPassword(user);
 }
 /**

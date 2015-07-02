@@ -2,7 +2,7 @@
  * Created by Christian on 5/16/2015.
  */
 var bcrypt = require('bcryptjs');
-
+var _ = require('lodash');
 var bc;
 
 module.exports = bc = {
@@ -22,22 +22,23 @@ module.exports = bc = {
             });
         });
     },
-    salt : function(){
+    salt : function(num){
+        num = _.isNumber(num) ?  num : 10;
         return new Promise(function (resolve, reject) {
-            bcrypt.genSalt(10, function (err, salt) {
-                if (err) { reject(err); } else { resolve(salt); }
+            bcrypt.genSalt(num, function (err, salt) {
+                if (err) { reject(err); console.error(err);} else { resolve(salt); }
             });
         });
     },
     hash : function(password, salt){
         return new Promise(function (resolve, reject) {
             bcrypt.hash(password, salt, function(err, hash) {
-                if (err) { reject(err); } else { resolve(hash); }
+                if (err) { reject(err);console.error(err); } else { resolve(hash); }
             });
         });
     },
-    hashAndSalt: function* (password) {
-        var salt = yield bc.salt();
+    hashAndSalt: function* (password, rounds) {
+        var salt = yield bc.salt(rounds);
         return yield bc.hash(password, salt);
     }
 };
