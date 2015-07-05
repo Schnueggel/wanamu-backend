@@ -4,6 +4,7 @@ var co = require('co'),
     TodoListController = require('../controller/todolist'),
     UserController = require('../controller/user'),
     ProfileController = require('../controller/profile'),
+    RegistrationController = require('../controller/registration'),
     SettingController = require('../controller/setting'),
     AuthController = require('../controller/auth');
 
@@ -49,6 +50,7 @@ module.exports = function(app){
 
     app.use(route.post('/auth/login', AuthController.login));
     app.use(route.post('/user', UserController.create));
+    app.use(route.get('/confirmation/:hash', RegistrationController.confirm));
 
     /**
      * ######################################################################################
