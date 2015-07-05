@@ -71,7 +71,7 @@ var Setting = sequelize.define('Setting', {
          * @name Setting.getUpdateFields
          */
         getUpdateFields : function(isAdmin){
-            var without = ['id', 'UserId'];
+            var without = ['id'];
 
             if (!isAdmin) {
                 without.concat(['updatedAt', 'createdAt']);

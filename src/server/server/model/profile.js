@@ -89,7 +89,7 @@ var Profile = sequelize.define('Profile', {
          */
         getUpdateFields : function(isAdmin){
 
-            var without = ['id', 'UserId'];
+            var without = ['id'];
 
             if (!isAdmin) {
                 without.concat([ 'updatedAt', 'createdAt']);
