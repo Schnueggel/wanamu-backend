@@ -8,6 +8,7 @@ var User = require('../../model/user.js'),
     Todo = require('../../model/todo'),
     Profile = require('../../model/profile'),
     Setting = require('../../model/setting'),
+    Registration = require('../../model/registration'),
     co = require('co');
 
 /**
@@ -44,6 +45,9 @@ function* createUsers() {
         salutation: 'mr'
     }, { isNewRecord: true });
     var settings = yield Setting.create({
+        UserId : user.id
+    }, { isNewRecord: true });
+    var registration = yield Registration.create({
         UserId : user.id
     }, { isNewRecord: true });
 }
