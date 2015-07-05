@@ -5,5 +5,12 @@
         "user": "todoit_test",
         "password": "todoit_test",
         "database": "todoit_test"
+    },
+    "mail": {
+        "service": "gmail",
+        "auth": {
+            "user": "christian.steinmann.test@gmail.com",
+            "password": "$$Test$$"
+        }
     }
 }
