@@ -18,8 +18,21 @@ module.exports = {
     UserNotFound : UserNotFound,
     ProfileNotFound : ProfileNotFound,
     TodoListDefaultNoDelete : TodoListDefaultNoDelete,
-    NotFound : NotFound
+    NotFound : NotFound,
+    ServerError : ServerError
 };
+
+/**
+ *
+ * @param {String} [message]
+ * @constructor
+ */
+function ServerError (message) {
+    this.name = 'ServerError';
+    this.message = message ||  'ServerError';
+}
+
+ServerError.prototype = TodoItError.prototype;
 
 /**
  *
