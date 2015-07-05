@@ -2,6 +2,8 @@
 
 var User = require('../model/user'),
     Registration = require('../model/registration'),
+    Profile = require('../model/profile'),
+    mailService = require('../services/mail'),
     ErrorUtil = require('../util/error');
 
 /**
@@ -24,6 +26,9 @@ function* confirmRegistration(hash) {
     user = yield User.findOne({
         include : [
             {
+                model : Profile
+            },
+            {
                 model : Registration,
                 where : {
                     confirmhash: hash
@@ -44,6 +49,8 @@ function* confirmRegistration(hash) {
             confirmed: 1
         });
     }
+
+    mailService.sendConfirmationSuccessMail(user.email, user.Profile);
 
     result.success = true;
 }

@@ -63,10 +63,19 @@ if (fs.existsSync( __dirname + '/json/local.json')) {
 nconf.getConfirmationUrl = function(hash){
     return nconf.get('webhost') + nconf.get('url').confirmation.replace('${hash}', hash);
 };
-
+/**
+ * Returns the default mail for testing
+ */
 nconf.getTestMail1 = function() {
     return nconf.get('testmail1');
-}
+};
+/**
+ * Returns the url of the home page for the webfrontend
+ * @returns {*}
+ */
+nconf.getWebhomeUrl = function(){
+    return nconf.get('webhost') + nconf.get('webhome');
+};
 // =============================================================================================
 // Export
 // =============================================================================================

@@ -6,6 +6,7 @@
     },
     "debug": false,
     "webhost": "http://localhost:3000",
+    "webhome": "/home",
     "mysql": {
         "port": 3306,
         "host": "localhost",
