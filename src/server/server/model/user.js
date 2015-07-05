@@ -6,10 +6,13 @@ var sequelize = require('../config/sequelize'),
     _ = require('lodash'),
     bcrypt = require('../config/bcrypt'),
     Profile = require('./profile'),
+    Registration = require('./registration'),
     Setting = require('./setting');
 
 /**
  * User Model
+ * @name User
+ * @namespace model
  * @type {Model}
  */
 var User = sequelize.define('User', {
@@ -56,11 +59,6 @@ var User = sequelize.define('User', {
     confirmed : {
         type : sequelize.Sequelize.INTEGER,
         defaultValue : 0
-    },
-    confirmhash : {
-        type : sequelize.Sequelize.STRING,
-        allowNull : true,
-        unique : true
     },
     banned: {
         type: sequelize.Sequelize.DATE,
@@ -235,6 +233,9 @@ User.hasOne(Setting, {
     onDelete: 'CASCADE'
 });
 
+User.hasOne(Registration, {
+    onDelete: 'Cascade'
+});
 
 User.hasOne(Profile, {
     onDelete: 'CASCADE'
@@ -270,7 +271,6 @@ function* beforeBulkCreate (users, options){
  *
  */
 function* beforeCreate(user, options){
-    user.confirmhash =  yield bcrypt.hashAndSalt(user.email, 4);
     yield hashPassword(user);
 }
 /**
@@ -305,8 +305,14 @@ function comparePassword(passwordCandidate) {
     return bcrypt.compare(passwordCandidate, userPassword);
 }
 
+/**
+ * @param user
+ */
 function* afterFind(user) {
     if (user) {
+        // =============================================================================================
+        // TODO remove filter out
+        // =============================================================================================
         user.filterOut(user);
     }
 
