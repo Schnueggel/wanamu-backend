@@ -5,14 +5,23 @@
         "secret": "dogfoodcat(-_-)"
     },
     "debug": false,
-    "forceloginOnDev": false,
-    "debug": true,
+    "webhost": "http://localhost:3000",
     "mysql": {
         "port": 3306,
         "host": "localhost",
         "user": "todoit",
         "password": "todoit",
         "database": "todoit"
+    },
+    "url" : {
+        "confirmation": "/#/confirmation/${hash}"
+    },
+    "mail": {
+        "service": "gmail",
+        "auth": {
+            "user": "christian.steinmann.test@gmail.com",
+            "password": "$$Test$$"
+        }
     },
     "sequelize": {
         "host": "localhost",

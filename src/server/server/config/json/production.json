@@ -2,8 +2,8 @@
     "port": 80,
     "debug": false,
     "mysql":  {
-        "user": "todoit",
-        "password": "todoit",
-        "database": "todoit"
+        "user": "wanamu",
+        "password": "wanamu",
+        "database": "wanamu"
     }
 }
