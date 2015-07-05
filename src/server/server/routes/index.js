@@ -27,6 +27,12 @@ function* auth(next){
             success: false,
             error : 'Not logged in'
         };
+    } else if (this.req.user.confirmed !== 1){
+        this.status = 424;
+        this.body = {
+            success: false,
+            error : 'Please Confirm'
+        };
     } else {
         yield next;
     }

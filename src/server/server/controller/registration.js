@@ -45,8 +45,11 @@ function* confirmRegistration(hash) {
 
 
     if ( !user.confirmed ) {
-        yield user.update({
+        yield user.updateAttributes({
             confirmed: 1
+        });
+        yield user.Registration.updateAttributes({
+            lastconfirmation: user.sequelize.fn('NOW')
         });
         mailService.sendConfirmationSuccessMail(user.email, user.Profile);
     }
