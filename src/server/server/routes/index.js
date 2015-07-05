@@ -27,12 +27,6 @@ function* auth(next){
             success: false,
             error : 'Not logged in'
         };
-    } else if (this.req.user.confirmed !== 1){
-        this.status = 424;
-        this.body = {
-            success: false,
-            error : 'Please Confirm'
-        };
     } else {
         yield next;
     }
@@ -57,6 +51,7 @@ module.exports = function(app){
     app.use(route.post('/auth/login', AuthController.login));
     app.use(route.post('/user', UserController.create));
     app.use(route.get('/confirmation/:hash', RegistrationController.confirm));
+    app.use(route.post('/confirmation', RegistrationController.resendConfirmation));
 
     /**
      * ######################################################################################

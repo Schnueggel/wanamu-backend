@@ -4,12 +4,16 @@ var User = require('../model/user'),
     Registration = require('../model/registration'),
     Profile = require('../model/profile'),
     mailService = require('../services/mail'),
+    bcrypt = require ('../config/bcrypt'),
+    util = require('../util/util'),
     ErrorUtil = require('../util/error');
 
 /**
  * ######################################################################################
  * ######################################################################################
- * Get a Profile by id. A user can only request his own profile. Except admins
+ * Confirms a registration with the confirmation hash
+ * Sends status codes
+ * 404 User not found
  * ######################################################################################
  * ######################################################################################
  */
@@ -60,55 +64,99 @@ function* confirmRegistration(hash) {
 /**
  * ######################################################################################
  * ######################################################################################
- * Updates a profile. Update is the only changing method for profile because it get created with
- * the user and cant exist without it
+ * Resends confirmation needs email and password
+ * Send Status codes
+ * 404 User not found
+ * 412 User password mismatch
  * ######################################################################################
  * ######################################################################################
  */
 function* resendConfirmation() {
-    var user = this.req.user,
-        isAdmin = user.isAdmin(),
-        input = this.request.body || {},
-        data = input.data || {},
-        resultdata,
+    var input = this.request.body || {},
         result = {
-            error: null,
+            data: [],
             success: false,
-            data: []
-        };
+            error: null
+        },
+        user,
+        isAdmin = this.req.user && this.req.user.isAdmin(),
+        data = input.data || {};
 
     this.body = result;
 
-    var profile = yield Profile.findById(id);
+    user = yield User.findOne({
+        where : {
+            email : data.email
+        },
+        include : [
+            {
+                model : Profile
+            },
+            {
+                model : Registration
+            }
+        ]
+    });
 
-    if (!profile) {
+    if ( !user ) {
         this.status = 404;
-        result.error = new ErrorUtil.ProfileNotFound();
+        result.error = new ErrorUtil.NotFound();
         return;
     }
 
-    // ==========================================================================
-    // Only admin can update profiles of other user
-    // ==========================================================================
-    if (!isAdmin && profile.UserId !== user.id) {
-        this.status = 403;
-        result.error = new ErrorUtil.AccessViolation();
+    if (user.confirmed) {
+        this.status = 208;
+        result.error = new ErrorUtil.AlreadyReported();
+        return;
+    }
+    // =============================================================================================
+    // Check if password matches
+    // =============================================================================================
+    var isMatch = yield bcrypt.compare( data.password, user.password);
+    if ( !isMatch && !isAdmin ) {
+        this.status = 412;
+        result.error = new ErrorUtil.NotIdentified('Please check your credentials');
         return;
     }
 
-    var options = Profile.getUpdateFields(isAdmin);
-    yield profile.updateAttributes(data, options);
+    var registration = user.Registration;
+    // =============================================================================================
+    // We check the time diff in seconds between the last request for confirmation and now
+    // =============================================================================================
+    var datediff = 1000000;
 
-    profile = yield profile.reload();
+    if (registration.lastconfirmation instanceof Date) {
+        datediff = (new Date()).getTime() - registration.lastconfirmation.getTime();
+        datediff = datediff/1000;
+    }
 
-    resultdata = _.pick(profile.get({plain: true}), Profile.getVisibleFields(isAdmin));
+    // =============================================================================================
+    // If request comes to offen we throttle the requests
+    // TODO not sure if this make sense. Perhaps look for something like failtoban for nodejs
+    // =============================================================================================
+    if (datediff < 10) {
+        yield util.sleep(10000);
+    } else if (datediff < 60) {
+        yield util.sleep(5000);
+    }else if (datediff < 120) {
+        yield util.sleep(3000);
+    }
+
+    // =============================================================================================
+    // Resend mail only every 10 minutes
+    // =============================================================================================
+    if ( datediff > 600 ) {
+        yield registration.updateAttributes({
+            lastconfirmation: user.sequelize.fn('NOW')
+        });
+        mailService.sendConfirmationMail(user, registration);
+    }
 
     result.success = true;
-    result.data.push(resultdata);
 }
 
 
 module.exports = {
     confirm : confirmRegistration,
-    resend : resendConfirmation
+    resendConfirmation : resendConfirmation
 };

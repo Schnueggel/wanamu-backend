@@ -9,6 +9,7 @@ var passport = require('koa-passport'),
     TodoList = require('../model/todolist'),
     Todo = require('../model/todo'),
     User = require('../model/user.js'),
+    ErrorUtil = require('../util/error'),
     config = require('../config'),
     co = require('co');
 
@@ -74,19 +75,22 @@ function* strategy(username, password, done){
 
         user = yield User.findOne(options);
     } catch(err) {
-        console.error(err);
-        return done(null, false, {message: 'User not found'});
+        console.error(err.stack);
+        return done(new ErrorUtil.ServerError('Could not process user login'), false, {});
     }
 
     if (user === null) {
-        return done(null, false, { message: 'Incorrect username' });
+        return done(new ErrorUtil.NotFound(), false, {} );
     }
-
 
     var isMatch = yield bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-        return done(null, false, { message: 'Wrong Username or password' });
+        return done(new ErrorUtil.AccessViolation(), false, {});
+    }
+
+    if (!user.confirmed) {
+        return done(new ErrorUtil.NotConfirmed(), false,  {});
     }
 
     done(null, user);

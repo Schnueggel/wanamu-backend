@@ -5,6 +5,7 @@
 var UsersCollection = require('../model/user.js'),
     Util = require('../util/util.js'),
     passport = require ('../config/passport.js'),
+    ErrorUtil = require('../util/error');
     _ = require('lodash'),
     co = require('co');
 
@@ -14,17 +15,19 @@ module.exports = {
 };
 
 /**
- *  * Needs request.params.id field
- * @param req
- * @param res
+ *
+ * @param next
  */
 function* login(next) {
     var ctx = this;
     yield* passport.authenticate('local', function*(err, user, info) {
-        if (err) {
-            throw err;
-        }
-        if (typeof user !== 'object') {
+
+        if (err instanceof ErrorUtil.NotConfirmed) {
+            ctx.status = 424;
+            ctx.body = {
+                success: false
+            };
+        } else if (typeof user !== 'object') {
             // ==========================================================================
             // 401 for not Authenticated
             // ==========================================================================

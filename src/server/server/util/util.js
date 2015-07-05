@@ -46,6 +46,20 @@ var Util = {
         }
 
         return text;
+    },
+    /**
+     * transforms a timeout into a promise. When the promise resolves the timeout ended
+     * @param millis
+     * @returns {Promise}
+     */
+    sleep: function (millis) {
+        var promise = new Promise( function(resolve, reject){
+            setTimeout(function() {
+                resolve()
+            }, millis);
+        });
+
+        return promise;
     }
 };
 

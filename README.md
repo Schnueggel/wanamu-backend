@@ -79,10 +79,12 @@ Are at:  <https://projects.invisionapp.com/d/main#/projects/3485192>
 
 ## Status Codes
 
-This status code are use in the application
+This status code are used in the application
 
+208 If User is confirmed but confirmation is requested again
 401 If User is not Authenticated
 403 If User does not have the permission to do this action
+412 If User requests a resend of confirmation data but has not given a correct password
 422 If data validation went wrong
 404 Entity not found
 424 User not confirmed

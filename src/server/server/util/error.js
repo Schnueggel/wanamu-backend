@@ -1,12 +1,22 @@
 /**
  * Created by Christian on 5/17/2015.
  */
+var util = require('util');
 
-var TodoItError = {};
-TodoItError.prototype = new Error();
+/**
+ * Base Error
+ * @constructor
+ */
+var WanamuError = function() {
+    Error.call(this);
+    Error.captureStackTrace(this, arguments.callee);
+    this.message = message;
+};
+
+util.inherits(WanamuError, Error);
 
 module.exports = {
-    TodoItError : TodoItError,
+    WanamuError : WanamuError,
     TodoNotFound: TodoNotFound,
     AccessViolation: AccessViolation,
     UserPasswordNotCreated : UserPasswordNotCreated,
@@ -19,8 +29,45 @@ module.exports = {
     ProfileNotFound : ProfileNotFound,
     TodoListDefaultNoDelete : TodoListDefaultNoDelete,
     NotFound : NotFound,
+    NotIdentified : NotIdentified,
+    NotConfirmed : NotConfirmed,
+    AlreadyReported : AlreadyReported,
     ServerError : ServerError
 };
+
+/**
+ *
+ * @param {String} [message]
+ * @constructor
+ */
+function NotConfirmed (message) {console.log(this instanceof Error);
+    this.name = 'NotConfirmed';
+    this.message = message;
+}
+util.inherits(NotConfirmed, WanamuError);
+
+/**
+ *
+ * @param {String} [message]
+ * @constructor
+ */
+function AlreadyReported (message) {
+    this.name = 'AlreadyReported';
+    this.message = message;
+}
+util.inherits(AlreadyReported, WanamuError);
+
+/**
+ *
+ * @param {String} [message]
+ * @constructor
+ */
+function NotIdentified (message) {
+    this.name = 'NotIdentified';
+    this.message = message;
+}
+
+util.inherits(NotIdentified, WanamuError);
 
 /**
  *
@@ -32,7 +79,8 @@ function ServerError (message) {
     this.message = message ||  'ServerError';
 }
 
-ServerError.prototype = TodoItError.prototype;
+util.inherits(ServerError, WanamuError);
+
 
 /**
  *
@@ -44,8 +92,7 @@ function NotFound (message) {
     this.message = message ||  'The request data could not be found';
 }
 
-NotFound.prototype = TodoItError.prototype;
-
+util.inherits(NotFound, WanamuError);
 /**
  *
  * @param {String} [message]
@@ -55,8 +102,7 @@ function ProfileNotFound (message) {
     this.name = 'ProfileNotFound';
     this.message = message ||  'The request Profile could not be found';
 }
-
-ProfileNotFound.prototype = TodoItError.prototype;
+util.inherits(ProfileNotFound, WanamuError);
 
 /**
  *
@@ -68,7 +114,7 @@ function TodoAlreadyExists (message) {
     this.message = message ||  'Todo with the same title already exists';
 }
 
-TodoAlreadyExists.prototype = TodoItError.prototype;
+util.inherits(TodoAlreadyExists, WanamuError);
 
 /**
  *
@@ -80,7 +126,7 @@ function TodoListDefaultNoDelete (message) {
     this.message = message ||  'Default TodoList cannot be deleted';
 }
 
-TodoListDefaultNoDelete.prototype = TodoItError.prototype;
+util.inherits(TodoListDefaultNoDelete, WanamuError);
 
 /**
  *
@@ -91,8 +137,7 @@ function TodoListNotFound (message) {
     this.name = 'TodoListNotFound';
     this.message = message ||  'No valid todolist could be found.';
 }
-
-TodoListNotFound.prototype = TodoItError.prototype;
+util.inherits(TodoListNotFound, WanamuError);
 
 /**
  *
@@ -104,8 +149,7 @@ function TodoNotFound (message) {
     this.message = message ||  'No valid todo could be found.';
 }
 
-TodoNotFound.prototype = TodoItError.prototype;
-
+util.inherits(TodoNotFound, WanamuError);
 /**
  *
  * @param {String} [message]
@@ -116,7 +160,7 @@ function AccessViolation (message) {
     this.message = message ||  'Not enough permission';
 }
 
-AccessViolation.prototype = TodoItError.prototype;
+util.inherits(AccessViolation, WanamuError);
 /**
  *
  * @param {String} [message]
@@ -126,8 +170,7 @@ function UserNotFound (message) {
     this.name = 'UserNotFound';
     this.message = message ||  'No valid user could be found.';
 }
-
-UserNotFound.prototype = TodoItError.prototype;
+util.inherits(UserNotFound, WanamuError);
 
 /**
  *
@@ -139,7 +182,7 @@ function UserPasswordNotCreated (message) {
     this.message = message ||  'Unable to create user password.';
 }
 
-UserPasswordNotCreated.prototype = TodoItError.prototype;
+util.inherits(UserPasswordNotCreated, WanamuError);
 
 /**
  *
@@ -151,7 +194,7 @@ function UserAlreadyExists (message) {
     this.message = message || 'User already exists.';
 }
 
-UserAlreadyExists.prototype = TodoItError.prototype;
+util.inherits(UserAlreadyExists, WanamuError);
 
 /**
  * Error on Model Validation
@@ -167,7 +210,7 @@ function ModelValidationError (message, errors, model) {
     this.model = model;
 }
 
-ModelValidationError.prototype = TodoItError.prototype;
+util.inherits(ModelValidationError, WanamuError);
 
 /**
  *
@@ -181,4 +224,4 @@ function ModelValidationFieldError (field, message) {
     this.field = field;
 }
 
-ModelValidationFieldError.prototype = TodoItError.prototype;
+util.inherits(ModelValidationFieldError, WanamuError);
