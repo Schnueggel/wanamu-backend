@@ -1,5 +1,5 @@
 var sequelize = require('../config/sequelize'),
-    bcrypt = require('../config/bcrypt'),
+    crypto = require('crypto'),
     errors = require('../util/error'),
     co = require('co'),
     _ = require('lodash');
@@ -97,7 +97,9 @@ var Registration = sequelize.define('Registration', {
  *
  */
 function* beforeCreate(registration, options){
-    registration.confirmhash =  yield bcrypt.hashAndSalt(registration.UserId.toString(), 4);
+    var sha256 = crypto.createHash("sha256");
+    sha256.update(registration.UserId + 'wanamu', 'utf8');
+    registration.confirmhash = sha256.digest('hex');
 
     if (registration.confirmhash.length < 5) {
         throw new errors.ServerError('Unable to create a valid confirmation hash');

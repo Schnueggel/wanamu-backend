@@ -19,6 +19,8 @@ function* confirmRegistration(hash) {
             data: []
         };
 
+    this.body = result;
+
     user = yield User.findOne({
         include : [
             {
@@ -36,6 +38,7 @@ function* confirmRegistration(hash) {
         return;
     }
 
+
     if ( !user.confirmed ) {
         yield user.update({
             confirmed: 1
@@ -43,8 +46,6 @@ function* confirmRegistration(hash) {
     }
 
     result.success = true;
-
-    result.data.push(result);
 }
 
 

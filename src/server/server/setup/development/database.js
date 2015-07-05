@@ -37,7 +37,8 @@ function* createUsers() {
 
     var user = yield User.create({
         email: conf.get('testmail1'),
-        password: 'abcdefghijk'
+        password: 'abcdefghijk',
+        confirmed : 1
     }, { isNewRecord: true });
 
     console.log('user created');
