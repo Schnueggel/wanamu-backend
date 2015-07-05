@@ -48,9 +48,8 @@ function* confirmRegistration(hash) {
         yield user.update({
             confirmed: 1
         });
+        mailService.sendConfirmationSuccessMail(user.email, user.Profile);
     }
-
-    mailService.sendConfirmationSuccessMail(user.email, user.Profile);
 
     result.success = true;
 }
