@@ -43,7 +43,6 @@ function* confirmRegistration(hash) {
         return;
     }
 
-
     if ( !user.confirmed ) {
         yield user.updateAttributes({
             confirmed: 1

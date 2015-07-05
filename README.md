@@ -85,4 +85,5 @@ This status code are use in the application
 403 If User does not have the permission to do this action
 422 If data validation went wrong
 404 Entity not found
+424 User not confirmed
 500 On an unexpected error
