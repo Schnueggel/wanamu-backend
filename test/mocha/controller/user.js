@@ -4,6 +4,7 @@
 
 var request = require('../../../dist/server/server/config/mocha').request,
     app = require('../../../dist/server/server.js'),
+    config = require('../../../dist/server/server/config'),
     supertest = require('co-supertest'),
     assert = require('assert'),
     co = require('co'),
@@ -68,7 +69,7 @@ describe('Test User Controller', function () {
                 .type('json')
                 .send({
                     data: {
-                        email: 'dog@email.de',
+                        email: 'dog@wanamu.de',
                         password: 'abcdefghijk',
                         Profile : {
                            firstname: 'dog',
@@ -103,7 +104,7 @@ describe('Test User Controller', function () {
                 .post('/auth/login')
                 .type('form')
                 .send({
-                    username: 'dog@email.de',
+                    username: 'dog@wanamu.de',
                     password: 'abcdefghijk'
                 })
                 .set('Accept', 'application/json')

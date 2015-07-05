@@ -4,6 +4,7 @@
 
 var request = require('../../../dist/server/server/config/mocha').request,
     app = require('../../../dist/server/server.js'),
+    config = require('../../../dist/server/server/config'),
     assert = require('assert'), co = require('co'),
     _ = require('lodash');
 
@@ -37,7 +38,7 @@ describe('Test Auth Controller', function () {
                 .post('/auth/login')
                 .type('form')
                 .send({
-                    username: 'test@email.de',
+                    username: config.get('testmail1'),
                     password: 'abcdefghijk'
                 })
                 .set('Accept', 'application/json')
@@ -98,7 +99,7 @@ describe('Test Auth Controller', function () {
                  .type('json')
                  .set('Accept', 'application/json')
                  .expect('Content-Type', /json/)
-                 .expect(403)
+                 .expect(401)
                  .end();
 
             assert(typeof res.body, 'object');
@@ -116,7 +117,7 @@ describe('Test Auth Controller', function () {
                 .post('/auth/login')
                 .type('form')
                 .send({
-                    username: 'test@email.de',
+                    username: config.get('testmail1'),
                     password: 'abcdefghijk'
                 })
                 .set('Accept', 'application/json')

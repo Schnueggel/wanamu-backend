@@ -9,6 +9,7 @@ var User = require('../../model/user.js'),
     Profile = require('../../model/profile'),
     Setting = require('../../model/setting'),
     Registration = require('../../model/registration'),
+    conf = require('../../config'),
     co = require('co');
 
 /**
@@ -33,20 +34,25 @@ function* setup(){
 }
 
 function* createUsers() {
+
     var user = yield User.create({
-        email: 'test@email.de',
+        email: conf.get('testmail1'),
         password: 'abcdefghijk'
     }, { isNewRecord: true });
+
     console.log('user created');
+
     var profile = yield Profile.create({
         UserId : user.id,
         firstname: 'firstName',
         lastname: 'lastName',
         salutation: 'mr'
     }, { isNewRecord: true });
+
     var settings = yield Setting.create({
         UserId : user.id
     }, { isNewRecord: true });
+
     var registration = yield Registration.create({
         UserId : user.id
     }, { isNewRecord: true });
@@ -57,7 +63,7 @@ function* createTodoList() {
 
     var user = yield User.findOne({
         where:{
-            email:'test@email.de'
+            email: conf.get('testmail1')
         }
     });
     var todolist = yield user.createTodoList({
@@ -70,7 +76,7 @@ function* createTodoList() {
 function* createTodos() {
     var user = yield User.findOne({
         where:{
-            email:'test@email.de'
+            email:conf.get('testmail1')
         }
     });
 

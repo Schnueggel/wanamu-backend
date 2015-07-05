@@ -20,7 +20,7 @@
         "service": "gmail",
         "auth": {
             "user": "christian.steinmann.test@gmail.com",
-            "password": "$$Test$$"
+            "pass": "$$Test$$"
         }
     },
     "sequelize": {

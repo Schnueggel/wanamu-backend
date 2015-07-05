@@ -4,6 +4,7 @@
 
 var request = require('../../../dist/server/server/config/mocha').request,
     app = require('../../../dist/server/server.js'),
+    config = require('../../../dist/server/server/config'),
     assert = require('assert'), co = require('co'),
     _ = require('lodash');
 
@@ -41,7 +42,7 @@ describe('Test Todo Controller', function () {
                 .post('/auth/login')
                 .type('form')
                 .send({
-                    username: 'test@email.de',
+                    username: config.getTestMail1(),
                     password: 'abcdefghijk'
                 })
                 .set('Accept', 'application/json')

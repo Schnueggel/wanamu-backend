@@ -5,6 +5,8 @@ var TodoList = require('../model/todolist'),
     Todo = require('../model/todo'),
     Setting = require('../model/setting'),
     Profile = require('../model/profile'),
+    Registration = require('../model/registration'),
+    mailService = require('../services/mail'),
     ErrorUtil = require('../util/error'),
     bcrypt = require ('bcryptjs'),
     _ = require('lodash'),
@@ -94,6 +96,10 @@ function* createUser() {
 
         yield Profile.create( profiledata,{ isNewRecord: true, transaction: transaction } );
 
+        var registration = yield Registration.create ( {
+            UserId : user.id
+        }, { isNewRecord: true, transaction: transaction });
+
         // ==========================================================================
         // Default todolist is needed
         // ==========================================================================
@@ -107,6 +113,8 @@ function* createUser() {
             include: User.getIncludeAllOption(false)
         });
 
+        yield mailService.sendConfirmationMail(user, registration);
+
         result.success = true;
         // ==========================================================================
         // Filter the resulting data
@@ -118,7 +126,9 @@ function* createUser() {
 
     } catch (err) {
         console.error(err.stack);
-        transaction.rollback();
+        if (transaction.finished !== 'commit') {
+            transaction.rollback();
+        }
         // ==========================================================================
         // TODO test validation errors
         // ==========================================================================

@@ -26,14 +26,30 @@ module.exports = bc = {
         num = _.isNumber(num) ?  num : 10;
         return new Promise(function (resolve, reject) {
             bcrypt.genSalt(num, function (err, salt) {
-                if (err) { reject(err); console.error(err);} else { resolve(salt); }
+                if (err) {
+                    reject(err);
+                    console.error(err.stack);
+                } else {
+                    resolve(salt);
+                }
             });
         });
     },
+    /**
+     *
+     * @param {string} password
+     * @param {string} salt
+     * @returns {Promise}
+     */
     hash : function(password, salt){
         return new Promise(function (resolve, reject) {
             bcrypt.hash(password, salt, function(err, hash) {
-                if (err) { reject(err);console.error(err); } else { resolve(hash); }
+                if (err) {
+                    reject(err);
+                    console.error(err.stack);
+                } else {
+                    resolve(hash);
+                }
             });
         });
     },

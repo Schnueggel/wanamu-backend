@@ -1,5 +1,7 @@
-var templatehtml = require('./template.html');
-var templatetxt = require('./template.txt');
+var fs = require('fs');
+
+var templatehtml = fs.readFileSync(__dirname + '/template.html').toString();
+var templatetxt = fs.readFileSync(__dirname + '/template.txt').toString();
 
 function ConfirmationMail () {
     this.text = templatetxt;
@@ -14,6 +16,5 @@ ConfirmationMail.prototype.setConfirmationLink = function(link) {
     this.html = this.html.replace('${confirmationlink}', link);
     return this;
 };
-
 
 module.exports = ConfirmationMail;

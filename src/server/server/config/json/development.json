@@ -4,5 +4,6 @@
         "user": "todoit_dev",
         "password": "todoit_dev",
         "database": "todoit_dev"
-    }
+    },
+    "testmail1" : "christian.steinmann.test@gmail.com"
 }

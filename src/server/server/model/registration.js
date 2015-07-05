@@ -22,7 +22,7 @@ var Registration = sequelize.define('Registration', {
         autoIncrement: true
     },
     confirmhash: {
-        type: sequelize.Sequelize.STRING(255),
+        type: sequelize.Sequelize.STRING,
         allowNull : true,
         unique : true
     },
@@ -97,7 +97,8 @@ var Registration = sequelize.define('Registration', {
  *
  */
 function* beforeCreate(registration, options){
-    registration.confirmhash =  yield bcrypt.hashAndSalt(registration.UserId, 4);
+    registration.confirmhash =  yield bcrypt.hashAndSalt(registration.UserId.toString(), 4);
+
     if (registration.confirmhash.length < 5) {
         throw new errors.ServerError('Unable to create a valid confirmation hash');
     }

@@ -41,7 +41,7 @@ nconf.file({file: __dirname + '/json/default.json'});
 // Test inherits from development
 // =============================================================================================
 if (nconf.isTest()) {
-    nconf.file('env', {file: __dirname + '/json/development.json'});
+    nconf.file('development', {file: __dirname + '/json/development.json'});
 }
 // =============================================================================================
 // Load the environment specific config
@@ -64,6 +64,9 @@ nconf.getConfirmationUrl = function(hash){
     return nconf.get('webhost') + nconf.get('url').confirmation.replace('${hash}', hash);
 };
 
+nconf.getTestMail1 = function() {
+    return nconf.get('testmail1');
+}
 // =============================================================================================
 // Export
 // =============================================================================================
