@@ -76,7 +76,46 @@ All data is stored in a Mongo Database.
 
 Are at:  <https://projects.invisionapp.com/d/main#/projects/3485192>
 
+## Docker
 
+We use docker to run the database
+To update the scheme use the wanamu-db project and the docker-liquibase project.
+
+1. Go to the folder changelogs in the wanamu-db create a new changelog.xml and raise the postfix. Dont forget to include the previous Version.
+
+Go into the folder of wanamu-db and build the container 
+```build -t wanamudb .```
+
+Go into the folder of liquibase and build the container
+```build -t liquivase .```
+
+2. Create the needed env vars (Example):
+    export LB_CHANGELOGS=/c/Users/Schnueggel/WebstormProjects/wanamu-db/changelogs
+    export POSTGRES_DATA=/c/Users/Schnueggel/WebstormProjects/wanamu-db/data
+    export POSTGRES_USER=postgres
+    export POSTGRES_PASSWORD=postgres
+    export WU_DB_NAME=wanamu
+    export WU_DB_PASS=wanamu
+    export WU_DB_USER=wanamu
+
+3. Start wanamudb container
+
+docker run --name wanamudb \
+    -p 5432:5432  \
+    -v POSTGRES_DATA:/var/lib/postgresql/data \
+    -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD   \
+    -e POSTGRES_USER=$POSTGRES_USER \
+    -e DB_USER=$WU_DB_USER
+    -e DB_PASS=$WU_DB_PASS
+    -e DB_NAME=$WU_DB_NAME
+    -d wanamudb
+    
+    Or single line:
+    docker run --name wanamudb -p 5432:5432  -v POSTGRES_DATA:/var/lib/postgresql/data  -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_USER=$POSTGRES_USER  -e DB_USER=$WU_DB_USER  -e DB_PASS=$WU_DB_PASS -e DB_NAME=$WU_DB_NAME  -d wanamudb  
+    
+4. Start liquibase container to update database
+
+    docker run -it --name liquibase --link wanamudb:db --entrypoint="/scripts/liquibase_command.sh"   -v $LB_CHANGELOGS:/changelogs -e LB_CHANGELOG_FILE=/changelogs/changelog.xml -e LB_DB_NAME=wanamu --rm liquibase  update
 ## Status Codes
 
 This status code are used in the application
