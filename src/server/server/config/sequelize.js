@@ -5,4 +5,6 @@
 var nconf = require('../config'),
     Sequelize = require('sequelize');
 
-module.exports = new Sequelize(nconf.get('mysql:database'), nconf.get('mysql:user'), nconf.get('mysql:password'), nconf.get('sequelize'));
+var postgres = nconf.get('postgres');
+console.log(postgres);
+module.exports = new Sequelize(postgres.database,postgres.user, postgres.password, nconf.get('sequelize'));

@@ -7,12 +7,10 @@
     "debug": false,
     "webhost": "http://localhost:3000",
     "webhome": "/home",
-    "mysql": {
-        "port": 3306,
-        "host": "localhost",
-        "user": "todoit",
-        "password": "todoit",
-        "database": "todoit"
+    "postgres":{
+        "user": "wanamu",
+        "password": "wanamu",
+        "database": "wanamu"
     },
     "url" : {
         "confirmation": "/#/confirmation/${hash}"
@@ -26,7 +24,7 @@
     },
     "sequelize": {
         "host": "localhost",
-        "dialect": "mysql",
+        "dialect": "postgres",
         "define": {
             "collate": "utf8_general_ci"
         },
