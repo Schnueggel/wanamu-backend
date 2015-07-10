@@ -222,7 +222,7 @@ gulp.task('build-development-database', function (cb) {
     requireFolder(modelpath);
 
     process.env.NODE_ENV = 'development';
-    sequelize.query('SET FOREIGN_KEY_CHECKS = 0').then(function(){
+    sequelize.query('').then(function(){
         sequelize.sync({'force': true})
             .then(function(){
                 var devDbSetupScript = path.join(distServerPath, 'server', 'setup', 'development', 'database.js');
