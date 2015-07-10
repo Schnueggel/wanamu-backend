@@ -36,16 +36,20 @@ var Todo = sequelize.define('Todo', {
         allowNull: true
     },
     repeatWeekly: {
-        type: sequelize.Sequelize.STRING,
+        type: sequelize.Sequelize.ARRAY,
         allowNull: true
     },
     repeatMonthly: {
-        type: sequelize.Sequelize.STRING,
+        type: sequelize.Sequelize.ARRAY,
         allowNull: true
     },
     repeatYearly: {
-        type: sequelize.Sequelize.STRING,
+        type: sequelize.Sequelize.ARRAY,
         allowNull: true
+    },
+    finished : {
+        type: sequelize.Sequelize.BOOLEAN,
+        defaultValue: false
     },
     color: {
         type: sequelize.Sequelize.ENUM('color1', 'color2', 'color3', 'color4', 'color5'),
@@ -65,9 +69,6 @@ var Todo = sequelize.define('Todo', {
     // HOOKS
     // ==========================================================================
     hooks: {
-        afterFind: co.wrap(afterFind),
-        beforeValidate: co.wrap(beforeValidate),
-        beforeDestroy: co.wrap(beforeDestroy)
     },
     classMethods: {
         /**
@@ -117,51 +118,9 @@ var Todo = sequelize.define('Todo', {
         }
     },
     instanceMethods: {
-        filterOut: function (todo) {
-            _.forEach(['repeatWeekly', 'repeatMonthly', 'repeatYearly'], function (v) {
-                if (_.isString(todo[v]) && todo[v].length > 0) {
-                    todo[v] = todo[v].split(',');
-                } else {
-                    todo[v] = [];
-                }
-            });
-            return todo;
-        },
-        filterIn: function (todo) {
-            if (_.isArray(todo.repeatWeekly)) {
-                todo.repeatWeekly = todo.repeatWeekly.join(',');
-            }
-            if (_.isArray(todo.repeatMonthly)) {
-                todo.repeatMonthly = todo.repeatMonthly.join(',');
-            }
-            if (_.isArray(todo.repeatYearly)) {
-                todo.repeatYearly = todo.repeatYearly.join(',');
-            }
-            return todo;
-        }
+
     }
 });
-
-function* beforeDestroy(todo) {
-    if (todo) {
-        todo.filterIn(todo);
-    }
-    return;
-}
-
-function* beforeValidate(todo) {
-    if (todo) {
-        todo.filterIn(todo);
-    }
-    return;
-}
-function* afterFind(todo) {
-    if (todo) {
-        todo.filterOut(todo);
-    }
-
-    return;
-}
 
 
 module.exports = Todo;

@@ -75,8 +75,7 @@ var User = sequelize.define('User', {
     hooks: {
         beforeBulkCreate: co.wrap(beforeBulkCreate),
         beforeCreate: co.wrap(beforeCreate),
-        beforeUpdate: co.wrap(beforeUpdate),
-        afterFind: co.wrap(afterFind)
+        beforeUpdate: co.wrap(beforeUpdate)
     },
     // ==========================================================================
     // Class Methods
@@ -191,25 +190,6 @@ var User = sequelize.define('User', {
                 DefaultTodoListId: todolist.id
             }, options);
         },
-        filterOut : function(user) {
-            if (!_.isArray(user.TodoLists)) {
-                return user;
-            }
-
-            _.forEach(user.TodoLists, function(todolist) {
-                if (_.isFunction(todolist.filterOut)) {
-                    todolist.filterOut(todolist);
-                }
-                if (_.isArray(todolist.Todos)) {
-                   _.forEach(todolist.Todos, function(todo) {
-                       if (_.isFunction(todo.filterOut)) {
-                           todo.filterOut(todo);
-                       }
-                   });
-                }
-            });
-            return user;
-        },
         /**
          * @param {Object} [options]
          * @returns {Promise}
@@ -303,18 +283,4 @@ function* hashPassword(user) {
 function comparePassword(passwordCandidate) {
     var userPassword = this.password;
     return bcrypt.compare(passwordCandidate, userPassword);
-}
-
-/**
- * @param user
- */
-function* afterFind(user) {
-    if (user) {
-        // =============================================================================================
-        // TODO remove filter out
-        // =============================================================================================
-        user.filterOut(user);
-    }
-
-    return;
 }
