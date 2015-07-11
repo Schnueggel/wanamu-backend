@@ -24,7 +24,7 @@ var Todo = sequelize.define('Todo', {
         allowNull: true
     },
     title: {
-        type: sequelize.Sequelize.STRING(255),
+        type: sequelize.Sequelize.STRING(100),
         allowNull: false
     },
     order: {
@@ -36,15 +36,15 @@ var Todo = sequelize.define('Todo', {
         allowNull: true
     },
     repeatWeekly: {
-        type: sequelize.Sequelize.ARRAY,
+        type: sequelize.Sequelize.ARRAY(sequelize.Sequelize.STRING(2)),
         allowNull: true
     },
     repeatMonthly: {
-        type: sequelize.Sequelize.ARRAY,
+        type: sequelize.Sequelize.ARRAY(sequelize.Sequelize.STRING(2)),
         allowNull: true
     },
     repeatYearly: {
-        type: sequelize.Sequelize.ARRAY,
+        type: sequelize.Sequelize.ARRAY(sequelize.Sequelize.STRING(3)),
         allowNull: true
     },
     finished : {
@@ -65,11 +65,6 @@ var Todo = sequelize.define('Todo', {
     // OPTIONS
     // ==========================================================================
     paranoid: true,
-    // ==========================================================================
-    // HOOKS
-    // ==========================================================================
-    hooks: {
-    },
     classMethods: {
         /**
          * Helper function to get a list of  the fields

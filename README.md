@@ -87,35 +87,12 @@ Go into the folder of wanamu-db and build the container
 ```build -t wanamudb .```
 
 Go into the folder of liquibase and build the container
-```build -t liquivase .```
+```build -t liquibase .```
 
-2. Create the needed env vars (Example):
-    export LB_CHANGELOGS=/c/Users/Schnueggel/WebstormProjects/wanamu-db/changelogs
-    export POSTGRES_DATA=/c/Users/Schnueggel/WebstormProjects/wanamu-db/data
-    export POSTGRES_USER=postgres
-    export POSTGRES_PASSWORD=postgres
-    export WU_DB_NAME=wanamu
-    export WU_DB_PASS=wanamu
-    export WU_DB_USER=wanamu
+2. Create the database by using the start.sh script in the database project
 
-3. Start wanamudb container
-
-docker run --name wanamudb \
-    -p 5432:5432  \
-    -v POSTGRES_DATA:/var/lib/postgresql/data \
-    -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD   \
-    -e POSTGRES_USER=$POSTGRES_USER \
-    -e DB_USER=$WU_DB_USER
-    -e DB_PASS=$WU_DB_PASS
-    -e DB_NAME=$WU_DB_NAME
-    -d wanamudb
+3. Update the schema in the database by calling the update.sh script in the liquibase folder
     
-    Or single line:
-    docker run --name wanamudb -p 5432:5432  -v POSTGRES_DATA:/var/lib/postgresql/data  -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_USER=$POSTGRES_USER  -e DB_USER=$WU_DB_USER  -e DB_PASS=$WU_DB_PASS -e DB_NAME=$WU_DB_NAME  -d wanamudb  
-    
-4. Start liquibase container to update database
-
-    docker run -it --name liquibase --link wanamudb:db --entrypoint="/scripts/liquibase_command.sh"   -v $LB_CHANGELOGS:/changelogs -e LB_CHANGELOG_FILE=/changelogs/changelog.xml -e LB_DB_NAME=wanamu --rm liquibase  update
 ## Status Codes
 
 This status code are used in the application
