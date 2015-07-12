@@ -136,6 +136,13 @@ function* createTodos() {
 
         yield todolist.addTodos([todo1, todo2]);
     }
+    else {
+        _.forEach(todos, function(todo) {
+            todo.finished = false;
+            todo.deletedAt = null;
+            todo.save();
+        })
+    }
 }
 
 module.exports = start();
