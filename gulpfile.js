@@ -223,7 +223,7 @@ gulp.task('build-development-database', function (cb) {
 
     process.env.NODE_ENV = 'development';
     sequelize.query('').then(function(){
-        sequelize.sync({'force': true})
+        sequelize.sync({'force': false})
             .then(function(){
                 var devDbSetupScript = path.join(distServerPath, 'server', 'setup', 'development', 'database.js');
                 require(devDbSetupScript).then(function(){
@@ -247,7 +247,7 @@ gulp.task('build-test-database',['build-server'], function (cb) {
 
     process.env.NODE_ENV = 'test';
     sequelize.query('SET FOREIGN_KEY_CHECKS = 0').then(function(){
-        sequelize.sync({'force': true}).then(function(){
+        sequelize.sync({'force': false}).then(function(){
             var testDbSetupScript = path.join(distServerPath, 'server', 'setup', 'test', 'database.js');
             require(testDbSetupScript).then(function(){
                 cb();

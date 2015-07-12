@@ -146,16 +146,6 @@ var User = sequelize.define('User', {
                 },
                 {
                     model: Profile
-                },
-                {
-                    model: TodoList,
-                    include: [
-                        {
-                            model: Todo,
-                            attributes: Todo.getVisibleFields(isAdmin)
-                        }
-                    ],
-                    attributes: TodoList.getVisibleFields(isAdmin)
                 }
             ];
         }
