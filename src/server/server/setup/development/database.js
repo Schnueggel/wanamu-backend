@@ -76,7 +76,6 @@ function* createUsers() {
         console.log('user updated');
     }
 
-
 }
 
 function* createTodoList() {
@@ -112,7 +111,7 @@ function* createTodos() {
 
     var todolist = yield TodoList.findOne({where: {name: 'default', UserId: user.id}});
 
-    var todos = todolist.findAll({
+    var todos = yield Todo.findAll({
         where: {
             TodoListId: todolist.id
         }
