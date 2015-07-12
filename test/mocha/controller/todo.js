@@ -12,6 +12,7 @@ var request = require('../../../dist/server/server/config/mocha').request,
 describe('Test Todo Controller', function () {
 
     var todoid;
+    var todolistid;
     // ==========================================================================
     // Before test we start the server
     // ==========================================================================
@@ -51,7 +52,10 @@ describe('Test Todo Controller', function () {
                 .end();
 
             assert(res.body.success, true);
-
+            assert(_.isArray(res.body.data));
+            assert(res.body.data.length, 1);
+            assert(_.isNumber(res.body.data[0].DefaultTodoListId));
+            todolistid = res.body.data[0].DefaultTodoListId;
         }).then(function(){
             done();
         }).catch(function(err){
@@ -72,8 +76,8 @@ describe('Test Todo Controller', function () {
                         title: 'Feed dog',
                         description: 'Give him some food',
                         alarm: '2015-01-01 15:30',
-                        color: '#456789',
-                        TodoListId: 1
+                        color: 'color1',
+                        TodoListId: todolistid
                     }
                 })
                 .set('Accept', 'application/json')

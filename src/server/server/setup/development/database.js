@@ -1,6 +1,3 @@
-/**
- * Created by Christian on 5/10/2015.
- */
 'use strict';
 
 var User = require('../../model/user.js'),
@@ -10,6 +7,7 @@ var User = require('../../model/user.js'),
     Setting = require('../../model/setting'),
     Registration = require('../../model/registration'),
     conf = require('../../config'),
+    _ = require('lodash'),
     co = require('co');
 
 /**
@@ -34,6 +32,16 @@ function* setup(){
 }
 
 function* createUsers() {
+
+    yield User.destroy({
+        force: true,
+        where: {
+            id: {
+                gt : 0
+            }
+        }
+    });
+
     var user = yield User.findOne({
         where: {
             email:conf.get('testmail1')
@@ -47,22 +55,22 @@ function* createUsers() {
     };
 
     var profiledata = {
-        UserId : user.id,
         firstname: 'firstName',
         lastname: 'lastName',
         salutation: 'mr'
     };
 
-    var settingdata = {
-        UserId : user.id
-    };
+    var settingdata = { };
 
-    var registrationdata = {
-        UserId : user.id
-    };
+    var registrationdata = { };
 
     if (!user) {
+
         user = yield User.create(userdata, { isNewRecord: true });
+
+        settingdata.UserId = user.id;
+        profiledata.UserId = user.id;
+        registrationdata.UserId = user.id;
         yield Profile.create(profiledata, { isNewRecord: true });
 
         yield Setting.create( settingdata, { isNewRecord: true });
@@ -137,11 +145,11 @@ function* createTodos() {
         yield todolist.addTodos([todo1, todo2]);
     }
     else {
-        _.forEach(todos, function(todo) {
-            todo.finished = false;
-            todo.deletedAt = null;
-            todo.save();
-        })
+        for (var i = 0; i < todos.length; i++) {
+            todos[i].finished = false;
+            todos[i].deletedAt = null;
+            yield todos[i].save();
+        }
     }
 }
 

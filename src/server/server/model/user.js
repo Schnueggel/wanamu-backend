@@ -176,7 +176,7 @@ var User = sequelize.define('User', {
          * @return {Promise}
          */
         setDefaultTodoList: function*(todolist, options) {
-            return yield this.update({
+            return yield this.updateAttributes({
                 DefaultTodoListId: todolist.id
             }, options);
         },

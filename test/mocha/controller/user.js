@@ -2,14 +2,15 @@
  * Created by Christian on 5/21/2015.
  */
 
-var request = require('../../../dist/server/server/config/mocha').request,
+var mochaconf =  require('../../../dist/server/server/config/mocha')
+    request = mochaconf.request,
     app = require('../../../dist/server/server.js'),
     config = require('../../../dist/server/server/config'),
+    User = require('../../../dist/server/server/model/user'),
     supertest = require('co-supertest'),
     assert = require('assert'),
     co = require('co'),
     _ = require('lodash');
-
 
 describe('Test User Controller', function () {
 
@@ -18,14 +19,14 @@ describe('Test User Controller', function () {
     // Before test we start the server
     // ==========================================================================
     before(function (done) {
-
         co(function*() {
+            yield User.destroy({
+                where: {
+                    email : 'dog@wanamu.de'
+                }
+            });
             yield app.init();
-        }).then(function () {
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
+        }).then(mochaconf.doneGood(done)).catch(mochaconf.doneErr(done));
     });
 
     // ==========================================================================
@@ -53,12 +54,10 @@ describe('Test User Controller', function () {
 
             assert(typeof res.body, 'object');
             assert.equal(res.body.success, true);
+            assert(res.body.success, true);
 
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(mochaconf.doneGood(done))
+            .catch(mochaconf.doneErr(done));
     });
 
     it('Should create user', function(done){
@@ -83,22 +82,17 @@ describe('Test User Controller', function () {
                 .expect(200)
                 .end();
 
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
+            assert.equal(typeof res.body, 'object');
+            assert.equal(res.body.success, true);
             assert(_.isArray(res.body.data));
-            assert(res.body.data.length, 1);
-            assert(typeof res.body.data[0], 'object');
+            assert.equal(res.body.data.length, 1);
+            assert.equal(typeof res.body.data[0], 'object');
 
             userid = res.body.data[0].id;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(mochaconf.doneGood(done))
+            .catch(mochaconf.doneErr(done));
     });
-
-
-    it('Should login', function(done){
+    it('Should not login', function(done){
         co(function *() {
             var res = yield request
                 .post('/auth/login')
@@ -109,19 +103,16 @@ describe('Test User Controller', function () {
                 })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
-                .expect(200)
+                .expect(424)
                 .end();
 
-            assert(res.body.success, true);
+            assert.equal(res.body.success, false);
 
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(mochaconf.doneGood(done))
+            .catch(mochaconf.doneErr(done));
     });
 
-    it('Should update user', function(done){
+    it('Should not update user', function(done){
         assert(_.isNumber(userid));
 
         co(function *() {
@@ -139,22 +130,75 @@ describe('Test User Controller', function () {
                 })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
+                .expect(401)
+                .end();
+
+            assert.equal(typeof res.body, 'object');
+            assert.equal(res.body.success, false);
+
+        }).then(mochaconf.doneGood(done)).catch(mochaconf.doneErr(done));
+    });
+
+    it('Should login', function(done){
+        co(function *() {
+            // =============================================================================================
+            // We need to confirm the user before we can update him
+            // =============================================================================================
+            var user = yield User.findById(userid);
+            user.confirmed = 1;
+            yield user.save();
+
+            var res = yield request
+                .post('/auth/login')
+                .type('form')
+                .send({
+                    username: 'dog@wanamu.de',
+                    password: 'abcdefghijk'
+                })
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
                 .expect(200)
                 .end();
 
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert(res.body.data.length, 1);
-            assert(typeof res.body.data[0], 'object');
-            assert(typeof res.body.data[0].firstname, 'hotdog');
-            assert(typeof res.body.data[0].firstname, 'kitcat');
+            assert.equal(res.body.success, true);
 
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(mochaconf.doneGood(done)).catch(mochaconf.doneErr(done));
+    });
+
+    it('Should update user', function(done){
+        assert(_.isNumber(userid));
+
+        co(function *() {
+            var res = yield request
+                .put('/user/' + userid)
+                .type('json')
+                .send({
+                    data: {
+
+                        Profile: {
+                            firstname: 'hotdog',
+                            lastname: 'kitcat',
+                            salutation: 'mr'
+                        }
+                    }
+                })
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end();
+
+            assert.equal(typeof res.body, 'object');
+            assert.equal(res.body.success, true);
+            assert(_.isArray(res.body.data));
+            assert.equal(res.body.data.length, 1);
+            assert.equal(typeof res.body.data[0], 'object');
+            // =============================================================================================
+            // Profile should not get updated
+            // =============================================================================================
+            assert.equal(res.body.data[0].Profile.firstname, 'dog');
+            assert.equal(res.body.data[0].Profile.lastname, 'cat');
+
+        }).then(mochaconf.doneGood(done)).catch(mochaconf.doneErr(done));
     });
 
     it('Should Get User', function (done) {
@@ -168,18 +212,14 @@ describe('Test User Controller', function () {
                  .expect(200)
                  .end();
 
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
+            assert.equal(typeof res.body, 'object');
+            assert.equal(res.body.success, true);
             assert(_.isArray(res.body.data));
-            assert(res.body.data.length, 1);
-            assert(res.body.data[0].id, userid);
-            assert(res.body.data[0].Profile.firstname, 'dog');
-            assert(res.body.data[0].Profile.lastname, 'cat');
-        }).then(function () {
-            done();
-        }).catch(function (err) {
-           done(err);
-        });
+            assert.equal(res.body.data.length, 1);
+            assert.equal(res.body.data[0].id, userid);
+            assert.equal(res.body.data[0].Profile.firstname, 'dog');
+            assert.equal(res.body.data[0].Profile.lastname, 'cat');
+        }).then(mochaconf.doneGood(done)).catch(mochaconf.doneErr(done));
     });
 });
 

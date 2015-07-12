@@ -40,7 +40,7 @@ module.exports = {
  * @param {String} [message]
  * @constructor
  */
-function NotConfirmed (message) {console.log(this instanceof Error);
+function NotConfirmed (message) {
     this.name = 'NotConfirmed';
     this.message = message;
 }

@@ -6,5 +6,19 @@ var config = require('../config'),
 
 
 module.exports = {
-    request: request
+    request: request,
+    doneGood: function (done) {
+        return function () {
+            done();
+        }
+    },
+    doneErr: function (done) {
+        return function (err) {
+            if (err) {
+                done(err);
+            } else {
+                done();
+            }
+        }
+    }
 };

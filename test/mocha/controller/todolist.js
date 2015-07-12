@@ -10,7 +10,7 @@ var request = require('../../../dist/server/server/config/mocha').request,
 
 
 describe('Test Todolist Controller', function () {
-
+    var user;
     // ==========================================================================
     // Before test we start the server
     // ==========================================================================
@@ -50,7 +50,10 @@ describe('Test Todolist Controller', function () {
                 .end();
 
             assert(res.body.success, true);
-
+            assert(_.isArray(res.body.data));
+            assert(res.body.data.length, 1);
+            assert(_.isNumber(res.body.data[0].DefaultTodoListId));
+            user = res.body.data[0];
         }).then(function(){
             done();
         }).catch(function(err){
@@ -88,7 +91,7 @@ describe('Test Todolist Controller', function () {
     it('Should not delete default Todolist', function(done){
         co(function *() {
             var res = yield request
-                .delete('/todolist/1')
+                .delete('/todolist/' + user.DefaultTodoListId)
                 .type('json')
                 .send({
                     data: {
@@ -117,7 +120,7 @@ describe('Test Todolist Controller', function () {
     it('Should Get Todolist', function (done) {
         co(function*(){
             var res = yield request
-                .get('/todolist/1')
+                .get('/todolist/' + user.DefaultTodoListId)
                 .type('json')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)

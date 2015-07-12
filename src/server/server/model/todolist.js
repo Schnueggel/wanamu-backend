@@ -104,8 +104,7 @@ var TodoList = sequelize.define('TodoList', {
     ]
 });
 
-TodoList.hasMany(Todo);
-
+TodoList.hasMany(Todo,  { onDelete: 'cascade' });
 /**
  * Returns all fields that are allowed for update
  * @param {boolean} isAdmin
@@ -119,5 +118,6 @@ TodoList.hasMany(Todo);
  * @returns {string[]}
  * @name TodoList.getCreateFields
  */
+
 
 module.exports = TodoList;
