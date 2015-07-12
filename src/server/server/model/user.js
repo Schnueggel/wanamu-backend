@@ -7,6 +7,7 @@ var sequelize = require('../config/sequelize'),
     bcrypt = require('../config/bcrypt'),
     Profile = require('./profile'),
     Registration = require('./registration'),
+    Friends = require('./friends'),
     Setting = require('./setting');
 
 /**
@@ -211,6 +212,7 @@ User.hasOne(Profile, {
     onDelete: 'CASCADE'
 });
 
+User.belongsToMany(User, { as: 'Friends', through : Friends});
 module.exports = User;
 
 

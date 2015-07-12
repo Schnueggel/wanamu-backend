@@ -89,6 +89,7 @@ describe('Test User Controller', function () {
             assert.equal(typeof res.body.data[0], 'object');
 
             userid = res.body.data[0].id;
+            return null;
         }).then(mochaconf.doneGood(done))
             .catch(mochaconf.doneErr(done));
     });

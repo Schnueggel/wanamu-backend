@@ -194,7 +194,7 @@ gulp.task('test-mocha', ['prepare-mocha-tests'], function () {
     return gulp.src('test/mocha/**/**.js')
         .pipe(mocha({
             timeout: 5000
-        }))
+        }));
 });
 
 // ==========================================================================

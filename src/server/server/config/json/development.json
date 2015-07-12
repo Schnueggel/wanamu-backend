@@ -2,7 +2,7 @@
     "debug": true,
     "testmail1" : "christian.steinmann.test@gmail.com",
     "postgres":{
-        "user": "postgres",
-        "password": "postgres"
+        "user": "wanamu",
+        "password": "wanamu"
     }
 }

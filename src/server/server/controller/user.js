@@ -58,7 +58,7 @@ function* createUser() {
     if (!isAdmin) {
         data.group = 'user';
     }
-    var salt = bcrypt.genSaltSync(10);
+
     // ==========================================================================
     // Filter not allowed fields
     // ==========================================================================
@@ -113,7 +113,7 @@ function* createUser() {
             include: User.getIncludeAllOption(false)
         });
 
-        yield mailService.sendConfirmationMail(user, registration);
+        mailService.sendConfirmationMail(user, registration);
 
         result.success = true;
         // ==========================================================================

@@ -38,9 +38,9 @@ function* testCreateUser(){
         assert(false, true, 'This code should never be reached');
     } catch(err) {
         assert(err instanceof sequelize.Sequelize.ValidationError);
-        assert(typeof err.errors,  'array');
-        assert(err.errors.length, 1);
-        assert(err.errors[0].path, 'password');
+        assert.equal(typeof err.errors,  'object');
+        assert.equal(err.errors.length, 1);
+        assert.equal(err.errors[0].path, 'password');
     }
 
     var password = 'abcdefghijk';
@@ -48,7 +48,7 @@ function* testCreateUser(){
 
     yield user.save();
     assert.notEqual(user.password, password);
-    assert(user.password.length, 60);
+    assert.equal(user.password.length, 60);
 
     var isMatch = yield user.comparePassword(password);
 

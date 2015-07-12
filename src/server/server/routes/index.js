@@ -3,6 +3,7 @@ var co = require('co'),
     TodoController = require('../controller/todo'),
     TodoListController = require('../controller/todolist'),
     UserController = require('../controller/user'),
+    FriendsController = require('../controller/friends'),
     ProfileController = require('../controller/profile'),
     RegistrationController = require('../controller/registration'),
     SettingController = require('../controller/setting'),
@@ -92,6 +93,10 @@ module.exports = function(app){
     // =============================================================================================
     app.use(route.put('/setting/:id', SettingController.update));
     app.use(route.get('/setting/:id', SettingController.get));
+    // =============================================================================================
+    // Friends
+    // =============================================================================================
+    app.use(route.get('/friends', FriendsController.list));
 };
 
 
