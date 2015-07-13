@@ -51,7 +51,7 @@ var User = sequelize.define('User', {
         }
     },
     password: {
-        type: sequelize.Sequelize.CHAR(60),
+        type: sequelize.Sequelize.CHAR(60).BINARY,
         allowNull: false,
         validate: {
             min: 8
