@@ -1,11 +1,9 @@
-/**
- * Created by Christian on 5/16/2015.
- */
+'use strict';
 
 var UsersCollection = require('../model/user.js'),
     Util = require('../util/util.js'),
     passport = require ('../config/passport.js'),
-    ErrorUtil = require('../util/error');
+    ErrorUtil = require('../util/error'),
     _ = require('lodash'),
     co = require('co');
 

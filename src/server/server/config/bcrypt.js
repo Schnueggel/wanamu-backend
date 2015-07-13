@@ -13,7 +13,7 @@ module.exports = bc = {
      */
     compare: function (passwordCandidate, userPassword) {
         return new Promise(function(resolve, reject){
-            bcrypt.compare(passwordCandidate, userPassword, function (err, isMatch) {
+            bcrypt.compare(passwordCandidate, userPassword.toString(), function (err, isMatch) {
                 if (err) {
                     reject(err);
                     return;
