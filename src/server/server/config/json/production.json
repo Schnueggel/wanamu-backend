@@ -1,9 +1,4 @@
 {
     "port": 80,
-    "debug": false,
-    "mysql":  {
-        "user": "wanamu",
-        "password": "wanamu",
-        "database": "wanamu"
-    }
+    "debug": false
 }

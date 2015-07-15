@@ -116,7 +116,7 @@ gulp.task('server-start', function (cb) {
         server.listen({
             path: distServerScript,
             env: {
-                NODE_ENV : 'development',
+                WANAMU_ENV : 'development',
                 DEBUG:'monk:*'
             },
             execArgv: ['--harmony_generators']});
@@ -190,7 +190,7 @@ gulp.task('dist-app-static', function () {
 // Start server side unit tests with mocha
 // ==========================================================================
 gulp.task('test-mocha', ['prepare-mocha-tests'], function () {
-    process.env.NODE_ENV = 'test';
+    process.env.WANAMU_ENV = 'test';
     return gulp.src('test/mocha/**/**.js')
         .pipe(mocha({
             timeout: 5000
@@ -201,7 +201,7 @@ gulp.task('test-mocha', ['prepare-mocha-tests'], function () {
 // Setup everything for testing
 // ==========================================================================
 gulp.task('prepare-mocha-tests', function(cb){
-    process.env.NODE_ENV = 'test';
+    process.env.WANAMU_ENV = 'test';
     runSequence('build-test-database', 'build-server', cb);
 });
 /**
@@ -215,13 +215,13 @@ gulp.task('prepare-mocha-tests', function(cb){
 // Builds the development database
 // ==========================================================================
 gulp.task('build-development-database', function (cb) {
-    process.env.NODE_ENV = 'development';
+    process.env.WANAMU_ENV = 'development';
     var modelpath = path.join(distServerPath, 'server', 'model'),
         sequelize = require(path.join(distServerPath, 'server', 'config', 'sequelize'));
 
     requireFolder(modelpath);
 
-    process.env.NODE_ENV = 'development';
+    process.env.WANAMU_ENV = 'development';
     sequelize.query('').then(function(){
         sequelize.sync({'force': false})
             .then(function(){
@@ -239,13 +239,13 @@ gulp.task('build-development-database', function (cb) {
 // Builds the test database
 // ==========================================================================
 gulp.task('build-test-database',['build-server'], function (cb) {
-    process.env.NODE_ENV = 'test';
+    process.env.WANAMU_ENV = 'test';
     var modelpath = path.join(distServerPath, 'server', 'model'),
         sequelize = require(path.join(distServerPath, 'server', 'config', 'sequelize'));
 
     requireFolder(modelpath);
 
-    process.env.NODE_ENV = 'test';
+    process.env.WANAMU_ENV = 'test';
     sequelize.query('').then(function(){
         sequelize.sync({'force': false}).then(function(){
             var testDbSetupScript = path.join(distServerPath, 'server', 'setup', 'test', 'database.js');

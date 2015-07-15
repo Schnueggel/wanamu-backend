@@ -1,8 +1,7 @@
 {
     "debug": true,
     "testmail1" : "christian.steinmann.test@gmail.com",
-    "postgres":{
-        "user": "wanamu",
-        "password": "wanamu"
+    "sequelize": {
+        "host": "devdb.wanamu.com"
     }
 }

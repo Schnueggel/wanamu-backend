@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+EXPORT WANAMU_DB_PASSWORD=wanamu
+EXPORT WANAMU_DB_USER=wanamu
+EXPORT WANAMU_DATABASE=wanamu
+EXPORT WANAMU_ENV=development

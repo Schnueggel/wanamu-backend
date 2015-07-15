@@ -3,12 +3,14 @@
 var nconf = require('nconf');
 var fs = require('fs');
 
+
 // ==========================================================================
 // ENVIRONMENT VARS
 // ==========================================================================
 var DEVELOPMENT = 'development';
 var TEST = 'test';
 var PRODUCTION = 'production';
+var environments = [DEVELOPMENT, TEST, PRODUCTION];
 // ==========================================================================
 // Convenient methods for checking the environment
 // ==========================================================================
@@ -21,14 +23,18 @@ nconf.isTest = function() {return env === TEST;};
 // And overwritten ny the config files
 // =============================================================================================
 nconf.argv();
-nconf.env();
+nconf.env({
+    separator: '__',
+    match: /WANAMU_.+/
+});
 
 // =============================================================================================
 // Check for correct environment variable
 // =============================================================================================
-var env = nconf.get('NODE_ENV');
+var env = nconf.get('WANAMU_ENV');
 nconf.set('env', env);
-if ([DEVELOPMENT, TEST, PRODUCTION].indexOf(env) === -1) {
+
+if (environments.indexOf(env) === -1) {
     throw new Error('Invalid server environment found:' + env);
 }
 
@@ -46,7 +52,7 @@ if (nconf.isTest()) {
 // =============================================================================================
 // Load the environment specific config
 // =============================================================================================
-nconf.file('env', {file: __dirname + '/json/' + env.toLowerCase() + '.json'});
+nconf.file('envconfig', {file: __dirname + '/json/' + env.toLowerCase() + '.json'});
 
 // =============================================================================================
 // If a local.json exist it will overwrite any config

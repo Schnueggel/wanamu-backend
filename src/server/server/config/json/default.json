@@ -7,11 +7,6 @@
     "debug": false,
     "webhost": "http://localhost:3000",
     "webhome": "/home",
-    "postgres":{
-        "user": "wanamu",
-        "password": "wanamu",
-        "database": "wanamu"
-    },
     "url" : {
         "confirmation": "/#/confirmation/${hash}"
     },
@@ -23,7 +18,7 @@
         }
     },
     "sequelize": {
-        "host": "localhost",
+        "host": "db.wanamu.com",
         "dialect": "postgres",
         "define": {
             "collate": "utf8_general_ci"
