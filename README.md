@@ -42,11 +42,14 @@ The built code will be put into the `dist` folder and have the same structure as
 The backend of the application is written in NodeJs using the Express framework.
 The frontend is made with Angular.
 
+mocha
+npm-check-updates
+
 ### Docs:
 
 
 Koa:
-
+npm
 <https://github.com/koajs/koa>
 
 ## Build
