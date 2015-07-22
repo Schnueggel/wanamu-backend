@@ -126,4 +126,7 @@ Database user
 Database password
 ### WU_DB_HOST
 The url to the database
+### WU_ENV
+Must be one of: development, staging, production, test
+
 
