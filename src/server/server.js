@@ -34,6 +34,7 @@ app.init = co.wrap(function *() {
     // We use basic auth only when env is set
     // =============================================================================================
     if (config.get(config.statics.WU_HTTP_AUTH)){
+        console.log('Protect application with http basic authentication');
         var credentials = {
             name: config.get(config.statics.WU_HTTP_USER),
             pass: config.get(config.statics.WU_HTTP_PASSWORD)
