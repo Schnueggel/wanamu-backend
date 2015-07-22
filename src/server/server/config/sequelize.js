@@ -1,12 +1,10 @@
-/**
- * Created by Christian on 5/18/2015.
- */
+'use strict';
 
 var nconf = require('../config'),
     Sequelize = require('sequelize');
 
-var sequelize = nconf.get('sequelize');
+var sequelize = nconf.get(nconf.statics.SEQUELIZE);
 
-sequelize.host = nconf.get('WANAMU_DB_HOST');
+sequelize.host = nconf.get(nconf.statics.WU_DB_HOST);
 
-module.exports = new Sequelize(nconf.get('WANAMU_DATABASE'), nconf.get('WANAMU_DB_USER'), nconf.get('WANAMU_DB_PASSWORD'), sequelize);
+module.exports = new Sequelize(nconf.get(nconf.statics.WU_DB_NAME), nconf.get(nconf.statics.WU_DB_USER), nconf.get(nconf.statics.WU_DB_PASSWORD), sequelize);

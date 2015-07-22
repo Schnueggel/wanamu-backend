@@ -10,12 +10,15 @@ var fs = require('fs');
 var DEVELOPMENT = 'development';
 var TEST = 'test';
 var PRODUCTION = 'production';
-var environments = [DEVELOPMENT, TEST, PRODUCTION];
+const STAGING = 'staging';
+
+var environments = [DEVELOPMENT, TEST, PRODUCTION, STAGING];
 // ==========================================================================
 // Convenient methods for checking the environment
 // ==========================================================================
 nconf.isDevelopment = function() {return env === DEVELOPMENT;};
 nconf.isProduction = function() {return env === PRODUCTION;};
+nconf.isStaging = function() {return env === STAGING;};
 nconf.isTest = function() {return env === TEST;};
 
 // =============================================================================================
@@ -75,6 +78,7 @@ nconf.getConfirmationUrl = function(hash){
 nconf.getTestMail1 = function() {
     return nconf.get('testmail1');
 };
+
 /**
  * Returns the url of the home page for the webfrontend
  * @returns {*}
@@ -82,6 +86,21 @@ nconf.getTestMail1 = function() {
 nconf.getWebhomeUrl = function(){
     return nconf.get('webhost') + nconf.get('webhome');
 };
+
+// =============================================================================================
+// Constant keys
+// =============================================================================================
+nconf.statics = {
+    SEQUELIZE: 'SEQUELIZE',
+    WU_HTTP_AUTH: 'WU_HTTP_AUTH',
+    WU_HTTP_USER: 'WU_HTTP_USER',
+    WU_HTTP_PASSWORD: 'WU_HTTP_PASSWORD',
+    WU_DB_HOST: 'WU_DB_HOST',
+    WU_DB_NAME: 'WU_DB_NAME',
+    WU_DB_USER: 'WU_DB_USER',
+    WU_DB_PASSWORD: 'WU_DB_PASSWORD'
+};
+
 // =============================================================================================
 // Export
 // =============================================================================================
