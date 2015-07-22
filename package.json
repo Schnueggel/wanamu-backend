@@ -1,7 +1,7 @@
 {
   "name": "wanamu-backend",
   "version": "1.0.0",
-  "description": "Another Todo App",
+  "description": "Another Todo App. Only better",
   "main": "index.js",
   "scripts": {
     "start": "node --harmony ./dist/server/server.js",
