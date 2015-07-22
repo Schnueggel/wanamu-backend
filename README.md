@@ -108,3 +108,22 @@ This status code are used in the application
 404 Entity not found
 424 User not confirmed
 500 On an unexpected error
+
+
+##Environment Settings
+
+### WU_HTTP_AUTH
+Set to 1 if you want to enable http basic auth
+### WU_HTTP_USER
+Set the user name for http auth
+### WU_HTTP_PASSWORD
+Set password for http auth
+### WU_DB_NAME
+Database name to connect to
+### WU_DB_USER
+Database user
+### WU_DB_PASSWORD
+Database password
+### WU_DB_HOST
+The url to the database
+
