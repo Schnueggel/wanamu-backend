@@ -10,7 +10,7 @@ deploy:
     - add-ssh-key:
         keyname: DEPLOY_KEY
     - script:
-        name: install ssh
+        name: SSH-Agent
         code: |
           ssh-agent -s
     - script:
