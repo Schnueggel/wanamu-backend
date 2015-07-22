@@ -12,6 +12,21 @@ var TEST = 'test';
 var PRODUCTION = 'production';
 const STAGING = 'staging';
 
+// =============================================================================================
+// Constant keys
+// =============================================================================================
+nconf.statics = {
+    SEQUELIZE: 'sequelize',
+    WU_ENV: 'WU_ENV',
+    WU_HTTP_AUTH: 'WU_HTTP_AUTH',
+    WU_HTTP_USER: 'WU_HTTP_USER',
+    WU_HTTP_PASSWORD: 'WU_HTTP_PASSWORD',
+    WU_DB_HOST: 'WU_DB_HOST',
+    WU_DB_NAME: 'WU_DB_NAME',
+    WU_DB_USER: 'WU_DB_USER',
+    WU_DB_PASSWORD: 'WU_DB_PASSWORD'
+};
+
 var environments = [DEVELOPMENT, TEST, PRODUCTION, STAGING];
 // ==========================================================================
 // Convenient methods for checking the environment
@@ -34,7 +49,7 @@ nconf.env({
 // =============================================================================================
 // Check for correct environment variable
 // =============================================================================================
-var env = nconf.get(config.statics.WU_ENV);
+var env = nconf.get(nconf.statics.WU_ENV);
 nconf.set('env', env);
 
 if (environments.indexOf(env) === -1) {
@@ -85,21 +100,6 @@ nconf.getTestMail1 = function() {
  */
 nconf.getWebhomeUrl = function(){
     return nconf.get('webhost') + nconf.get('webhome');
-};
-
-// =============================================================================================
-// Constant keys
-// =============================================================================================
-nconf.statics = {
-    SEQUELIZE: 'SEQUELIZE',
-    WU_ENV: 'WU_ENV',
-    WU_HTTP_AUTH: 'WU_HTTP_AUTH',
-    WU_HTTP_USER: 'WU_HTTP_USER',
-    WU_HTTP_PASSWORD: 'WU_HTTP_PASSWORD',
-    WU_DB_HOST: 'WU_DB_HOST',
-    WU_DB_NAME: 'WU_DB_NAME',
-    WU_DB_USER: 'WU_DB_USER',
-    WU_DB_PASSWORD: 'WU_DB_PASSWORD'
 };
 
 // =============================================================================================
