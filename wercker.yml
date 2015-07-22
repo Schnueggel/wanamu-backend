@@ -1,0 +1,29 @@
+box: golio/ubuntu:latest
+build:
+  steps:
+    - script:
+        name: Dummy
+        code: |
+          export
+deploy:
+  steps:
+    - add-ssh-key:
+        keyname: DEPLOY_KEY
+    - script:
+        name: install ssh
+        code: |
+          ssh-agent -s
+    - script:
+        name: Deploy
+        code: |
+          ssh -l $DEPLOY_USER -o UserKnownHostsFile=/dev/null -tt -o StrictHostKeyChecking=no $DEPLOY_HOST /bin/bash -e <<EOF
+          sudo ./dockerinstall.sh git@$WERCKER_GIT_DOMAIN:$WERCKER_GIT_OWNER/$WERCKER_GIT_REPOSITORY.git $WERCKER_GIT_BRANCH
+          cd ./$WERCKER_GIT_REPOSITORY
+          sudo -E docker-compose up -d
+          exit
+          EOF
+  after-steps:
+    - slack-notifier:
+        url: $SLACK_WEBHOOK_URL
+        channel: wercker-notify
+        username: werckerbot
