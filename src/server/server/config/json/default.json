@@ -18,7 +18,6 @@
         }
     },
     "sequelize": {
-        "host": "db.wanamu.com",
         "dialect": "postgres",
         "define": {
             "collate": "utf8_general_ci"
