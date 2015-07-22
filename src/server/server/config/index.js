@@ -34,7 +34,7 @@ nconf.env({
 // =============================================================================================
 // Check for correct environment variable
 // =============================================================================================
-var env = nconf.get('WANAMU_ENV');
+var env = nconf.get(config.statics.WU_ENV);
 nconf.set('env', env);
 
 if (environments.indexOf(env) === -1) {
@@ -92,6 +92,7 @@ nconf.getWebhomeUrl = function(){
 // =============================================================================================
 nconf.statics = {
     SEQUELIZE: 'SEQUELIZE',
+    WU_ENV: 'WU_ENV',
     WU_HTTP_AUTH: 'WU_HTTP_AUTH',
     WU_HTTP_USER: 'WU_HTTP_USER',
     WU_HTTP_PASSWORD: 'WU_HTTP_PASSWORD',
