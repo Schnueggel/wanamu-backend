@@ -4,7 +4,7 @@ build:
     - script:
         name: Dummy
         code: |
-          export
+          ls
 deploy:
   steps:
     - add-ssh-key:
