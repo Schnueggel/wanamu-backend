@@ -9,6 +9,7 @@ var config = require('./server/config'),
     bodyParser = require('koa-bodyparser'),
     session = require('koa-generic-session'),
     passport = require('koa-passport'),
+    auth = require('koa-basic-auth'),
     co = require('co'),
     app = require('koa')();
 
@@ -19,12 +20,41 @@ app.init = co.wrap(function *() {
 
     app.keys = [config.get('session').secret];
     app.use(session());
+    // =============================================================================================
+    // We must allow Cross origin to seperate the frontends from the backend
+    // =============================================================================================
     app.use(cors({
         maxAge: config.get('cacheTime') / 1000,
         credentials: true,
         methods: 'GET, HEAD, OPTIONS, PUT, POST, DELETE',
         headers: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
     }));
+
+    // =============================================================================================
+    // We use basic auth only when env is set
+    // =============================================================================================
+    if (config.get(config.statics.WU_HTTP_AUTH)){
+        var credentials = {
+            name: config.get(config.statics.WU_HTTP_USER),
+            pass: config.get(config.statics.WU_HTTP_PASSWORD)
+        };
+
+        app.use(function *(next){
+            try {
+                yield next;
+            } catch (err) {
+                if (401 == err.status) {
+                    this.status = 401;
+                    this.set('WWW-Authenticate', 'Basic');
+                    this.body = 'You must authenticate';
+                } else {
+                    throw err;
+                }
+            }
+        });
+
+        app.use(auth(credentials));
+    }
 
     app.use(function* cleanEmptySessionPassport(next) {
         yield* next;
