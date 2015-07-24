@@ -1,22 +1,14 @@
-/**
- * Created by Christian on 5/13/2015.
- */
 'use strict';
 
-var passport = require('koa-passport'),
+let passport = require('koa-passport'),
     LocalStrategy = require('passport-local').Strategy,
     bcrypt = require('../config/bcrypt.js'),
-    TodoList = require('../model/todolist'),
-    Todo = require('../model/todo'),
     User = require('../model/user.js'),
     ErrorUtil = require('../util/error'),
-    config = require('../config'),
     co = require('co');
 
 
-passport.use(new LocalStrategy(
-    co.wrap(strategy)
-));
+passport.use(new LocalStrategy(co.wrap(strategy)));
 
 /**
  * Save user id in session
@@ -32,7 +24,7 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(id, done) {
 
     co(function*(){
-        var user = yield User.findOne({
+        let user = yield User.findOne({
             where: {
                 id: id
             },
@@ -58,14 +50,14 @@ passport.deserializeUser(function(id, done) {
  */
 function* strategy(username, password, done){
 
-    var user,
+    let user,
         userfields = User.getVisibleFields(false);
 
     //We need the password field for auth
     userfields.push('password');
 
     try{
-        var options = {
+        let options = {
             where : {
                 email: username
             },
@@ -83,7 +75,7 @@ function* strategy(username, password, done){
         return done(new ErrorUtil.NotFound(), false, {} );
     }
 
-    var isMatch = yield bcrypt.compare(password, user.password);
+    let isMatch = yield bcrypt.compare(password, user.password);
 
     if (!isMatch) {
         return done(new ErrorUtil.AccessViolation(), false, {});

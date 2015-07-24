@@ -1,7 +1,6 @@
-var sequelize = require('../config/sequelize'),
+let sequelize = require('../config/sequelize'),
     ErrorUtil = require('../util/error'),
     TodoList = require('./todolist'),
-    Todo = require('./todo'),
     co = require('co'),
     _ = require('lodash'),
     bcrypt = require('../config/bcrypt'),
@@ -16,7 +15,7 @@ var sequelize = require('../config/sequelize'),
  * @namespace model
  * @type {Model}
  */
-var User = sequelize.define('User', {
+let User = sequelize.define('User', {
     id : {
         type: sequelize.Sequelize.INTEGER,
         primaryKey: true,
@@ -100,7 +99,7 @@ var User = sequelize.define('User', {
          * @name User.getCreateFields
          */
         getCreateFields: function(isAdmin) {
-            var without = ['id', 'createdAt', 'updatedAt', 'deletedAt', 'banned'];
+            let without = ['id', 'createdAt', 'updatedAt', 'deletedAt', 'banned'];
             if (!isAdmin) {
                 without = without.concat(['group']);
             }
@@ -113,7 +112,7 @@ var User = sequelize.define('User', {
          * @name User.getUpdateFields
          */
         getUpdateFields: function(isAdmin) {
-            var without = ['id', 'createdAt', 'updatedAt'];
+            let without = ['id', 'createdAt', 'updatedAt'];
 
             if (!isAdmin) {
                 without = without.concat(['banned', 'group', 'deletedAt']);
@@ -127,7 +126,7 @@ var User = sequelize.define('User', {
          * @name User.getVisibleFields
          */
         getVisibleFields: function(isAdmin){
-            var without = ['password', 'confirmhash'];
+            let without = ['password', 'confirmhash'];
 
             if (!isAdmin) {
                 without = without.concat(['banned', 'deletedAt', 'updatedAt']);
@@ -164,7 +163,7 @@ var User = sequelize.define('User', {
          * @returns {Object}
          */
         getVisibleData: function(){
-            var fields = User.getVisibleFields(this.isAdmin());
+            let fields = User.getVisibleFields(this.isAdmin());
             fields.push('TodoLists');
             fields.push('Setting');
             fields.push('Profile');
@@ -231,7 +230,7 @@ module.exports = User;
  * @param options
  */
 function* beforeBulkCreate (users, options){
-    for(var i = 0; i < users.length; i++) {
+    for(let i = 0; i < users.length; i++) {
         yield* beforeCreate(users[i], options);
     }
 }
@@ -273,6 +272,6 @@ function* hashPassword(user) {
 }
 
 function comparePassword(passwordCandidate) {
-    var userPassword = this.password;
+    let userPassword = this.password;
     return bcrypt.compare(passwordCandidate, userPassword);
 }

@@ -2,10 +2,10 @@
  * Created by Christian on 5/17/2015.
  */
 
-var TodoList = require('../model/todolist'),
+let TodoList = require('../model/todolist'),
     Todo = require('../model/todo'),
-    ErrorUtil = require('../util/error')
-_ = require('lodash');
+    ErrorUtil = require('../util/error'),
+    _ = require('lodash');
 
 
 module.exports = {
@@ -18,7 +18,7 @@ module.exports = {
  * Create Action
  */
 function* create() {
-    var input = this.request.body || {},
+    let input = this.request.body || {},
         result = {
             data: [],
             success: false,
@@ -58,7 +58,7 @@ function* create() {
     // ==========================================================================
     // Todos always belongs to a todolist lets find this
     // ==========================================================================
-    var todolist = yield TodoList.findOne(queryOptions);
+    let todolist = yield TodoList.findOne(queryOptions);
 
     if (todolist === null) {
         this.status = 404;
@@ -97,7 +97,7 @@ function* create() {
  * @param id
  */
 function* update(id) {
-    var input = this.request.body || {},
+    let input = this.request.body || {},
         result = {
             data: [],
             success: false,
@@ -181,7 +181,7 @@ function* update(id) {
  * @param id
  */
 function* deleteTodo(id) {
-    var result = {
+    let result = {
             data: [],
             success: false,
             error: null
@@ -229,7 +229,7 @@ function* deleteTodo(id) {
         // Filter the resulting data
         // Only visible fields will be sent to the user
         // ==========================================================================
-        resultdata = _.pick(todo.get({plain: true}), Todo.getVisibleFields(isAdmin));
+        let resultdata = _.pick(todo.get({plain: true}), Todo.getVisibleFields(isAdmin));
 
         result.success = true;
         result.data.push(resultdata);

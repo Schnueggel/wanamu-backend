@@ -3,7 +3,7 @@
  * Created by Christian on 5/9/2015.
  */
 
-var Util = {
+let Util = {
     /**
      * Pads a number with zeros. If the number length exceeds the padding, the number is returned as string
      * @param num the number to pad
@@ -11,9 +11,9 @@ var Util = {
      * @returns {string}
      */
     zeroPad: function (num, numZeros) {
-        var n = Math.abs(num);
-        var zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
-        var zeroString = Math.pow(10, zeros).toString().substr(1);
+        let n = Math.abs(num);
+        let zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
+        let zeroString = Math.pow(10, zeros).toString().substr(1);
         if (num < 0) {
             zeroString = '-' + zeroString;
         }
@@ -28,7 +28,7 @@ var Util = {
      */
     getRandomString: function (length, alphanumeric) {
         alphanumeric = alphanumeric || Util.CHART_TYPE.Alpha;
-        var stringlist = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        let stringlist = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
             text = '';
 
         if (length < 1) {
@@ -41,7 +41,7 @@ var Util = {
             stringlist += '1234567890';
         }
 
-        for (var i = 0; i < length; i++) {
+        for (let i = 0; i < length; i++) {
             text += stringlist.charAt(Math.floor(Math.random() * stringlist.length));
         }
 
@@ -53,9 +53,9 @@ var Util = {
      * @returns {Promise}
      */
     sleep: function (millis) {
-        var promise = new Promise( function(resolve, reject){
+        let promise = new Promise( (resolve) => {
             setTimeout(function() {
-                resolve()
+                resolve();
             }, millis);
         });
 

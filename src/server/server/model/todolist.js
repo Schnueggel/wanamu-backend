@@ -1,11 +1,12 @@
-var sequelize = require('../config/sequelize'),
-    Todo = require('./todo');
+let sequelize = require('../config/sequelize'),
+    Todo = require('./todo'),
+    _ = require('lodash');
 
 /**
  * TodoList Model
  * @type {Model}
  */
-var TodoList = sequelize.define('TodoList', {
+let TodoList = sequelize.define('TodoList', {
     /**
      * ######################################################################################
      * ######################################################################################
@@ -58,7 +59,7 @@ var TodoList = sequelize.define('TodoList', {
          * @returns {string[]}
          */
         getUpdateFields : function(isAdmin){
-            var without = [],
+            let without = [],
                 attribskeys = this.getAttribKeys();
             if (!isAdmin) {
                 without = without.concat(['deletedAt', 'UserId']);
@@ -75,7 +76,7 @@ var TodoList = sequelize.define('TodoList', {
          * @name TodoList.getVisibleFields
          */
         getVisibleFields : function(isAdmin) {
-            var without = [],
+            let without = [],
                 attribkeys = this.getAttribKeys();
 
             if (!isAdmin) {

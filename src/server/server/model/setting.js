@@ -1,11 +1,11 @@
-var sequelize = require('../config/sequelize'),
+let sequelize = require('../config/sequelize'),
     _ = require('lodash');
 
 /**
  * SettingModel
  * @type {*|{}|Model}
  */
-var Setting = sequelize.define('Setting', {
+let Setting = sequelize.define('Setting', {
     /**
      * ######################################################################################
      * ######################################################################################
@@ -71,7 +71,7 @@ var Setting = sequelize.define('Setting', {
          * @name Setting.getUpdateFields
          */
         getUpdateFields : function(isAdmin){
-            var without = ['id'];
+            let without = ['id'];
 
             if (!isAdmin) {
                 without.concat(['updatedAt', 'createdAt']);
@@ -86,7 +86,7 @@ var Setting = sequelize.define('Setting', {
          * @name Setting.getVisibleFields
          */
         getVisibleFields : function(isAdmin) {
-            var without = [];
+            let without = [];
 
             return  _.difference(this.getAttribKeys(),  without);
         }

@@ -1,11 +1,11 @@
 /**
  * Created by Schnueggel on 05.07.2015.
  */
-var mailer = require('../config/mailer');
-var ConfirmationMail = require('./mails/confirmation/mail');
-var ConfirmationSuccessMail = require('./mails/confirmationsuccess/mail');
-var config = require ('../config');
-var errors = require('../util/error');
+let mailer = require('../config/mailer');
+let ConfirmationMail = require('./mails/confirmation/mail');
+let ConfirmationSuccessMail = require('./mails/confirmationsuccess/mail');
+let config = require ('../config');
+let errors = require('../util/error');
 
 /**
  *
@@ -21,7 +21,7 @@ function MailService () {
  * @param {Registration} registration
  */
 MailService.prototype.sendConfirmationMail = function(user, registration) {
-    var mail = new ConfirmationMail();
+    let mail = new ConfirmationMail();
     mail.setConfirmationLink(config.getConfirmationUrl(registration.confirmhash));
     mail.to = user.email;
     return this.sendMail(mail);
@@ -34,7 +34,7 @@ MailService.prototype.sendConfirmationMail = function(user, registration) {
  * @returns {Promise}
  */
 MailService.prototype.sendConfirmationSuccessMail = function(email, profile) {
-    var mail = new ConfirmationSuccessMail();
+    let mail = new ConfirmationSuccessMail();
     mail.setProfile(profile);
     mail.setHomeLink(config.getWebhomeUrl());
     mail.to = email;
@@ -47,10 +47,10 @@ MailService.prototype.sendConfirmationSuccessMail = function(email, profile) {
  * @returns {Promise}
  */
 MailService.prototype.sendMail = function(mail){
-    var reject;
-    var resolve;
+    let reject;
+    let resolve;
 
-    var promise = new Promise(function(res, rej){
+    let promise = new Promise(function(res, rej){
         resolve = res;
         reject = rej;
     });

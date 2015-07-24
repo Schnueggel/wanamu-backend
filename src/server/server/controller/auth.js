@@ -1,56 +1,63 @@
 'use strict';
 
-var UsersCollection = require('../model/user.js'),
-    Util = require('../util/util.js'),
-    passport = require ('../config/passport.js'),
-    ErrorUtil = require('../util/error'),
-    _ = require('lodash'),
-    co = require('co');
+let passport = require('../config/passport.js'),
+    ErrorUtil = require('../util/error');
 
-module.exports = {
-    login: login,
-    dologout: dologout
-};
+export class AuthController {
 
-/**
- *
- * @param next
- */
-function* login(next) {
-    var ctx = this;
-    yield* passport.authenticate('local', function*(err, user, info) {
-
+    /**
+     * #########################################################################################################
+     * Handle the result of the passport local strategy
+     * #########################################################################################################
+     * @param {Error} err
+     * @param user
+     * @param {Object} context Koa Request Context
+     */
+    *authenticateLocal(err, user, context) {
         if (err instanceof ErrorUtil.NotConfirmed) {
-            ctx.status = 424;
-            ctx.body = {
+            context.status = 424;
+            context.body = {
                 success: false
             };
         } else if (typeof user !== 'object') {
             // ==========================================================================
             // 401 for not Authenticated
             // ==========================================================================
-            ctx.status = 401;
-            ctx.body = {
+            context.status = 401;
+            context.body = {
                 success: false
             };
         } else {
-            yield ctx.login(user);
-            ctx.body = {
+            yield context.login(user);
+            context.body = {
                 success: true,
                 data: [user.getVisibleData()]
             };
         }
-    }).call(this, next);
+    }
+
+    /**
+     *
+     * @param {Function} next
+     * @param {Object} context Koa Request Context
+     */
+    *login(next, context) {
+        let that = this;
+        yield passport.authenticate('local', function*(err, user) {
+            yield that.authenticateLocal(err, user, context);
+        });
+    }
+
+    /**
+     * @param {Function} next
+     * @param {Object} context Koa Request Context
+     */
+    *doLogout(next, context) {
+        context.logOut();
+        context.body = {
+            success: true,
+            data: []
+        };
+    }
 }
 
-/**
- * Logs the user out
- * @param next
- */
-function* dologout(next) {
-    this.logOut();
-    this.body = {
-        success: true,
-        data: []
-    };
-}

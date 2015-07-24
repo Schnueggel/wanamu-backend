@@ -1,8 +1,6 @@
 'use strict';
 
-var User = require('../model/user'),
-    Profile = require('../model/profile'),
-    ErrorUtil = require('../util/error');
+let Profile = require('../model/profile');
 
 /**
  * ######################################################################################
@@ -12,9 +10,7 @@ var User = require('../model/user'),
  * ######################################################################################
  */
 function* getList() {
-    var user = this.req.user,
-        isAdmin = user.isAdmin(),
-        result = {
+    let result = {
             error: null,
             success: false,
             data: []
@@ -22,7 +18,7 @@ function* getList() {
 
     this.body = result;
 
-    var friends = yield this.req.user.getFriends({
+    let friends = yield this.req.user.getFriends({
         include : [
             {
                 model: Profile,
@@ -32,7 +28,7 @@ function* getList() {
         attributes: ['id']
     });
 
-    result.data = friends.map(function(friend){ return friend.get({plain: true}) });
+    result.data = friends.map((friend) => { return friend.get({plain: true}); });
     result.success = true;
 }
 

@@ -1,14 +1,14 @@
 'use strict';
 
-var TodoList = require('../model/todolist'),
+let TodoList = require('../model/todolist'),
     ErrorUtil = require('../util/error'),
+    _ = require('lodash'),
     Todo = require('../model/todo');
 
 /**
  * TODO implement
  */
 function* createTodolist() {
-    yield null;
     throw new Error('Not Implemented yet');
 }
 
@@ -16,7 +16,7 @@ function* createTodolist() {
  * Gets a single todolist
  */
 function* getTodolist(id) {
-    var user = this.req.user,
+    let user = this.req.user,
         todolist,
         isAdmin = user.isAdmin(),
         resultdata,
@@ -83,7 +83,7 @@ function* getTodolist(id) {
  * ```
  */
 function* listTodolist() {
-    var input = this.request.body || {},
+    let input = this.request.body || {},
         limit = input.limit || 100,
         offset = input.offset || 0,
         user = this.req.user,
@@ -146,7 +146,7 @@ function* listTodolist() {
  * @param {int} id
  */
 function* deleteTodoList(id){
-    var result = {
+    let result = {
             data: [],
             success: false,
             error: null

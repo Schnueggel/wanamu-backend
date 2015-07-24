@@ -1,4 +1,15 @@
 {
+    "WU_DB_PASSWORD":"wanamu",
+    "WU_DB_USER":"wanamu",
+    "WU_DB_NAME":"wanamu",
+    "WU_ENV":"development",
+    "WU_DB_HOST":"localhost",
+    "WU_DB_POST": 5432,
+    "POSTGRES_USER":"postgres",
+    "POSTGRES_PASSWORD":"postgress",
+    "WU_HTTP_AUTH":"",
+    "WU_HTTP_USER":"",
+    "WU_HTTP_PASSWORD":"",
     "debug": true,
     "testmail1" : "christian.steinmann.test@gmail.com",
     "sequelize": {

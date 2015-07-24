@@ -1,7 +1,8 @@
 'use strict';
 
-var Profile = require('../model/profile'),
-    ErrorUtil = require('../util/error');
+let Profile = require('../model/profile'),
+    ErrorUtil = require('../util/error'),
+    _ = require('lodash');
 
 /**
  * ######################################################################################
@@ -11,7 +12,7 @@ var Profile = require('../model/profile'),
  * ######################################################################################
  */
 function* getProfile(id) {
-    var user = this.req.user,
+    let user = this.req.user,
         isAdmin = user.isAdmin(),
         data,
         result = {
@@ -22,7 +23,7 @@ function* getProfile(id) {
 
     this.body = result;
 
-    var profile = yield Profile.findById(id);
+    let profile = yield Profile.findById(id);
 
     if ( !profile ) {
         this.status = 404;
@@ -52,7 +53,7 @@ function* getProfile(id) {
  * ######################################################################################
  */
 function* updateProfile(id) {
-    var user = this.req.user,
+    let user = this.req.user,
         isAdmin = user.isAdmin(),
         input = this.request.body || {},
         data = input.data || {},
@@ -65,7 +66,7 @@ function* updateProfile(id) {
 
     this.body = result;
 
-    var profile = yield Profile.findById(id);
+    let profile = yield Profile.findById(id);
 
     if (!profile) {
         this.status = 404;
@@ -82,7 +83,7 @@ function* updateProfile(id) {
         return;
     }
 
-    var options = Profile.getUpdateFields(isAdmin);
+    let options = Profile.getUpdateFields(isAdmin);
     yield profile.updateAttributes(data, options);
 
     profile = yield profile.reload();

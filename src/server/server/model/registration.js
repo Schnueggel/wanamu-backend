@@ -1,4 +1,4 @@
-var sequelize = require('../config/sequelize'),
+let sequelize = require('../config/sequelize'),
     crypto = require('crypto'),
     errors = require('../util/error'),
     co = require('co'),
@@ -8,7 +8,7 @@ var sequelize = require('../config/sequelize'),
  * Registration
  * @type {*|{}|Model}
  */
-var Registration = sequelize.define('Registration', {
+let Registration = sequelize.define('Registration', {
     /**
      * ######################################################################################
      * ######################################################################################
@@ -68,7 +68,7 @@ var Registration = sequelize.define('Registration', {
          * @name Setting.getUpdateFields
          */
         getUpdateFields : function(isAdmin){
-            var without = ['id', 'hash'];
+            let without = ['id', 'hash'];
 
             if (!isAdmin) {
                 without.concat(['updatedAt', 'createdAt']);
@@ -83,7 +83,7 @@ var Registration = sequelize.define('Registration', {
          * @name Setting.getVisibleFields
          */
         getVisibleFields : function(isAdmin) {
-            var without = [];
+            let without = [];
 
             return  _.difference(this.getAttribKeys(),  without);
         }
@@ -97,7 +97,8 @@ var Registration = sequelize.define('Registration', {
  *
  */
 function* beforeCreate(registration, options){
-    var sha256 = crypto.createHash("sha256");
+
+    let sha256 = crypto.createHash('sha256');
     sha256.update(registration.UserId + 'wanamu', 'utf8');
     registration.confirmhash = sha256.digest('hex');
 

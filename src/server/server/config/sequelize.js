@@ -1,9 +1,9 @@
 'use strict';
 
-var nconf = require('../config'),
+let nconf = require('../config'),
     Sequelize = require('sequelize');
 
-var sequelize = nconf.get(nconf.statics.SEQUELIZE);
+let sequelize = nconf.get(nconf.statics.SEQUELIZE);
 
 sequelize.host = nconf.get(nconf.statics.WU_DB_HOST);
 

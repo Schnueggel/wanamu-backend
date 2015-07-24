@@ -1,22 +1,15 @@
 'use strict';
 
-var User = require('../../model/user.js'),
+let User = require('../../model/user.js'),
     TodoList = require('../../model/todolist.js'),
     Todo = require('../../model/todo'),
     Profile = require('../../model/profile'),
     Setting = require('../../model/setting'),
     Registration = require('../../model/registration'),
     conf = require('../../config'),
-    _ = require('lodash'),
     co = require('co');
 
-/**
- * Starts the database setup
- * @returns {Promise}
- */
-function start() {
-    return co(setup);
-}
+
 
 /**
  * Setup complete database
@@ -31,6 +24,14 @@ function* setup(){
     console.log('TODO created');
 }
 
+/**
+ * Starts the database setup
+ * @returns {Promise}
+ */
+function start() {
+    return co(setup);
+}
+
 function* createUsers() {
 
     yield User.destroy({
@@ -42,27 +43,27 @@ function* createUsers() {
         }
     });
 
-    var user = yield User.findOne({
+    let user = yield User.findOne({
         where: {
             email:conf.get('testmail1')
         }
     });
 
-    var userdata =  {
+    let userdata =  {
         email: conf.get('testmail1'),
         password: 'abcdefghijk',
         confirmed : 1
     };
 
-    var profiledata = {
+    let profiledata = {
         firstname: 'firstName',
         lastname: 'lastName',
         salutation: 'mr'
     };
 
-    var settingdata = { };
+    let settingdata = { };
 
-    var registrationdata = { };
+    let registrationdata = { };
 
     if (!user) {
 
@@ -79,7 +80,7 @@ function* createUsers() {
         console.log('user created');
     } else {
         yield user.updateAttributes( userdata );
-        var profile = yield user.getProfile();
+        let profile = yield user.getProfile();
         yield profile.updateAttributes(profiledata);
         console.log('user updated');
     }
@@ -90,20 +91,20 @@ function* createTodoList() {
 
 
 
-    var user = yield User.findOne({
+    let user = yield User.findOne({
         where:{
             email: conf.get('testmail1')
         }
     });
 
-    var todolist = yield TodoList.findOne({
+    let todolist = yield TodoList.findOne({
         where: {
             UserId: user.id
         }
     });
 
     if (!todolist) {
-        var todolist = yield user.createTodoList({
+        let todolist = yield user.createTodoList({
             name: 'default'
         });
         yield user.setDefaultTodoList(todolist);
@@ -111,15 +112,15 @@ function* createTodoList() {
 }
 
 function* createTodos() {
-    var user = yield User.findOne({
+    let user = yield User.findOne({
         where:{
             email:conf.get('testmail1')
         }
     });
 
-    var todolist = yield TodoList.findOne({where: {name: 'default', UserId: user.id}});
+    let todolist = yield TodoList.findOne({where: {name: 'default', UserId: user.id}});
 
-    var todos = yield Todo.findAll({
+    let todos = yield Todo.findAll({
         where: {
             TodoListId: todolist.id
         }
@@ -127,13 +128,13 @@ function* createTodos() {
 
     if (todos.length === 0) {
         console.log('Create new todos');
-        var todo1 = Todo.build({
+        let todo1 = Todo.build({
             title: 'Make dog cake',
             repeat: true,
             repeatWeekly: ['mo', 'we'],
             alarm : new Date()
         });
-        var todo2 = Todo.build({
+        let todo2 = Todo.build({
             title: 'Make cat cake',
             repeat: true,
             repeatWeekly: ['mo', 'we'],
@@ -145,7 +146,7 @@ function* createTodos() {
         yield todolist.addTodos([todo1, todo2]);
     }
     else {
-        for (var i = 0; i < todos.length; i++) {
+        for (let i = 0; i < todos.length; i++) {
             todos[i].finished = false;
             todos[i].deletedAt = null;
             yield todos[i].save();

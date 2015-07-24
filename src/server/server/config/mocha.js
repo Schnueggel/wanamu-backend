@@ -1,24 +1,20 @@
-/**
- * Created by Christian on 5/25/2015.
- */
-var config = require('../config'),
+let config = require('../config'),
     request = require('co-supertest').agent('http://localhost:' + config.get('port'));
-
 
 module.exports = {
     request: request,
-    doneGood: function (done) {
-        return function () {
+    doneGood: (done) => {
+        return () => {
             done();
-        }
+        };
     },
-    doneErr: function (done) {
-        return function (err) {
+    doneErr: (done) => {
+        return (err) => {
             if (err) {
                 done(err);
             } else {
                 done();
             }
-        }
+        };
     }
 };

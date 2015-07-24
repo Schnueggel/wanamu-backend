@@ -1,15 +1,16 @@
 'use strict';
 
-var nconf = require('nconf');
-var fs = require('fs');
+let nconf = require('nconf');
+let fs = require('fs'),
+    _ = require('lodash');
 
 
 // ==========================================================================
 // ENVIRONMENT VARS
 // ==========================================================================
-var DEVELOPMENT = 'development';
-var TEST = 'test';
-var PRODUCTION = 'production';
+const DEVELOPMENT = 'development';
+const TEST = 'test';
+const PRODUCTION = 'production';
 const STAGING = 'staging';
 
 // =============================================================================================
@@ -27,15 +28,6 @@ nconf.statics = {
     WU_DB_PASSWORD: 'WU_DB_PASSWORD'
 };
 
-var environments = [DEVELOPMENT, TEST, PRODUCTION, STAGING];
-// ==========================================================================
-// Convenient methods for checking the environment
-// ==========================================================================
-nconf.isDevelopment = function() {return env === DEVELOPMENT;};
-nconf.isProduction = function() {return env === PRODUCTION;};
-nconf.isStaging = function() {return env === STAGING;};
-nconf.isTest = function() {return env === TEST;};
-
 // =============================================================================================
 // Not sure if this should be loaded first or last. At moment it will be loaded first and
 // And overwritten ny the config files
@@ -49,12 +41,24 @@ nconf.env({
 // =============================================================================================
 // Check for correct environment variable
 // =============================================================================================
-var env = nconf.get(nconf.statics.WU_ENV);
-nconf.set('env', env);
+let env = nconf.get(nconf.statics.WU_ENV);
 
-if (environments.indexOf(env) === -1) {
+console.log(`Generate config for: ${env}`);
+
+// ==========================================================================
+// Convenient methods for checking the environment
+// ==========================================================================
+nconf.isDevelopment = function() {return env === DEVELOPMENT;};
+nconf.isProduction = function() {return env === PRODUCTION;};
+nconf.isStaging = function() {return env === STAGING;};
+nconf.isTest = function() {return env === TEST;};
+
+let environments = [DEVELOPMENT, TEST, PRODUCTION, STAGING];
+
+if (!_.contains(environments, env)) {
     throw new Error('Invalid server environment found:' + env);
 }
+
 
 // =============================================================================================
 // The default config file
@@ -106,3 +110,4 @@ nconf.getWebhomeUrl = function(){
 // Export
 // =============================================================================================
 module.exports = nconf;
+

@@ -1,12 +1,11 @@
-var sequelize = require('../config/sequelize'),
-    _ = require('lodash'),
-    co = require('co');
+let sequelize = require('../config/sequelize'),
+    _ = require('lodash');
 
 /**
  * TodoModel
  * @type {*|{}|Model}
  */
-var Todo = sequelize.define('Todo', {
+let Todo = sequelize.define('Todo', {
     /**
      * ######################################################################################
      * ######################################################################################
@@ -90,7 +89,7 @@ var Todo = sequelize.define('Todo', {
          * @name Todo.getUpdateFields
          */
         getUpdateFields: function (isAdmin) {
-            var without = ['id'];
+            let without = ['id'];
 
             if (!isAdmin) {
                 without = without.concat(['createdAt', 'updatedAt']);
@@ -104,7 +103,7 @@ var Todo = sequelize.define('Todo', {
          * @name Todo.getVisibleFields
          */
         getVisibleFields: function (isAdmin) {
-            var without = [];
+            let without = [];
 
             if (!isAdmin) {
                 without = without.concat([]);

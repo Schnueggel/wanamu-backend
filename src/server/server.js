@@ -1,9 +1,6 @@
 'use strict';
 
-/**
- * Created by Christian on 4/27/2015.
- */
-var config = require('./server/config'),
+let config = require('./server/config'),
     logger = require('koa-logger'),
     cors = require('koa-cors'),
     bodyParser = require('koa-bodyparser'),
@@ -35,7 +32,7 @@ app.init = co.wrap(function *() {
     // =============================================================================================
     if (config.get(config.statics.WU_HTTP_AUTH)){
         console.log('Protect application with http basic authentication');
-        var credentials = {
+        let credentials = {
             name: config.get(config.statics.WU_HTTP_USER),
             pass: config.get(config.statics.WU_HTTP_PASSWORD)
         };
@@ -44,7 +41,7 @@ app.init = co.wrap(function *() {
             try {
                 yield next;
             } catch (err) {
-                if (401 == err.status) {
+                if (401 === err.status) {
                     this.status = 401;
                     this.set('WWW-Authenticate', 'Basic');
                     this.body = 'You must authenticate';
@@ -56,13 +53,6 @@ app.init = co.wrap(function *() {
 
         app.use(auth(credentials));
     }
-
-    app.use(function* cleanEmptySessionPassport(next) {
-        yield* next;
-        if (Object.keys(this.session.passport).length === 0) {
-            delete this.session.passport;
-        }
-    });
 
     app.use(bodyParser());
 

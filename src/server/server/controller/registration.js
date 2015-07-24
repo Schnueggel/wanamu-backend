@@ -1,6 +1,6 @@
 'use strict';
 
-var User = require('../model/user'),
+let User = require('../model/user'),
     Registration = require('../model/registration'),
     Profile = require('../model/profile'),
     mailService = require('../services/mail'),
@@ -18,7 +18,7 @@ var User = require('../model/user'),
  * ######################################################################################
  */
 function* confirmRegistration(hash) {
-    var user,
+    let user,
         result = {
             error: null,
             success: false,
@@ -72,7 +72,7 @@ function* confirmRegistration(hash) {
  * ######################################################################################
  */
 function* resendConfirmation() {
-    var input = this.request.body || {},
+    let input = this.request.body || {},
         result = {
             data: [],
             success: false,
@@ -112,18 +112,18 @@ function* resendConfirmation() {
     // =============================================================================================
     // Check if password matches
     // =============================================================================================
-    var isMatch = yield bcrypt.compare( data.password, user.password);
+    let isMatch = yield bcrypt.compare( data.password, user.password);
     if ( !isMatch && !isAdmin ) {
         this.status = 412;
         result.error = new ErrorUtil.NotIdentified('Please check your credentials');
         return;
     }
 
-    var registration = user.Registration;
+    let registration = user.Registration;
     // =============================================================================================
     // We check the time diff in seconds between the last request for confirmation and now
     // =============================================================================================
-    var datediff = 1000000;
+    let datediff = 1000000;
 
     if (registration.lastconfirmation instanceof Date) {
         datediff = (new Date()).getTime() - registration.lastconfirmation.getTime();

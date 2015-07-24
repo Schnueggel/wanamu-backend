@@ -1,13 +1,12 @@
-var co = require('co'),
-    route = require('koa-route'),
+import { AuthController, UserController } from '../controller/controller.js';
+
+let route = require('koa-route'),
     TodoController = require('../controller/todo'),
     TodoListController = require('../controller/todolist'),
-    UserController = require('../controller/user'),
     FriendsController = require('../controller/friends'),
     ProfileController = require('../controller/profile'),
     RegistrationController = require('../controller/registration'),
-    SettingController = require('../controller/setting'),
-    AuthController = require('../controller/auth');
+    SettingController = require('../controller/setting');
 
 /**
  * ######################################################################################
@@ -41,6 +40,9 @@ function* auth(next){
  * ######################################################################################
  */
 module.exports = function(app){
+    let authCtrl = new AuthController();
+    let userCtrl = new UserController();
+
     /**
      * ######################################################################################
      * ######################################################################################
@@ -49,7 +51,9 @@ module.exports = function(app){
      * ######################################################################################
      */
 
-    app.use(route.post('/auth/login', AuthController.login));
+    app.use(route.post('/auth/login', function* (next){
+        yield authCtrl.login(next, this);
+    }));
     app.use(route.post('/user', UserController.create));
     app.use(route.get('/confirmation/:hash', RegistrationController.confirm));
     app.use(route.post('/confirmation', RegistrationController.resendConfirmation));
@@ -77,12 +81,18 @@ module.exports = function(app){
     // ==========================================================================
     // USER
     // ==========================================================================
-    app.use(route.put('/user/:id', UserController.update));
-    app.use(route.get('/user/:id', UserController.get));
+    app.use(route.put('/user/:id', function* (id, next){
+        yield userCtrl.updateUser(id, next, this);
+    }));
+    app.use(route.get('/user/:id', function* (id, next){
+        yield userCtrl.getUser(id, next, this);
+    }));
     // ==========================================================================
     // AUTH
     // ==========================================================================
-    app.use(route.post('/auth/logout', AuthController.dologout));
+    app.use(route.post('/auth/logout', (next) => {
+        authCtrl.doLogout(next, this);
+    }));
     // =============================================================================================
     // Profile
     // =============================================================================================

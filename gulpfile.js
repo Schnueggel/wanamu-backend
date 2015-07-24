@@ -8,6 +8,7 @@
 // Start node with harmony flag
 // ==========================================================================
 require('harmonize')();
+
 /**
  * ######################################################################################
  * ######################################################################################
@@ -24,6 +25,8 @@ var gulp = require('gulp'),
     path = require('path'),
     server = require('gulp-develop-server'),
     mocha = require('gulp-mocha'),
+    jscs = require('gulp-jscs'),
+    babel = require('gulp-babel'),
     fs = require('fs'),
     rename = require('gulp-rename'),
     del = require('del');
@@ -39,6 +42,7 @@ var srcServerPath = path.join(__dirname, 'src/server'),
     distServerPath = path.join(distPath, 'server'),
     distServerScript = path.join(distServerPath, 'server.js');
 
+
 /**
  * ######################################################################################
  * ######################################################################################
@@ -47,6 +51,11 @@ var srcServerPath = path.join(__dirname, 'src/server'),
  * ######################################################################################
  */
 var requireFolder = null;
+var babelOptions = {
+    blacklist:  [
+        'es6.constants', 'regenerator'
+    ]
+};
 
 /**
  * ######################################################################################
@@ -63,14 +72,14 @@ gulp.task('default', ['build']);
 // Build the application into the dist folder
 // ===================================================================
 gulp.task('build', function (cb) {
-    runSequence('jshint', 'build-server', cb);
+    runSequence('jshint', 'jscs', 'build-server', cb);
 });
 
 // ===========================================================================
 // Build the server
 // ===========================================================================
 gulp.task('build-server', function (cb) {
-    runSequence('build-clean-server', 'dist-server', cb);
+    runSequence('build-clean-server', 'dist-server', 'babel', cb);
 });
 
 // ====================================================================
@@ -116,10 +125,10 @@ gulp.task('server-start', function (cb) {
         server.listen({
             path: distServerScript,
             env: {
-                WANAMU_ENV : 'development',
+                WU_ENV : 'development',
                 DEBUG:'monk:*'
             },
-            execArgv: ['--harmony_generators']});
+            execArgv: ['--harmony']});
         cb();
     });
 });
@@ -167,7 +176,19 @@ gulp.task('watch-server', function () {
 // Moves the server code into the dist folder
 // ==========================================================================
 gulp.task('dist-server', function () {
-    return gulp.src(srcServerPath + '/**/!(*.es6)').pipe(gulp.dest(distServerPath));
+    return gulp
+        .src(srcServerPath + '/**/*.*')
+        .pipe(gulp.dest(distServerPath));
+});
+
+// =============================================================================================
+// Transpiler
+// =============================================================================================
+gulp.task('babel', function() {
+    return gulp
+        .src(path.join(distServerPath, '/**/*.*js'))
+        .pipe(babel(babelOptions))
+        .pipe(gulp.dest(distServerPath));
 });
 
 // ==========================================================================
@@ -190,7 +211,7 @@ gulp.task('dist-app-static', function () {
 // Start server side unit tests with mocha
 // ==========================================================================
 gulp.task('test-mocha', ['prepare-mocha-tests'], function () {
-    process.env.WANAMU_ENV = 'test';
+    process.env.WU_ENV = 'test';
     return gulp.src('test/mocha/**/**.js')
         .pipe(mocha({
             timeout: 5000
@@ -201,7 +222,7 @@ gulp.task('test-mocha', ['prepare-mocha-tests'], function () {
 // Setup everything for testing
 // ==========================================================================
 gulp.task('prepare-mocha-tests', function(cb){
-    process.env.WANAMU_ENV = 'test';
+    process.env.WU_ENV = 'test';
     runSequence('build-test-database', 'build-server', cb);
 });
 /**
@@ -215,13 +236,13 @@ gulp.task('prepare-mocha-tests', function(cb){
 // Builds the development database
 // ==========================================================================
 gulp.task('build-development-database', function (cb) {
-    process.env.WANAMU_ENV = 'development';
+    process.env.WU_ENV = 'development';
     var modelpath = path.join(distServerPath, 'server', 'model'),
         sequelize = require(path.join(distServerPath, 'server', 'config', 'sequelize'));
 
     requireFolder(modelpath);
 
-    process.env.WANAMU_ENV = 'development';
+    process.env.WU_ENV = 'development';
     sequelize.query('').then(function(){
         sequelize.sync({'force': false})
             .then(function(){
@@ -239,13 +260,13 @@ gulp.task('build-development-database', function (cb) {
 // Builds the test database
 // ==========================================================================
 gulp.task('build-test-database',['build-server'], function (cb) {
-    process.env.WANAMU_ENV = 'test';
+    process.env.WU_ENV = 'test';
     var modelpath = path.join(distServerPath, 'server', 'model'),
         sequelize = require(path.join(distServerPath, 'server', 'config', 'sequelize'));
 
     requireFolder(modelpath);
 
-    process.env.WANAMU_ENV = 'test';
+    process.env.WU_ENV = 'test';
     sequelize.query('').then(function(){
         sequelize.sync({'force': false}).then(function(){
             var testDbSetupScript = path.join(distServerPath, 'server', 'setup', 'test', 'database.js');
@@ -269,10 +290,20 @@ gulp.task('build-production-database',['build-server'], function (cb) {
 // Code Quality
 // ==========================================================================
 gulp.task('jshint', function () {
-    var json = JSON.parse(require('fs').readFileSync(('./.jshintrc')));
-    return gulp.src('src')
-        .pipe(jshint(json));
+    gulp.src('src/**/*.js')
+        .pipe(jshint('.jshintrc'))
+        .pipe(jshint.reporter('jshint-stylish'))
+        .pipe(jshint.reporter('fail'));
 });
+
+// =============================================================================================
+// Code Style
+// =============================================================================================
+gulp.task('jscs', function() {
+    gulp.src('src/**/*.js')
+        .pipe(jscs());
+});
+
 
 /**
  * ######################################################################################

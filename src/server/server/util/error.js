@@ -1,15 +1,12 @@
-/**
- * Created by Christian on 5/17/2015.
- */
-var util = require('util');
+let util = require('util');
 
 /**
  * Base Error
  * @constructor
  */
-var WanamuError = function() {
+let WanamuError = function(message) {
     Error.call(this);
-    Error.captureStackTrace(this, arguments.callee);
+    Error.captureStackTrace(this, this.constructor);
     this.message = message;
 };
 

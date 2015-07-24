@@ -1,12 +1,11 @@
-var sequelize = require('../config/sequelize'),
-    _ = require('lodash'),
-    co = require('co');
+let sequelize = require('../config/sequelize'),
+    _ = require('lodash');
 
 /**
  * Profile
  * @type {*|{}|Model}
  */
-var Profile = sequelize.define('Profile', {
+let Profile = sequelize.define('Profile', {
     /**
      * ######################################################################################
      * ######################################################################################
@@ -89,7 +88,7 @@ var Profile = sequelize.define('Profile', {
          */
         getUpdateFields : function(isAdmin){
 
-            var without = ['id'];
+            let without = ['id'];
 
             if (!isAdmin) {
                 without.concat([ 'updatedAt', 'createdAt']);
@@ -104,7 +103,7 @@ var Profile = sequelize.define('Profile', {
          * @name Profile.getVisibleFields
          */
         getVisibleFields : function(isAdmin) {
-            var without = [];
+            let without = [];
 
             if (!isAdmin) {
                 without = without.concat([]);

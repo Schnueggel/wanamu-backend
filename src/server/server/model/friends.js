@@ -1,12 +1,10 @@
-var sequelize = require('../config/sequelize'),
-    _ = require('lodash'),
-    co = require('co');
+let sequelize = require('../config/sequelize');
 
 /**
  * Friends
  * @type {*|{}|Model}
  */
-var Friends = sequelize.define('Friends', {
+let Friends = sequelize.define('Friends', {
         accepted : {
             type : sequelize.Sequelize.BOOLEAN,
             defaultValue : false

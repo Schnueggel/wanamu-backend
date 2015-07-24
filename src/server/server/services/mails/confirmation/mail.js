@@ -1,14 +1,14 @@
-var fs = require('fs');
+let fs = require('fs');
 
-var templatehtml = fs.readFileSync(__dirname + '/template.html').toString();
-var templatetxt = fs.readFileSync(__dirname + '/template.txt').toString();
+let templatehtml = fs.readFileSync(__dirname + '/template.html').toString();
+let templatetxt = fs.readFileSync(__dirname + '/template.txt').toString();
 
 function ConfirmationMail () {
     this.text = templatetxt;
     this.html = templatehtml;
     this.subject = 'Wanamu registration confirmation';
     this.from = '';
-    this.to = ''
+    this.to = '';
 }
 
 ConfirmationMail.prototype.setConfirmationLink = function(link) {

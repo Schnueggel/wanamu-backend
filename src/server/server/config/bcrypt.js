@@ -1,9 +1,9 @@
 /**
  * Created by Christian on 5/16/2015.
  */
-var bcrypt = require('bcryptjs');
-var _ = require('lodash');
-var bc;
+let bcrypt = require('bcryptjs');
+let _ = require('lodash');
+let bc;
 
 module.exports = bc = {
     /**
@@ -54,7 +54,7 @@ module.exports = bc = {
         });
     },
     hashAndSalt: function* (password, rounds) {
-        var salt = yield bc.salt(rounds);
+        let salt = yield bc.salt(rounds);
         return yield bc.hash(password, salt);
     }
 };

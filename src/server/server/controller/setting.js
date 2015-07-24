@@ -1,7 +1,8 @@
 'use strict';
 
-var Setting = require('../model/setting'),
-    ErrorUtil = require('../util/error');
+let Setting = require('../model/setting'),
+    ErrorUtil = require('../util/error'),
+    _ = require('lodash');
 
 /**
  * ######################################################################################
@@ -11,7 +12,7 @@ var Setting = require('../model/setting'),
  * ######################################################################################
  */
 function* getSetting(id) {
-    var user = this.req.user,
+    let user = this.req.user,
         isAdmin = user.isAdmin(),
         data,
         result = {
@@ -22,7 +23,7 @@ function* getSetting(id) {
 
     this.body = result;
 
-    var setting = yield Setting.findById(id);
+    let setting = yield Setting.findById(id);
 
     if ( !setting ) {
         this.status = 404;
@@ -52,7 +53,7 @@ function* getSetting(id) {
  * ######################################################################################
  */
 function* updateSetting(id) {
-    var user = this.req.user,
+    let user = this.req.user,
         isAdmin = user.isAdmin(),
         input = this.request.body || {},
         data = input.data || {},
@@ -65,7 +66,7 @@ function* updateSetting(id) {
 
     this.body = result;
 
-    var setting = yield Setting.findById(id);
+    let setting = yield Setting.findById(id);
 
     if (!setting) {
         this.status = 404;
@@ -82,7 +83,7 @@ function* updateSetting(id) {
         return;
     }
 
-    var options = Setting.getUpdateFields(isAdmin);
+    let options = Setting.getUpdateFields(isAdmin);
     yield setting.updateAttributes(data, options);
 
     setting = yield setting.reload();
