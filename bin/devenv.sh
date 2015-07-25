@@ -10,4 +10,5 @@ export POSTGRES_PASSWORD=postgress
 export WU_HTTP_AUTH=""
 export WU_HTTP_USER=""
 export WU_HTTP_PASSWORD=""
-
+export WU_BACKEND_CERT=/test.crt
+export WU_BACKEND_KEY=/test.key

@@ -7,12 +7,19 @@ let config = require('./server/config'),
     session = require('koa-generic-session'),
     passport = require('koa-passport'),
     auth = require('koa-basic-auth'),
+    forcessl = require('koa-force-ssl'),
+    http = require('http'),
+    https = require('https'),
+    fs = require('fs'),
     co = require('co'),
     app = require('koa')();
 
 app.init = co.wrap(function *() {
     if (!config.isTest()) {
         app.use(logger());
+    }
+    if (config.isStaging() || config.isProduction()) {
+        app.use(forcessl());
     }
 
     app.keys = [config.get('session').secret];
@@ -60,14 +67,18 @@ app.init = co.wrap(function *() {
     app.use(passport.session());
 
     require('./server/routes')(app);
-
+    let options = {
+        pfx: fs.readFileSync('bin/localhost.pfx')
+    };
     // ==========================================================================
     // We store the http server object. Koa uses nodes http.Server
     // This is useful to close connection for tests
     // ==========================================================================
-    app.server = app.listen(config.get('port'));
+    app.server = http.createServer(app.callback()).listen(config.PORT);
+    app.serverSSL = https.createServer(options, app.callback()).listen(config.PORTSSL);
 
-    console.log('Wanamu backend listening on port ' + config.get('port'));
+    console.log(`Wanamu backend listening on port ${config.PORT}`);
+    console.log(`Wanamu SSL backend listening on port ${config.PORTSSL}`);
 });
 
 module.exports = app;

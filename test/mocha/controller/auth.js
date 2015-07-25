@@ -1,20 +1,16 @@
-/**
- * Created by Christian on 5/21/2015.
- */
-
-var request = require('../../../dist/server/server/config/mocha').request,
+'use strict';
+let request = require('../../../dist/server/server/config/mocha').request,
     app = require('../../../dist/server/server.js'),
     config = require('../../../dist/server/server/config'),
     assert = require('assert'), co = require('co'),
     _ = require('lodash');
-
 
 describe('Test Auth Controller', function () {
 
     // ==========================================================================
     // Before test we start the server
     // ==========================================================================
-    before(function (done) {
+    before((done) => {
 
         co(function*() {
             yield app.init();

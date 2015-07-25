@@ -1,5 +1,6 @@
 {
     "port": 3001,
+    "portssl": 3002,
     "cacheTime": 604800000,
     "session": {
         "secret": "dogfoodcat(-_-)"

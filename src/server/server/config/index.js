@@ -56,7 +56,7 @@ class Config {
         // =============================================================================================
         // Load the environment specific config
         // =============================================================================================
-        let envConfigPath = `${__dirname}/json/{env.toLowerCase()}.json`;
+        let envConfigPath = `${__dirname}/json/${this.env.toLowerCase()}.json`;
         nconf.file('envconfig', { file: envConfigPath });
 
         // =============================================================================================
@@ -69,6 +69,8 @@ class Config {
 
     get statics() {
         return {
+            PORT:'port',
+            PORT_SSL:'portssl',
             SEQUELIZE: 'sequelize',
             WU_ENV: 'WU_ENV',
             WU_HTTP_AUTH: 'WU_HTTP_AUTH',
@@ -77,7 +79,9 @@ class Config {
             WU_DB_HOST: 'WU_DB_HOST',
             WU_DB_NAME: 'WU_DB_NAME',
             WU_DB_USER: 'WU_DB_USER',
-            WU_DB_PASSWORD: 'WU_DB_PASSWORD'
+            WU_DB_PASSWORD: 'WU_DB_PASSWORD',
+            WU_BACKEND_CERT: 'WU_BACKEND_CERT',
+            WU_BACKEND_KEY: 'WU_BACKEND_CERT'
         };
     }
 
@@ -147,6 +151,24 @@ class Config {
         this.nconf.set(key, value);
     }
 
+    get PORT () {
+        return this.get(this.statics.PORT);
+    }
+
+    get PORTSSL () {
+        return this.get(this.statics.PORT_SSL);
+    }
+
+    get WU_DB_USER(){
+        return this.get(this.statics.WU_DB_USER);
+    }
+
+    get WU_BACKEND_KEY() {
+        return this.get(this.statics.WU_BACKEND_KEY);
+    }
+    get WU_BACKEND_CERT() {
+        return this.get(this.statics.WU_BACKEND_CERT);
+    }
 }
 
 // =============================================================================================

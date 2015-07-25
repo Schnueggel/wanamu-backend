@@ -6,13 +6,15 @@
     "WU_DB_HOST":"localhost",
     "WU_DB_POST": 5432,
     "POSTGRES_USER":"postgres",
-    "POSTGRES_PASSWORD":"postgress",
+    "POSTGRES_PASSWORD":"postgres",
     "WU_HTTP_AUTH":"",
     "WU_HTTP_USER":"",
     "WU_HTTP_PASSWORD":"",
+    "WU_BACKEND_CERT":"bin/test.crt.pem",
+    "WU_BACKEND_KEY":"bin/test.key.pem",
     "debug": true,
     "testmail1" : "christian.steinmann.test@gmail.com",
     "sequelize": {
-        "host": "devdb.wanamu.com"
+        "host": "localhost"
     }
 }
