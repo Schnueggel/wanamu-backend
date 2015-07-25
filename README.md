@@ -1,6 +1,16 @@
 # Wanamu Backend
+This is the backend of the wanamu. It is the api layer and the bl layer. In the future they will be seperated perhaps. 
+Lets see when I get tired of this app
 
 ##Setup
+
+### Setup with docker
+docker-compose build
+docker-compose up -d
+
+### Local Setup with gulp
+
+gulp build-serve
 
 ###Development
 You must create a local mysql instance
@@ -11,7 +21,7 @@ The following npm package should be installed global
 gulp
 
 ## Install
-In order to run this application you need to make an alias and run the node command with `--harmony_generators` flag or use 
+In order to run this application you need to make an alias and run the node command with `--harmony` flag or use 
 `io.js`.
 
 Use `npm start` to start the server.
@@ -20,7 +30,7 @@ Use `gulp build-serve` to start development server.
 
 Use `gulp build` to build only.
 
-Use `gulp test` to start tests.
+Use `npm  test` to start tests.
    
 ## Development
 For development create a MongoDb database at localhost without password and username
@@ -43,14 +53,23 @@ The backend of the application is written in NodeJs using the Express framework.
 The frontend is made with Angular.
 
 mocha
+
 npm-check-updates
 
-### Docs:
+babel
 
+docker
 
-Koa:
-npm
-<https://github.com/koajs/koa>
+docker-compose (<https://docs.docker.com/compose/yml>)
+
+dockerpush (<https://bitbucket.org/schnueggel/dockerpush>)
+
+wercker
+
+Koa
+
+ES6
+
 
 ## Build
 
@@ -73,7 +92,7 @@ To start the tests on the command line you can use:
 
 ## Database
 
-All data is stored in a Mongo Database.
+All data is stored in a Postgres Database.
 
 ## Mockups
 
@@ -101,14 +120,20 @@ Go into the folder of liquibase and build the container
 This status code are used in the application
 
 208 If User is confirmed but confirmation is requested again
-401 If User is not Authenticated
-403 If User does not have the permission to do this action
-412 If User requests a resend of confirmation data but has not given a correct password
-422 If data validation went wrong
-404 Entity not found
-424 User not confirmed
-500 On an unexpected error
 
+401 If User is not Authenticated
+
+403 If User does not have the permission to do this action
+
+412 If User requests a resend of confirmation data but has not given a correct password
+
+422 If data validation went wrong
+
+404 Entity not found
+
+424 User not confirmed
+
+500 On an unexpected error
 
 ##Environment Settings
 
@@ -128,5 +153,19 @@ Database password
 The url to the database
 ### WU_ENV
 Must be one of: development, staging, production, test
+### WU_BACKEND_PFX
+Path to pfx cert file for ssl
 
+## TODO
 
+Friends Todo Sharing
+
+Template Engine for Mails
+
+Model Testing
+
+Serverside Translations
+
+Sequelize Model Validation
+
+Wercker Build Test
