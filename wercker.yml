@@ -27,7 +27,7 @@ deploy:
               git add .
               git remote add deploy $DEPLOY_REPO_URL
               git commit --allow-empty -m "Wercker Push"
-              git push deploy HEAD:refs/heads/master --force
+              git push deploy master --force
     after-steps:
         - slack-notifier:
             url: $SLACK_WEBHOOK_URL
