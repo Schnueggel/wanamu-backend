@@ -68,7 +68,7 @@ app.init = co.wrap(function *() {
 
     require('./server/routes')(app);
     let options = {
-        pfx: fs.readFileSync('bin/localhost.pfx')
+        pfx: fs.readFileSync(config.WU_BACKEND_PFX)
     };
     // ==========================================================================
     // We store the http server object. Koa uses nodes http.Server

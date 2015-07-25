@@ -81,7 +81,8 @@ class Config {
             WU_DB_USER: 'WU_DB_USER',
             WU_DB_PASSWORD: 'WU_DB_PASSWORD',
             WU_BACKEND_CERT: 'WU_BACKEND_CERT',
-            WU_BACKEND_KEY: 'WU_BACKEND_CERT'
+            WU_BACKEND_KEY: 'WU_BACKEND_CERT',
+            WU_BACKEND_PFX: 'WU_BACKEND_PFX'
         };
     }
 
@@ -166,8 +167,13 @@ class Config {
     get WU_BACKEND_KEY() {
         return this.get(this.statics.WU_BACKEND_KEY);
     }
+
     get WU_BACKEND_CERT() {
         return this.get(this.statics.WU_BACKEND_CERT);
+    }
+
+    get WU_BACKEND_PFX() {
+        return this.get(this.statics.WU_BACKEND_PFX);
     }
 }
 
