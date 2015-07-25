@@ -14,14 +14,13 @@ let TodoList = require('../model/todolist'),
 export class UserController {
     /**
      * ######################################################################################
-     * ######################################################################################
      * Create a new User. The given userdata must contain a field Profile with firstname, lastname
      * and salutation
      * ######################################################################################
-     * ######################################################################################
+     * @param {Object} context koa context
      */
-    *createUser() {
-        let input = this.request.body || {},
+    *createUser(context) {
+        let input = context.request.body || {},
             result = {
                 data: [],
                 success: false,
@@ -33,13 +32,13 @@ export class UserController {
             resultdata,
             data = input.data || {};
 
-        this.body = result;
+        context.body = result;
 
         // ==========================================================================
         // A logged in user cannot create a new user only Admin can do this
         // ==========================================================================
-        if (this.isAuthenticated() && !this.req.user.isAdmin()) {
-            this.status = 403;
+        if (context.isAuthenticated() && !context.req.user.isAdmin()) {
+            context.status = 403;
             result.error = new ErrorUtil.AccessViolation('Please logout before creating a new User');
             return;
         }
@@ -124,10 +123,10 @@ export class UserController {
             // TODO test validation errors
             // ==========================================================================
             if (err instanceof User.sequelize.ValidationError) {
-                this.status = 422;
+                context.status = 422;
                 result.error = err;
             } else {
-                this.status = 500;
+                context.status = 500;
                 result.error = new Error('Unable to create User.');
             }
         }
@@ -153,7 +152,7 @@ export class UserController {
             resultdata,
             data = input.data || {};
 
-        this.body = result;
+        context.body = result;
 
         data = _.pick(data, User.getUpdateFields());
 

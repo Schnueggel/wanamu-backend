@@ -54,7 +54,9 @@ module.exports = function(app){
     app.use(route.post('/auth/login', function* (next){
         yield authCtrl.login(next, this);
     }));
-    app.use(route.post('/user', UserController.create));
+    app.use(route.post('/user', function *(next){
+        yield userCtrl.createUser(this);
+    }));
     app.use(route.get('/confirmation/:hash', RegistrationController.confirm));
     app.use(route.post('/confirmation', RegistrationController.resendConfirmation));
 
@@ -81,7 +83,7 @@ module.exports = function(app){
     // ==========================================================================
     // USER
     // ==========================================================================
-    app.use(route.put('/user/:id', function* (id, next){
+    app.use(route.put('/user/:id', function* (id, next) {
         yield userCtrl.updateUser(id, next, this);
     }));
     app.use(route.get('/user/:id', function* (id, next){
@@ -90,8 +92,8 @@ module.exports = function(app){
     // ==========================================================================
     // AUTH
     // ==========================================================================
-    app.use(route.post('/auth/logout', (next) => {
-        authCtrl.doLogout(next, this);
+    app.use(route.post('/auth/logout', function* (next) {
+        yield authCtrl.doLogout(next, this);
     }));
     // =============================================================================================
     // Profile
