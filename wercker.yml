@@ -25,7 +25,7 @@ deploy:
               git config --global user.name "Wercker"
               echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
               git checkout master
-              git merge WERCKER_GIT_BRANCH
+              git merge $WERCKER_GIT_BRANCH
               git add .
               git remote add deploy $DEPLOY_REPO_URL
               git commit --allow-empty -m "Wercker Push"
