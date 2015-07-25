@@ -1,18 +1,12 @@
 wanamubackend:
   restart: always
   build: .
+  external_links:
+    wanamudb_wanamudb_1:database
   ports:
     - 3001:3001
-  environment:
-    - WU_DB_NAME=wanamu
-    - WU_DB_USER
-    - WU_DB_PASSWORD
-    - WU_DB_DATA
-    - WU_DB_HOST
-    - WU_HTTP_AUTH
-    - WU_HTTP_USER
-    - WU_HTTP_PASSWORD
-    - WU_ENV
+    - 3002:3002
+  env_file:
+    - ./wanamu-backend.env
   volumes:
-    - /var/lib/postgresql/data:/var/lib/postgresql/data
-    - ${$WU_DB_DUMP}:/var/lib/postgresql/dump
+    - /certs:/certs

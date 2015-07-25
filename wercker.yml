@@ -1,29 +1,35 @@
-box: golio/ubuntu:latest
 build:
-  steps:
-    - script:
-        name: Dummy
-        code: |
-          ls
+    box: node:0.12.7
+    steps:
+        - script:
+            name: Build
+            code: |
+                npm install -g gulp
+                npm i
+                gulp build
+                npm test
+                cp -a . $WERCKER_OUTPUT_DIR
 deploy:
-  steps:
-    - add-ssh-key:
-        keyname: DEPLOY_KEY
-    - script:
-        name: SSH-Agent
-        code: |
-          ssh-agent -s
-    - script:
-        name: Deploy
-        code: |
-          ssh -l $DEPLOY_USER -o UserKnownHostsFile=/dev/null -tt -o StrictHostKeyChecking=no $DEPLOY_HOST /bin/bash -e <<EOF
-          sudo ./dockerinstall.sh git@$WERCKER_GIT_DOMAIN:$WERCKER_GIT_OWNER/$WERCKER_GIT_REPOSITORY.git $WERCKER_GIT_BRANCH
-          cd ./$WERCKER_GIT_REPOSITORY
-          sudo -E docker-compose up -d
-          exit
-          EOF
-  after-steps:
-    - slack-notifier:
-        url: $SLACK_WEBHOOK_URL
-        channel: wercker-notify
-        username: werckerbot
+    box: golio/ubuntu:latest
+    steps:
+        - add-ssh-key:
+            keyname: DEPLOY_KEY
+        - script:
+            name: install ssh
+            code: |
+              ssh-agent -s
+        - script:
+            name: Deploy
+            code: |
+              git config --global user.email "wercker@wanamu.com"
+              git config --global user.name "Wercker"
+              echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+              git add .
+              git remote add deploy $DEPLOY_REPO_URL
+              git commit --allow-empty -m "Wercker Push"
+              git push deploy HEAD:master --force
+    after-steps:
+        - slack-notifier:
+            url: $SLACK_WEBHOOK_URL
+            channel: wercker-notify
+            username: werckerbot

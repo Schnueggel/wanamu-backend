@@ -1,11 +1,12 @@
 {
   "name": "wanamu-backend",
   "version": "1.0.0",
-  "description": "Another Todo App. Only better",
+  "description": "The Backend for Wanamu",
   "main": "index.js",
   "scripts": {
     "start": "node --harmony ./dist/server/server.js",
-    "test": "gulp test"
+    "test": "gulp test-mocha",
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
