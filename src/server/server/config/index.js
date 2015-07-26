@@ -15,7 +15,7 @@ const STAGING = 'staging';
 /**
  * Config File
  */
-class Config {
+export class Config {
 
     constructor() {
         this.nconf = nconf;
@@ -176,6 +176,7 @@ class Config {
         return this.get(this.statics.WU_BACKEND_PFX);
     }
 }
+
 
 // =============================================================================================
 // Export

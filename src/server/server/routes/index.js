@@ -1,11 +1,10 @@
-import { AuthController, UserController } from '../controller/controller.js';
+import { AuthController, UserController, RegistrationController } from '../controller/controller.js';
 
 let route = require('koa-route'),
     TodoController = require('../controller/todo'),
     TodoListController = require('../controller/todolist'),
     FriendsController = require('../controller/friends'),
     ProfileController = require('../controller/profile'),
-    RegistrationController = require('../controller/registration'),
     SettingController = require('../controller/setting');
 
 /**
@@ -42,6 +41,7 @@ function* auth(next){
 module.exports = function(app){
     let authCtrl = new AuthController();
     let userCtrl = new UserController();
+    let registrationCtrl = new RegistrationController();
 
     /**
      * ######################################################################################
@@ -57,8 +57,12 @@ module.exports = function(app){
     app.use(route.post('/user', function *(next){
         yield userCtrl.createUser(this);
     }));
-    app.use(route.get('/confirmation/:hash', RegistrationController.confirm));
-    app.use(route.post('/confirmation', RegistrationController.resendConfirmation));
+    app.use(route.get('/confirmation/:hash', function *(hash, next) {
+        yield registrationCtrl.confirmRegistration(hash);
+    }));
+    app.use(route.post('/confirmation', function *(next) {
+        yield registrationCtrl.resendConfirmation();
+    }));
 
     /**
      * ######################################################################################

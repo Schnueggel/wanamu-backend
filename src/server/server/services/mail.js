@@ -18,7 +18,7 @@ function MailService () {
 /**
  *
  * @param {User} user
- * @param {Registration} registration
+ * @param {RegistrationController} registration
  */
 MailService.prototype.sendConfirmationMail = function(user, registration) {
     let mail = new ConfirmationMail();

@@ -10,7 +10,7 @@
     "WU_HTTP_AUTH":"",
     "WU_HTTP_USER":"",
     "WU_HTTP_PASSWORD":"",
-    "WU_BACKEND_PFX": "localhost.pfx",
+    "WU_BACKEND_PFX": "bin/localhost.pfx",
     "WU_BACKEND_CERT":"bin/test.crt.pem",
     "WU_BACKEND_KEY":"bin/test.key.pem",
     "debug": true,

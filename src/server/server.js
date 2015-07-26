@@ -75,7 +75,9 @@ app.init = co.wrap(function *() {
     // This is useful to close connection for tests
     // ==========================================================================
     app.server = http.createServer(app.callback()).listen(config.PORT);
-    app.serverSSL = https.createServer(options, app.callback()).listen(config.PORTSSL);
+    if (!config.isTest()) {
+        app.serverSSL = https.createServer(options, app.callback()).listen(config.PORTSSL);
+    }
 
     console.log(`Wanamu backend listening on port ${config.PORT}`);
     console.log(`Wanamu SSL backend listening on port ${config.PORTSSL}`);
