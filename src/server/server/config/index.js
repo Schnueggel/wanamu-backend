@@ -192,6 +192,7 @@ export class Config {
     get WU_DB_NAME() {
         return this.get(this.statics.WU_DB_NAME);
     }
+
     get SEQUELIZE() {
         return this.get(this.statics.SEQUELIZE);
     }
