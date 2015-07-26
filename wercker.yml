@@ -24,12 +24,15 @@ deploy:
               git config --global user.email "wercker@wanamu.com"
               git config --global user.name "Wercker"
               echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-              git checkout master
-              git merge $WERCKER_GIT_BRANCH
               git add .
-              git remote add deploy $DEPLOY_REPO_URL
+              git branch
               git commit --allow-empty -m "Wercker Push"
-              git push deploy master --force
+              git remote add deploy $DEPLOY_REPO_URL
+              git push -f deploy $WERCKER_GIT_BRANCH:master
+              git checkout master
+              git reset --hard $WERCKER_GIT_BRANCH
+              git remote add deploy $DEPLOY_REPO_URL
+              git push -f deploy master
     after-steps:
         - slack-notifier:
             url: $SLACK_WEBHOOK_URL
