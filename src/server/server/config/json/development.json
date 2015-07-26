@@ -4,7 +4,7 @@
     "WU_DB_NAME":"wanamu",
     "WU_ENV":"development",
     "WU_DB_HOST":"localhost",
-    "WU_DB_POST": 5432,
+    "WU_DB_PORT": 5432,
     "POSTGRES_USER":"postgres",
     "POSTGRES_PASSWORD":"postgres",
     "WU_HTTP_AUTH":"",
