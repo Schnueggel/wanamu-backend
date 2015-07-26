@@ -79,6 +79,7 @@ export class Config {
             WU_DB_HOST: 'WU_DB_HOST',
             WU_DB_NAME: 'WU_DB_NAME',
             WU_DB_USER: 'WU_DB_USER',
+            WU_DB_PORT: 'WU_DB_PORT',
             WU_DB_PASSWORD: 'WU_DB_PASSWORD',
             WU_BACKEND_CERT: 'WU_BACKEND_CERT',
             WU_BACKEND_KEY: 'WU_BACKEND_CERT',
@@ -174,6 +175,29 @@ export class Config {
 
     get WU_BACKEND_PFX() {
         return this.get(this.statics.WU_BACKEND_PFX);
+    }
+
+    get WU_DB_PORT() {
+        return this.get(this.statics.WU_DB_PORT);
+    }
+
+    get WU_DB_HOST() {
+        return this.get(this.statics.WU_DB_HOST);
+    }
+
+    get WU_DB_PASSWORD() {
+        return this.get(this.statics.WU_DB_PASSWORD);
+    }
+
+    get WU_DB_USER() {
+        return this.get(this.statics.WU_DB_USER);
+    }
+
+    get WU_DB_NAME() {
+        return this.get(this.statics.WU_DB_NAME);
+    }
+    get SEQUELIZE() {
+        return this.get(this.statics.SEQUELIZE);
     }
 }
 

@@ -3,9 +3,10 @@
 let config = require('../config'),
     Sequelize = require('sequelize');
 
-let sequelize = config.get(config.statics.SEQUELIZE);
+let sequelizeOptions = config.SEQUELIZE;
 
-sequelize.host = config.get(config.statics.WU_DB_HOST);
+sequelizeOptions.host = config.WU_DB_HOST;
+sequelizeOptions.port = config.WU_DB_PORT;
 
-module.exports = new Sequelize(config.get(config.statics.WU_DB_NAME), config.WU_DB_USER, config.get(config.statics.WU_DB_PASSWORD), sequelize);
+module.exports = new Sequelize(config.WU_DB_NAME, config.WU_DB_USER, config.WU_DB_PASSWORD, sequelizeOptions);
 
