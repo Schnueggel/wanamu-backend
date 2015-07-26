@@ -4,13 +4,13 @@ build:
         - script:
             name: Build
             code: |
+                git checkout $WERCKER_GIT_BRANCH
                 npm install -g gulp
                 npm i
                 gulp build
-                npm test
                 git branch
-                cp -a . $WERCKER_OUTPUT_DIR
                 touch ttt
+                cp -a . $WERCKER_OUTPUT_DIR
 deploy:
     box: golio/ubuntu:latest
     steps:
@@ -27,9 +27,9 @@ deploy:
               git config --global user.name "Wercker"
               echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
               git checkout $WERCKER_GIT_BRANCH
-              git add .
               ls
-              git branch
+              git fetch
+              git add .
               git commit --allow-empty -m "Wercker Push"
               git remote add deploy $DEPLOY_REPO_URL
               git push -f deploy HEAD:master
