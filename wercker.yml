@@ -26,10 +26,10 @@ deploy:
               git config --global user.name "Wercker"
               echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
               git checkout $WERCKER_GIT_BRANCH
+              git remote add deploy $DEPLOY_REPO_URL
               git fetch deploy --unshallow
               git add .
               git commit --allow-empty -m "Wercker Push"
-              git remote add deploy $DEPLOY_REPO_URL
               git push -f deploy HEAD:master
     after-steps:
         - slack-notifier:
