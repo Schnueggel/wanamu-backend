@@ -6,10 +6,9 @@ build:
             code: |
                 git checkout $WERCKER_GIT_BRANCH
                 npm install -g gulp
-                npm ig
+                npm i
                 gulp build
                 git branch
-
                 cp -a . $WERCKER_OUTPUT_DIR
 deploy:
     box: golio/ubuntu:latest
