@@ -161,10 +161,6 @@ export class Config {
         return this.get(this.statics.PORT_SSL);
     }
 
-    get WU_DB_USER(){
-        return this.get(this.statics.WU_DB_USER);
-    }
-
     get WU_BACKEND_KEY() {
         return this.get(this.statics.WU_BACKEND_KEY);
     }
