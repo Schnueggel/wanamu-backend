@@ -2,7 +2,7 @@ wanamubackend:
   restart: always
   build: .
   external_links:
-    wanamudb_wanamudb_1:database
+    - wanamudb_wanamudb_1:database
   ports:
     - 3001:3001
     - 3002:3002
