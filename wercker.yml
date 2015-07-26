@@ -9,6 +9,7 @@ build:
                 gulp build
                 npm test
                 cp -a . $WERCKER_OUTPUT_DIR
+                touch ttt
 deploy:
     box: golio/ubuntu:latest
     steps:
@@ -24,15 +25,13 @@ deploy:
               git config --global user.email "wercker@wanamu.com"
               git config --global user.name "Wercker"
               echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+              git checkout $WERCKER_GIT_BRANCH
               git add .
-              git branch
+              ls
+              echo $(git branch)
               git commit --allow-empty -m "Wercker Push"
               git remote add deploy $DEPLOY_REPO_URL
-              git push -f deploy $WERCKER_GIT_BRANCH:master
-              git checkout master
-              git reset --hard $WERCKER_GIT_BRANCH
-              git remote add deploy $DEPLOY_REPO_URL
-              git push -f deploy master
+              git push -f deploy HEAD:master
     after-steps:
         - slack-notifier:
             url: $SLACK_WEBHOOK_URL
