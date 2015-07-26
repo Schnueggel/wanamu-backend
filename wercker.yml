@@ -8,6 +8,7 @@ build:
                 npm i
                 gulp build
                 npm test
+                git branch
                 cp -a . $WERCKER_OUTPUT_DIR
                 touch ttt
 deploy:
@@ -28,7 +29,7 @@ deploy:
               git checkout $WERCKER_GIT_BRANCH
               git add .
               ls
-              echo $(git branch)
+              git branch
               git commit --allow-empty -m "Wercker Push"
               git remote add deploy $DEPLOY_REPO_URL
               git push -f deploy HEAD:master
