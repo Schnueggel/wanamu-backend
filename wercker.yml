@@ -20,6 +20,12 @@ deploy:
             code: |
               ssh-agent -s
         - script:
+            name: Create Wercker Textfile
+            code: |
+              echo "$WERCKER_MAIN_PIPELINE_STARTED" >> ./wercker.txt
+              echo "$WERCKER_GIT_COMMIT" >> ./wercker.txt
+              echo "$WERCKER_BUILD_ID" >> ./wercker.txt
+        - script:
             name: Deploy
             code: |
               git config --global user.email "wercker@wanamu.com"
@@ -27,9 +33,8 @@ deploy:
               echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
               git checkout $WERCKER_GIT_BRANCH
               git remote add deploy $DEPLOY_REPO_URL
-              git fetch deploy --unshallow
               git add .
-              git commit --allow-empty -m "Wercker Push"
+              git commit -m "Wercker Push"
               git push -f deploy HEAD:master
     after-steps:
         - slack-notifier:
