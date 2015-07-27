@@ -1,11 +1,10 @@
-import { AuthController, UserController, RegistrationController } from '../controller/controller.js';
+import { AuthController, UserController, RegistrationController, SettingController } from '../controller/controller.js';
 
 let route = require('koa-route'),
     TodoController = require('../controller/todo'),
     TodoListController = require('../controller/todolist'),
     FriendsController = require('../controller/friends'),
-    ProfileController = require('../controller/profile'),
-    SettingController = require('../controller/setting');
+    ProfileController = require('../controller/profile');
 
 /**
  * ######################################################################################
@@ -39,9 +38,10 @@ function* auth(next){
  * ######################################################################################
  */
 module.exports = function(app){
-    let authCtrl = new AuthController();
-    let userCtrl = new UserController();
-    let registrationCtrl = new RegistrationController();
+    const authCtrl = new AuthController();
+    const userCtrl = new UserController();
+    const registrationCtrl = new RegistrationController();
+    const settingCtrl = new SettingController();
 
     /**
      * ######################################################################################
@@ -107,8 +107,12 @@ module.exports = function(app){
     // =============================================================================================
     // Settings
     // =============================================================================================
-    app.use(route.put('/setting/:id', SettingController.update));
-    app.use(route.get('/setting/:id', SettingController.get));
+    app.use(route.put('/setting/:id', function*(id, next){
+        yield settingCtrl.updateSetting(id, next, this);
+    }));
+    app.use(route.get('/setting/:id', function*(id, next){
+        yield settingCtrl.getSetting(id, next, this);
+    }));
     // =============================================================================================
     // Friends
     // =============================================================================================

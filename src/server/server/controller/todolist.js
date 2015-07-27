@@ -187,7 +187,6 @@ function* deleteTodoList(id){
     try {
         yield todolist.destroy();
         result.success = true;
-        return;
     } catch (err) {
         console.error(err);
         if (err instanceof Todo.sequelize.ValidationError) {
