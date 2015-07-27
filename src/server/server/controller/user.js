@@ -19,7 +19,7 @@ export class UserController {
      * ######################################################################################
      * @param {Object} context koa context
      */
-    *createUser(context) {
+    *createUser(next, context) {
         let input = context.request.body || {},
             result = {
                 data: [],
@@ -95,7 +95,7 @@ export class UserController {
             // ==========================================================================
             yield user.addTodoList(todolist, {transaction: transaction});
 
-            transaction.commit();
+            yield transaction.commit();
             // ==========================================================================
             // Reload the user data to get all autocreated values like updatedAt
             // ==========================================================================
@@ -117,7 +117,7 @@ export class UserController {
         } catch (err) {
             console.error(err.stack);
             if (transaction.finished !== 'commit') {
-                transaction.rollback();
+                yield transaction.rollback();
             }
             // ==========================================================================
             // TODO test validation errors
