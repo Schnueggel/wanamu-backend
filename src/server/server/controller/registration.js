@@ -19,7 +19,7 @@ export class RegistrationController {
      * ######################################################################################
      * ######################################################################################
      */
-    *confirmRegistration(hash) {
+    *confirmRegistration(hash, next, context) {
         let user,
             result = {
                 error: null,
@@ -27,7 +27,7 @@ export class RegistrationController {
                 data: []
             };
 
-        this.body = result;
+        context.body = result;
 
         user = yield User.findOne({
             include: [
@@ -44,7 +44,7 @@ export class RegistrationController {
         });
 
         if (!user) {
-            this.status = 404;
+            context.status = 404;
             result.error = new ErrorUtil.NotFound();
             return;
         }
@@ -73,18 +73,18 @@ export class RegistrationController {
      * ######################################################################################
      * ######################################################################################
      */
-    *resendConfirmation() {
-        let input = this.request.body || {},
+    *resendConfirmation(next, context) {
+        let input = context.request.body || {},
             result = {
                 data: [],
                 success: false,
                 error: null
             },
             user,
-            isAdmin = this.req.user && this.req.user.isAdmin(),
+            isAdmin = context.req.user && context.req.user.isAdmin(),
             data = input.data || {};
 
-        this.body = result;
+        context.body = result;
 
         user = yield User.findOne({
             where: {
@@ -101,13 +101,13 @@ export class RegistrationController {
         });
 
         if (!user) {
-            this.status = 404;
+            context.status = 404;
             result.error = new ErrorUtil.NotFound();
             return;
         }
 
         if (user.confirmed) {
-            this.status = 208;
+            context.status = 208;
             result.error = new ErrorUtil.AlreadyReported();
             return;
         }
@@ -116,7 +116,7 @@ export class RegistrationController {
         // =============================================================================================
         let isMatch = yield bcrypt.compare(data.password, user.password);
         if (!isMatch && !isAdmin) {
-            this.status = 412;
+            context.status = 412;
             result.error = new ErrorUtil.NotIdentified('Please check your credentials');
             return;
         }

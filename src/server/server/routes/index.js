@@ -55,13 +55,13 @@ module.exports = function(app){
         yield authCtrl.login(next, this);
     }));
     app.use(route.post('/user', function *(next){
-        yield userCtrl.createUser(this);
+        yield userCtrl.createUser(next, this);
     }));
     app.use(route.get('/confirmation/:hash', function *(hash, next) {
-        yield registrationCtrl.confirmRegistration(hash);
+        yield registrationCtrl.confirmRegistration(hash, next, this);
     }));
     app.use(route.post('/confirmation', function *(next) {
-        yield registrationCtrl.resendConfirmation();
+        yield registrationCtrl.resendConfirmation(next, this);
     }));
 
     /**
