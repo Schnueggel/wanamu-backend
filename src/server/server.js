@@ -19,6 +19,7 @@ app.init = co.wrap(function *() {
         app.use(logger());
     }
     if (config.isStaging() || config.isProduction()) {
+        console.log('SLL enforced');
         app.use(forcessl());
     }
 
@@ -77,10 +78,11 @@ app.init = co.wrap(function *() {
     app.server = http.createServer(app.callback()).listen(config.PORT);
     if (!config.isTest()) {
         app.serverSSL = https.createServer(options, app.callback()).listen(config.PORTSSL);
+        console.log(`Wanamu SSL backend listening on port ${config.PORTSSL}`);
     }
 
     console.log(`Wanamu backend listening on port ${config.PORT}`);
-    console.log(`Wanamu SSL backend listening on port ${config.PORTSSL}`);
+
 });
 
 module.exports = app;
