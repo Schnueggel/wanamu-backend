@@ -1,7 +1,5 @@
 'use strict';
-/**
- * Created by Christian on 5/6/2015.
- */
+
 var assert = require('assert'),
     User = require('../../../dist/server/server/model/user'),
     ErrorUtil = require('../../../dist/server/server/util/error'),
