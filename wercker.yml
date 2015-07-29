@@ -19,6 +19,7 @@ deploy:
             name: Install ssh
             code: |
                 eval `ssh-agent -s`
+                echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
         - script:
             name: Create Wercker Textfile
             code: |
@@ -30,10 +31,10 @@ deploy:
             code: |
               git config --global user.email "wercker@wanamu.com"
               git config --global user.name "Wercker"
-              git checkout $WERCKER_GIT_BRANCH
-              echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-              echo -e "Host $WERCKER_GIT_DOMAIN\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-              git fetch --unshallow origin
+              # Wercker creates a shallow clone we have to fix this
+              rm -rf  /.git
+              git init
+              git checkout -b master
               git remote add deploy $DEPLOY_REPO_URL
               git add .
               git commit -m "Wercker Push"
