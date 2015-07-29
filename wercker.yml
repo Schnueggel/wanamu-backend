@@ -32,7 +32,7 @@ deploy:
               git config --global user.email "wercker@wanamu.com"
               git config --global user.name "Wercker"
               # Wercker creates a shallow clone we have to fix this
-              rm -rf  /.git
+              rm -rf  ./.git
               git init
               git checkout -b master
               git remote add deploy $DEPLOY_REPO_URL
