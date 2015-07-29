@@ -16,9 +16,9 @@ deploy:
         - add-ssh-key:
             keyname: DEPLOY_KEY
         - script:
-            name: install ssh
+            name: Install ssh
             code: |
-                ssh-agent -s
+                eval `ssh-agent -s`
         - script:
             name: Create Wercker Textfile
             code: |
