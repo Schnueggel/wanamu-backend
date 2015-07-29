@@ -32,8 +32,7 @@ deploy:
               git config --global user.name "Wercker"
               echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
               git checkout $WERCKER_GIT_BRANCH
-              git remote -v
-              git fetch --unshallow old
+              git fetch --unshallow origin
               git remote add deploy $DEPLOY_REPO_URL
               git add .
               git commit -m "Wercker Push"
