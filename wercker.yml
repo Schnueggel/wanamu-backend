@@ -33,6 +33,7 @@ deploy:
               echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
               git checkout $WERCKER_GIT_BRANCH
               git remote add deploy $DEPLOY_REPO_URL
+              git fetch
               git add .
               git commit -m "Wercker Push"
               git push -f deploy HEAD:master
