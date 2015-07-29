@@ -1,7 +1,6 @@
-import { AuthController, UserController, RegistrationController, SettingController } from '../controller/controller.js';
+import { AuthController, UserController, RegistrationController, SettingController, Todo } from '../controller/controller.js';
 
 let route = require('koa-route'),
-    TodoController = require('../controller/todo'),
     TodoListController = require('../controller/todolist'),
     FriendsController = require('../controller/friends'),
     ProfileController = require('../controller/profile');
@@ -42,6 +41,7 @@ module.exports = function(app){
     const userCtrl = new UserController();
     const registrationCtrl = new RegistrationController();
     const settingCtrl = new SettingController();
+    const todoCtrl = new TodoController();
 
     /**
      * ######################################################################################
@@ -75,9 +75,15 @@ module.exports = function(app){
     // ==========================================================================
     // TODOS
     // ==========================================================================
-    app.use(route.post('/todo', TodoController.create));
-    app.use(route.put('/todo/:id', TodoController.update));
-    app.use(route.delete('/todo/:id', TodoController.delete));
+    app.use(route.post('/todo', function* (next) {
+        yield todoCtrl.create(next, this);
+    }));
+    app.use(route.put('/todo/:id', function* (id, next) {
+        yield todoCtrl.update(id, next, this);
+    }));
+    app.use(route.delete('/todo/:id',  function* (id, next) {
+        yield todoCtrl.delete(id, next, this);
+    }));
     // ==========================================================================
     // TODOLIST
     // ==========================================================================

@@ -27,12 +27,12 @@ export class SettingController {
 
         let setting = yield Setting.findById(id);
 
-        if (!setting) {
+        if (setting === null) {
             context.status = 404;
             result.error = new ErrorUtil.NotFound();
             return;
         }
-        if (!isAdmin && context.req.user.id !== setting.UserId) {
+        if (isAdmin === false && context.req.user.id !== setting.UserId) {
             context.status = 403;
             result.error = new ErrorUtil.AccessViolation();
             return;
@@ -70,7 +70,7 @@ export class SettingController {
 
         let setting = yield Setting.findById(id);
 
-        if (!setting) {
+        if (setting === null) {
             context.status = 404;
             result.error = new ErrorUtil.NotFound();
             return;
@@ -79,7 +79,7 @@ export class SettingController {
         // ==========================================================================
         // Only admin can update settings of other user
         // ==========================================================================
-        if (!isAdmin && setting.UserId !== user.id) {
+        if (isAdmin === false && setting.UserId !== user.id) {
             context.status = 403;
             result.error = new ErrorUtil.AccessViolation();
             return;
