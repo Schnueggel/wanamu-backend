@@ -5,7 +5,7 @@ let TodoList = require('../model/todolist'),
     ErrorUtil = require('../util/error'),
     _ = require('lodash');
 
-export class Todo {
+export class TodoController {
 
     /**
      * Create Action

@@ -1,4 +1,4 @@
-import { AuthController, UserController, RegistrationController, SettingController, Todo } from '../controller/controller.js';
+import { AuthController, UserController, RegistrationController, SettingController, TodoController } from '../controller/controller.js';
 
 let route = require('koa-route'),
     TodoListController = require('../controller/todolist'),
@@ -82,7 +82,7 @@ module.exports = function(app){
         yield todoCtrl.update(id, next, this);
     }));
     app.use(route.delete('/todo/:id',  function* (id, next) {
-        yield todoCtrl.delete(id, next, this);
+        yield todoCtrl.deleteTodo(id, next, this);
     }));
     // ==========================================================================
     // TODOLIST
