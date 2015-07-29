@@ -30,6 +30,7 @@ deploy:
             code: |
               git config --global user.email "wercker@wanamu.com"
               git config --global user.name "Wercker"
+              echo -e "Host $WERCKER_GIT_DOMAIN\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
               echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
               git checkout $WERCKER_GIT_BRANCH
               git fetch --unshallow origin
