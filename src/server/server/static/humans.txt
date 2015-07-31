@@ -1,0 +1,16 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Christian Steinmann -- Developer
+    Yannick Mortier -- Developer
+
+# THANKS
+
+    To our parents
+
+# TECHNOLOGY COLOPHON
+
+    CSS3, HTML5
+    Node, AngularJS

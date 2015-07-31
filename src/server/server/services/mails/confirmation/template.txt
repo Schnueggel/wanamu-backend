@@ -1,0 +1,5 @@
+Thank you for registering at wanamu. To confirm your Account please follow this link to complete your registration:
+
+${confirmationlink}
+
+

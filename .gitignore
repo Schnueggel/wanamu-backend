@@ -1,4 +1,5 @@
 node_modules
 .idea
-dist
+.tmp
 playground
+src/server/server/config/json/local.json

@@ -1,0 +1,6 @@
+{
+    "debug": false,
+    "sequelize": {
+        "logging": false
+    }
+}

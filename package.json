@@ -1,32 +1,75 @@
 {
-  "name": "nautic-online",
+  "name": "wanamu-backend",
   "version": "1.0.0",
-  "description": "boat marketing",
+  "description": "The Backend for Wanamu",
   "main": "index.js",
   "scripts": {
-    "start": "server.js",
-    "test": "gulp test"
+    "start": "node --harmony ./dist/server/server.js",
+    "test": "gulp test-mocha",
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://schnueggel@bitbucket.org/battleprogrammers/nautic-online.git"
+    "url": "git+https://schnueggel@bitbucket.org/battleprogrammers/todoit-backend.git"
   },
   "author": [
-    "Christian Steinmann",
-    "Yannick Mortier"
+    {
+      "name": "Christian Steinmann",
+      "email": "christian.steinmann77@gmail.com"
+    },
+    {
+      "name": "Yannick Mortier",
+      "email": "mail@yannickmortier.de"
+    }
   ],
+  "engines": {
+    "node": ">=0.12.0"
+  },
   "license": "ISC",
   "homepage": "https://bitbucket.org/battleprogrammers/nautic-online#readme",
   "dependencies": {
-    "express": "^4.12.3",
-    "mysql": "^2.6.2",
-    "promise": "^7.0.1",
-    "sequelize": "^2.1.0"
+    "bcryptjs": "^2.2.0",
+    "co": "^4.6.0",
+    "koa": "^0.21.0",
+    "koa-basic-auth": "^1.1.2",
+    "koa-bodyparser": "^2.0.0",
+    "koa-cors": "0.0.16",
+    "koa-force-ssl": "0.0.5",
+    "koa-generic-session": "^1.9.0",
+    "koa-logger": "^1.3.0",
+    "koa-passport": "^1.1.6",
+    "koa-route": "^2.4.2",
+    "koa-session": "^3.3.1",
+    "lodash": "^3.10.0",
+    "nconf": "^0.7.1",
+    "nodemailer": "^1.4.0",
+    "passport": "^0.2.2",
+    "passport-local": "^1.0.0",
+    "pg": "^4.4.0",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^3.4.1",
+    "validator": "^3.41.2"
   },
   "devDependencies": {
-    "gulp": "^3.8.11",
-    "gulp-batch": "^1.0.5",
-    "gulp-develop-server": "^0.4.2",
-    "gulp-watch": "^4.2.4"
+    "co-supertest": "0.0.10",
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.1.0",
+    "gulp-develop-server": "^0.4.3",
+    "gulp-jscs": "^1.6.0",
+    "gulp-jshint": "^1.11.2",
+    "gulp-mocha": "^2.1.3",
+    "gulp-open": "^1.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace": "^0.5.3",
+    "gulp-util": "^3.0.6",
+    "harmonize": "^1.4.4",
+    "jshint-stylish": "^2.0.1",
+    "merge2": "^0.3.6",
+    "raw-loader": "^0.5.1",
+    "run-sequence": "^1.1.2",
+    "should": "^7.0.2",
+    "sinon": "^1.15.4",
+    "supertest": "^1.0.1"
   }
 }

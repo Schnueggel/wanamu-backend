@@ -1,0 +1,12 @@
+wanamubackend:
+  restart: always
+  build: .
+  external_links:
+    - wanamudb_wanamudb_1:database
+  ports:
+    - 3001:3001
+    - 3002:3002
+  env_file:
+    - ./wanamu-backend.env
+  volumes:
+    - /certs:/certs

@@ -1,0 +1,32 @@
+{
+    "port": 3001,
+    "portssl": 3002,
+    "cacheTime": 604800000,
+    "session": {
+        "secret": "dogfoodcat(-_-)"
+    },
+    "debug": false,
+    "webhost": "http://localhost:3000",
+    "webhome": "/home",
+    "url" : {
+        "confirmation": "/#/confirmation/${hash}"
+    },
+    "mail": {
+        "service": "gmail",
+        "auth": {
+            "user": "christian.steinmann.test@gmail.com",
+            "pass": "$$Test$$"
+        }
+    },
+    "sequelize": {
+        "dialect": "postgres",
+        "define": {
+            "collate": "utf8_general_ci"
+        },
+        "pool": {
+            "max": 5,
+            "min": 0,
+            "idle": 10000
+        }
+    }
+}

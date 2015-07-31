@@ -1,0 +1,46 @@
+build:
+    box: node:0.12.7
+    steps:
+        - script:
+            name: Build
+            code: |
+                git checkout $WERCKER_GIT_BRANCH
+                npm install -g gulp
+                npm i
+                gulp build
+                git branch
+                cp -a . $WERCKER_OUTPUT_DIR
+deploy:
+    box: golio/ubuntu:latest
+    steps:
+        - add-ssh-key:
+            keyname: DEPLOY_KEY
+        - script:
+            name: Install ssh
+            code: |
+                eval `ssh-agent -s`
+                echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+        - script:
+            name: Create Wercker Textfile
+            code: |
+              echo "$WERCKER_MAIN_PIPELINE_STARTED" >> ./wercker.txt
+              echo "$WERCKER_GIT_COMMIT" >> ./wercker.txt
+              echo "$WERCKER_BUILD_ID" >> ./wercker.txt
+        - script:
+            name: Deploy
+            code: |
+              git config --global user.email "wercker@wanamu.com"
+              git config --global user.name "Wercker"
+              # Wercker creates a shallow clone we have to fix this
+              rm -rf  ./.git
+              git init
+              git checkout -b master
+              git remote add deploy $DEPLOY_REPO_URL
+              git add .
+              git commit -m "Wercker Push"
+              git push -f deploy HEAD:master
+    after-steps:
+        - slack-notifier:
+            url: $SLACK_WEBHOOK_URL
+            channel: wercker-notify
+            username: werckerbot
