@@ -181,3 +181,7 @@ Add Mail Server Environment Var
 Use Wanamu Mail Server instead of Google
 
 Move to ES6
+
+Friend Invitation Acceptance Mail
+
+Friend Invitation Accept Action
