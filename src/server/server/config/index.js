@@ -83,7 +83,11 @@ export class Config {
             WU_DB_PASSWORD: 'WU_DB_PASSWORD',
             WU_BACKEND_CERT: 'WU_BACKEND_CERT',
             WU_BACKEND_KEY: 'WU_BACKEND_CERT',
-            WU_BACKEND_PFX: 'WU_BACKEND_PFX'
+            WU_BACKEND_PFX: 'WU_BACKEND_PFX',
+            WU_MAIL_HOST: 'WU_MAIL_HOST',
+            WU_MAIL_PASSWORD: 'WU_MAIL_PASSWORD',
+            WU_MAIL_USER: 'WU_MAIL_USER',
+            WU_MAIL_FROM: 'WU_MAIL_FROM'
         };
     }
 
@@ -195,6 +199,25 @@ export class Config {
 
     get SEQUELIZE() {
         return this.get(this.statics.SEQUELIZE);
+    }
+
+    get WU_MAIL_FROM() {
+        return this.get(this.statics.WU_MAIL_FROM);
+    }
+
+    /**
+     * Get Mail Transport configuration
+     * @returns {{host: *, auth: {user: *, password: *}}}
+     */
+    get mailerTransportConfig() {
+        return {
+            host: this.get(this.statics.WU_MAIL_HOST),
+            ignoreTLS: true,
+            auth: {
+                user: this.get(this.statics.WU_MAIL_USER),
+                pass: this.get(this.statics.WU_MAIL_PASSWORD)
+            }
+        };
     }
 }
 
