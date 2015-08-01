@@ -1,8 +1,7 @@
-import { AuthController, UserController, RegistrationController, SettingController, TodoController } from '../controller/controller.js';
+import { AuthController, UserController, RegistrationController, SettingController, TodoController, FriendsController } from '../controller/controller.js';
 
 let route = require('koa-route'),
     TodoListController = require('../controller/todolist'),
-    FriendsController = require('../controller/friends'),
     ProfileController = require('../controller/profile');
 
 /**
@@ -42,6 +41,7 @@ module.exports = function(app){
     const registrationCtrl = new RegistrationController();
     const settingCtrl = new SettingController();
     const todoCtrl = new TodoController();
+    const friendsCtrl = new FriendsController();
 
     /**
      * ######################################################################################
@@ -122,7 +122,12 @@ module.exports = function(app){
     // =============================================================================================
     // Friends
     // =============================================================================================
-    app.use(route.get('/friends', FriendsController.list));
+    app.use(route.get('/friends', function* (next){
+        yield friendsCtrl.getList(next, this);
+    }));
+    app.use(route.post('/addfriend', function* (next){
+        yield friendsCtrl.addFriend(next, this);
+    }));
 };
 
 

@@ -3,7 +3,8 @@ var request = require('../../../dist/server/server/config/mocha').request,
     config = require('../../../dist/server/server/config'),
     Profile = require('../../../dist/server/server/model/profile'),
     User = require('../../../dist/server/server/model/user'),
-    assert = require('assert'), co = require('co'),
+    assert = require('assert'),
+    co = require('co'),
     should = require('should'),
     _ = require('lodash');
 
@@ -13,6 +14,7 @@ describe('Test Friends Controller', function () {
     var user;
     var friend1;
     var friend2;
+    var newfriend;
 
     // ==========================================================================
     // Before test we start the server
@@ -136,10 +138,6 @@ describe('Test Friends Controller', function () {
             var res = yield request
                 .get('/friends')
                 .type('json')
-                .send({
-                    username: user.email,
-                    password: 'abcdefghijk'
-                })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
@@ -166,4 +164,71 @@ describe('Test Friends Controller', function () {
         });
     });
 
+    // ==========================================================================
+    // Login with the created user
+    // ==========================================================================
+    it('Should add a friends', function(done){
+
+        co(function *() {
+            newfriend = yield User.create({
+                email : 'newfriend@email.de',
+                confirmed: 1,
+                password: 'abcdefghijk'
+            }, { isNewRecord: true});
+
+            var res = yield request
+                .post('/addfriend')
+                .type('json')
+                .send({
+                    data: {
+                        email: 'newfriend@email.de'
+                    }
+                })
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end();
+
+            res.body.should.be.type('object');
+            res.body.success.should.be.true;
+            return null;
+        }).then(function(){
+            done();
+        }).catch(function(err){
+            done(err);
+        });
+    });
+
+    // ==========================================================================
+    // Login with the created user
+    // ==========================================================================
+    it('Should have a new friend', function(done){
+        co(function *() {
+            var res = yield request
+                .get('/friends')
+                .type('json')
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end();
+
+            res.body.should.be.type('object');
+            res.body.success.should.be.true;
+            res.body.should.be.type('object');
+            res.body.success.should.be.true;
+            res.body.data.should.have.length(3);
+            res.body.data.should.be.instanceof(Array);
+            res.body.data[2].should.be.type('object');
+            res.body.data[2].should.have.properties('id', 'Friends');
+            res.body.data[2].id.should.be.a.Number;
+            res.body.data[2].Friends.should.have.properties('FriendId', 'accepted');
+            res.body.data.should.containDeep([{id: newfriend.id, Friends: {UserId: user.id}}]);
+
+            return null;
+        }).then(function(){
+            done();
+        }).catch(function(err){
+            done(err);
+        });
+    });
 });
