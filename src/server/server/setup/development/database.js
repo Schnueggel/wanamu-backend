@@ -54,6 +54,11 @@ function* createUsers() {
         password: 'abcdefghijk',
         confirmed : 1
     };
+    const userdata3 =  {
+        email: 'friend@email.de',
+        password: 'abcdefghijk',
+        confirmed : 1
+    };
 
     const profiledata = {
         firstname: 'firstName',
@@ -62,11 +67,11 @@ function* createUsers() {
     };
 
     const settingdata = { };
-
     const registrationdata = { };
 
     const user = yield User.create(userdata, { isNewRecord: true });
     const user2 = yield User.create(userdata2, { isNewRecord: true });
+    const user3 = yield User.create(userdata3, { isNewRecord: true });
 
     profiledata.UserId = user.id;
     registrationdata.UserId = user.id;
@@ -81,6 +86,15 @@ function* createUsers() {
     yield Profile.create(profiledata, { isNewRecord: true });
     yield Setting.create( settingdata, { isNewRecord: true });
     yield Registration.create( registrationdata, { isNewRecord: true });
+
+    profiledata.UserId = user3.id;
+    registrationdata.UserId = user3.id;
+    settingdata.UserId = user3.id;
+    yield Profile.create(profiledata, { isNewRecord: true });
+    yield Setting.create( settingdata, { isNewRecord: true });
+    yield Registration.create( registrationdata, { isNewRecord: true });
+
+    user.addFriend(user2);
 
     console.log('user created');
 }
