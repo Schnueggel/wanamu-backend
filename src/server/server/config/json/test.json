@@ -1,4 +1,6 @@
 {
     "port": 3003,
-    "portssl": 3004
+    "portssl": 3004,
+    "testmail1" : "christian.steinmann.test@gmail.com",
+    "testmail2" : "christian.steinmann.test2@gmail.com"
 }

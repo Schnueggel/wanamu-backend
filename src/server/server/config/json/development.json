@@ -14,8 +14,6 @@
     "WU_BACKEND_CERT":"bin/test.crt.pem",
     "WU_BACKEND_KEY":"bin/test.key.pem",
     "debug": true,
-    "testmail1" : "christian.steinmann.test@gmail.com",
-    "testmail2" : "christian.steinmann.test2@gmail.com",
     "sequelize": {
         "host": "localhost"
     }
