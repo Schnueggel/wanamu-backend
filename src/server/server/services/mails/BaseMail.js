@@ -6,6 +6,6 @@ const config = require('../../config');
 export class BaseMail {
 
     constructor () {
-        this.from = config.WU_MAIL_FROM
+        this.from = config.WU_MAIL_FROM;
     }
 }

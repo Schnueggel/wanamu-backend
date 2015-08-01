@@ -41,10 +41,10 @@ export class MailService {
         let reject;
         let resolve;
 
-        let promise = new Promise(function (res, rej) {
+        const promise = new Promise(function (res, rej) {
             resolve = res;
             reject = rej;
-        })
+        });
 
         mailer.sendMail(mail, (err, info) => {
             if (err) {
