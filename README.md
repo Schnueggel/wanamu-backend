@@ -173,3 +173,5 @@ Wercker Build Test
 Redis Session Store
 
 Redis DB Cache
+
+Reset DB State on every Testcase
