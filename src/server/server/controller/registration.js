@@ -1,13 +1,13 @@
 'use strict';
 
-let User = require('../model/user'),
+const User = require('../model/user'),
     Registration = require('../model/registration'),
     Profile = require('../model/profile'),
-    mailService = require('../services/mail'),
     bcrypt = require('../config/bcrypt'),
     util = require('../util/util'),
     ErrorUtil = require('../util/error');
 
+import mailService from '../services/mail.js';
 
 export class RegistrationController {
     /**

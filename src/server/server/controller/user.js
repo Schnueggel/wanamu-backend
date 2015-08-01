@@ -6,10 +6,11 @@ let TodoList = require('../model/todolist'),
     Setting = require('../model/setting'),
     Profile = require('../model/profile'),
     Registration = require('../model/registration'),
-    mailService = require('../services/mail'),
+
     ErrorUtil = require('../util/error'),
     _ = require('lodash');
 
+import mailService from '../services/mail.js';
 
 export class UserController {
     /**
@@ -103,6 +104,7 @@ export class UserController {
                 include: User.getIncludeAllOption(false)
             });
 
+            console.log(mailService);
             mailService.sendConfirmationMail(user, registration);
 
             result.success = true;
