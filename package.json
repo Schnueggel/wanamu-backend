@@ -30,6 +30,7 @@
   "dependencies": {
     "bcryptjs": "^2.2.0",
     "co": "^4.6.0",
+    "jade": "^1.11.0",
     "koa": "^0.21.0",
     "koa-basic-auth": "^1.1.2",
     "koa-bodyparser": "^2.0.0",

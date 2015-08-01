@@ -1,49 +1,31 @@
-const fs = require('fs');
-const templatehtml = fs.readFileSync(__dirname + '/template.html').toString();
-const templatetxt = fs.readFileSync(__dirname + '/template.txt').toString();
+'use strict';
+
+import jade from 'jade';
 
 import { BaseMail } from '../BaseMail.js';
+// =============================================================================================
+// We need to compile the templates only once.
+// =============================================================================================
+const textJadeFunction = jade.compileFile(__dirname +  '/template.txt.jade');
+const htmlJadeFunction = jade.compileFile(__dirname + '/template.html.jade');
 
-export class ConfirmationSuccessMail extends BaseMail {
+/**
+ * @namespace services.mail
+ */
+export default class ConfirmationSuccessMail extends BaseMail {
 
-    constructor() {
-        super();
-        this.text = templatetxt;
-        this.html = templatehtml;
-        this.subject = '${firstname} ${lastname} Welcome to wanamu';
+    /**
+     *
+     * @param {Profile} profile
+     */
+    constructor(profile, homelink) {
+        super(textJadeFunction, htmlJadeFunction);
+        this.profile = profile;
+        this.subject = '${firstname} ${lastname} Welcome to wanamu'
+            .replace('${firstname}', profile.firstname)
+            .replace('${lastname}', profile.lastname);
+
         this.to = '';
-    }
-
-    /**
-     *
-     * @param {Profile} user
-     * @returns {ConfirmationSuccessMail}
-     */
-    setProfile(profile) {
-        this.text = this.text.replace('${firstname}', profile.firstname)
-            .replace('${salutation}', profile.salutation)
-            .replace('${lastname}', profile.lastname);
-
-        this.html = this.html.replace('${firstname}', profile.firstname)
-            .replace('${salutation}', profile.salutation)
-            .replace('${lastname}', profile.lastname);
-
-        this.subject = this.subject.replace('${firstname}', profile.salutation)
-            .replace('${lastname}', profile.lastname);
-
-        return this;
-    }
-
-    /**
-     *
-     * @param {User} user
-     * @returns {ConfirmationSuccessMail}
-     */
-    setHomeLink(link) {
-
-        this.text = this.text.replace('${homelink}', link);
-
-        this.html = this.html.replace('${homelink}', link);
-        return this;
+        this.homelink = homelink;
     }
 }

@@ -2,7 +2,10 @@ let sequelize = require('../config/sequelize'),
     _ = require('lodash');
 
 /**
+ *
  * Profile
+ * @namespace models
+ * @name Profile
  * @type {*|{}|Model}
  */
 let Profile = sequelize.define('Profile', {

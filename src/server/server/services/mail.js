@@ -1,6 +1,6 @@
 let mailer = require('../config/mailer');
-import { ConfirmationMail } from './mails/confirmation/mail';
-import { ConfirmationSuccessMail } from './mails/confirmationsuccess/mail';
+import ConfirmationMail from './mails/confirmation/mail';
+import ConfirmationSuccessMail  from './mails/confirmationsuccess/mail';
 let config = require('../config');
 let errors = require('../util/error');
 
@@ -12,9 +12,9 @@ export class MailService {
      * @param {RegistrationController} registration
      */
     sendConfirmationMail(user, registration) {
-        let mail = new ConfirmationMail();
-        mail.setConfirmationLink(config.getConfirmationUrl(registration.confirmhash));
+        let mail = new ConfirmationMail(config.getConfirmationUrl(registration.confirmhash));
         mail.to = user.email;
+
         return this.sendMail(mail);
     }
 
@@ -25,9 +25,7 @@ export class MailService {
      * @returns {Promise}
      */
     sendConfirmationSuccessMail(email, profile) {
-        let mail = new ConfirmationSuccessMail();
-        mail.setProfile(profile);
-        mail.setHomeLink(config.getWebhomeUrl());
+        let mail = new ConfirmationSuccessMail(profile, config.getWebhomeUrl());
         mail.to = email;
         return this.sendMail(mail);
     }

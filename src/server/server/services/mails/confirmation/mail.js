@@ -1,21 +1,29 @@
-const fs = require('fs');
-const templatehtml = fs.readFileSync(__dirname + '/template.html').toString();
-const templatetxt = fs.readFileSync(__dirname + '/template.txt').toString();
+'use strict';
 
 import { BaseMail } from '../BaseMail.js';
 
-export class ConfirmationMail extends BaseMail {
+import jade from 'jade';
 
-    constructor () {
-        super();
-        this.text = templatetxt;
-        this.html = templatehtml;
+// =============================================================================================
+// We need to compile the templates only once.
+// =============================================================================================
+const textJadeFunction = jade.compileFile(__dirname + '/template.txt.jade');
+const htmlJadeFunction = jade.compileFile(__dirname + '/template.html.jade');
+
+/**
+ * Confirmation Mail
+ * @namespace services.mail
+ */
+export default class ConfirmationMail extends BaseMail {
+
+    constructor (confirmationlink) {
+        super(textJadeFunction, htmlJadeFunction);
+        // =============================================================================================
+        // TODO translate
+        // =============================================================================================
         this.subject = 'Wanamu registration confirmation';
         this.to = '';
-    }
-    setConfirmationLink(link) {
-        this.text = this.text.replace('${confirmationlink}', link);
-        this.html = this.html.replace('${confirmationlink}', link);
-        return this;
+
+        this.confirmationlink = confirmationlink;
     }
 }
