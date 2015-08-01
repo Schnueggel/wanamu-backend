@@ -1,16 +1,16 @@
-let fs = require('fs');
+const fs = require('fs');
+const templatehtml = fs.readFileSync(__dirname + '/template.html').toString();
+const templatetxt = fs.readFileSync(__dirname + '/template.txt').toString();
 
-let templatehtml = fs.readFileSync(__dirname + '/template.html').toString();
-let templatetxt = fs.readFileSync(__dirname + '/template.txt').toString();
+import { BaseMail } from '../BaseMail.js';
 
-//TODO use template engine or custom class to handle string replacement
+export class ConfirmationSuccessMail extends BaseMail {
 
-class ConfirmationSuccessMail {
     constructor() {
+        super();
         this.text = templatetxt;
         this.html = templatehtml;
         this.subject = '${firstname} ${lastname} Welcome to wanamu';
-        this.from = '';
         this.to = '';
     }
 
@@ -47,6 +47,3 @@ class ConfirmationSuccessMail {
         return this;
     }
 }
-
-
-module.exports = ConfirmationSuccessMail;
