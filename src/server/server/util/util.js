@@ -67,7 +67,8 @@ let Util = {
         NOTFOUND: 404,
         ACCESS_VIOLATION: 401,
         UNAUTHORIZED: 403,
-        SERVER_ERROR: 500
+        SERVER_ERROR: 500,
+        IM_USED: 226
     }
 };
 

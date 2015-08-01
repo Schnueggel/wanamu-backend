@@ -43,14 +43,14 @@ describe('Test Friends Controller', function () {
     it('Should create Users', function(done){
         co(function *() {
             user = yield User.create({
-                email : 'frienduser@email.de',
+                email : 'testuser@email.de',
                 confirmed: 1,
                 password: 'abcdefghijk'
             }, { isNewRecord: true});
 
 
             friend1 = yield User.create({
-                email : 'friend1@email.de',
+                email : 'testfriend1@email.de',
                 confirmed: 1,
                 password: 'abcdefghijk'
             }, { isNewRecord: true});
@@ -63,7 +63,7 @@ describe('Test Friends Controller', function () {
             });
 
             friend2 = yield User.create({
-                email : 'friend2@email.de',
+                email : 'testfriend2@email.de',
                 confirmed: 1,
                 password: 'abcdefghijk'
             }, { isNewRecord: true});
@@ -150,7 +150,7 @@ describe('Test Friends Controller', function () {
             res.body.data[0].should.be.type('object');
             res.body.data[0].should.have.properties('id', 'Friends');
             res.body.data[0].id.should.be.a.Number;
-            res.body.data[0].Friends.should.have.properties('FriendId', 'accepted');
+            res.body.data[0].Friends.should.have.properties('updatedAt', 'accepted');
             res.body.data[0].Friends.should.be.type('object');
             res.body.data[0].Friends.accepted.should.be.true;
             res.body.data[0].Profile.should.be.type('object');
@@ -165,7 +165,7 @@ describe('Test Friends Controller', function () {
     });
 
     // ==========================================================================
-    // Login with the created user
+    // Add Friend
     // ==========================================================================
     it('Should add a friends', function(done){
 
@@ -200,7 +200,7 @@ describe('Test Friends Controller', function () {
     });
 
     // ==========================================================================
-    // Login with the created user
+    // Test is friend was added
     // ==========================================================================
     it('Should have a new friend', function(done){
         co(function *() {
@@ -221,9 +221,51 @@ describe('Test Friends Controller', function () {
             res.body.data[2].should.be.type('object');
             res.body.data[2].should.have.properties('id', 'Friends');
             res.body.data[2].id.should.be.a.Number;
-            res.body.data[2].Friends.should.have.properties('FriendId', 'accepted');
-            res.body.data.should.containDeep([{id: newfriend.id, Friends: {UserId: user.id}}]);
+            res.body.data[2].Friends.should.have.properties('updatedAt', 'accepted');
+            res.body.data.should.containDeep([{id: newfriend.id, Friends: {accepted: false}}]);
 
+            return null;
+        }).then(function(){
+            done();
+        }).catch(function(err){
+            done(err);
+        });
+    });
+    // ==========================================================================
+    // Add Friend and auto accept Friendship
+    // ==========================================================================
+    it('Should add a friends', function(done){
+
+        co(function *() {
+
+            yield request
+                .post('/auth/login')
+                .type('form')
+                .send({
+                    username: 'newfriend@email.de',
+                    password: 'abcdefghijk'
+                })
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end();
+
+            var res = yield request
+                .post('/addfriend')
+                .type('json')
+                .send({
+                    data: {
+                        email: user.email
+                    }
+                })
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(226)
+                .end();
+
+            res.body.should.be.type('object');
+            res.body.success.should.be.true;
+            res.body.message.should.be.a.String;
             return null;
         }).then(function(){
             done();

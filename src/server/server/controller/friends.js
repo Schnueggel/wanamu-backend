@@ -5,6 +5,10 @@ import User from '../model/user.js';
 import { Response } from '../util/response.js';
 const ErrorUtil = require('../util/error.js');
 const Util = require('../util/util.js');
+
+/**
+ * Manage Friends
+ */
 export class FriendsController {
     /**
      * ######################################################################################
@@ -46,12 +50,12 @@ export class FriendsController {
                     attributes: ['id', 'firstname', 'lastname']
                 }
             ],
+            //https://github.com/sequelize/sequelize/blob/master/lib/associations/belongs-to-many.js
+            joinTableAttributes: ['accepted', 'updatedAt'],
             attributes: ['id']
         });
 
-        response.data = friends.map((friend) => {
-            return friend.get({plain: true});
-        });
+        response.data = friends;
         response.success = true;
     }
 
@@ -68,43 +72,102 @@ export class FriendsController {
      * @param {Object} context
      */
     *addFriend(next, context) {
-        const reponse = new Response(),
+        const response = new Response(),
+            user = context.req.user,
             input = context.request.body || {},
             data = input.data || {};
 
-        context.body = reponse;
+        context.body = response;
 
+        // =============================================================================================
+        // Check if there is an email
+        // =============================================================================================
         if (!data.email) {
             context.status = Util.status.VALIDATION_ERROR;
-            reponse.error = new ErrorUtil.ModelValidationError('Not enough data to fullfill request');
-            console.error(`[ERROR] User:${context.req.user.id} ${reponse.error.message}`);
+            response.error = new ErrorUtil.ModelValidationError('Not enough data to fullfill request');
+            console.error(`[ERROR] User:${user.id} ${response.error.message}`);
             return;
         }
 
-        const user = yield User.findOne({
+        // =============================================================================================
+        // Find this new friend user by email
+        // =============================================================================================
+        const newfriend = yield User.findOne({
+            include: [{
+                model: Profile
+            }],
             where: {
                 email: data.email
             }
         });
 
-        if (user === null) {
+        // =============================================================================================
+        // Check if new friend user exists
+        // =============================================================================================
+        if (newfriend === null) {
             context.status = Util.status.NOTFOUND;
-            reponse.error = new ErrorUtil.UserNotFound();
-            console.error(`[ERROR] User:${context.req.user.id} Email:${data.email} ${reponse.error.message}`);
+            response.error = new ErrorUtil.UserNotFound();
+            console.error(`[ERROR] User:${user.id} Email:${data.email} ${response.error.message}`);
             return;
         }
 
-        if (user.id === context.req.user.id) {
+        // =============================================================================================
+        // User cannot add himself as friend
+        // =============================================================================================
+        if (newfriend.id === user.id) {
             context.status = Util.status.VALIDATION_ERROR;
-            reponse.error = new ErrorUtil.ModelValidationError('You cannot add your self as friend');
-            console.error(`[ERROR] User:${context.req.user.id} Email:${data.email} ${reponse.error.message}`);
+            response.error = new ErrorUtil.ModelValidationError('You cannot add your self as friend');
+            console.error(`[ERROR] User:${user.id} Email:${data.email} ${response.error.message}`);
             return;
         }
 
-        yield context.req.user.addFriend(user, {});
+        // =============================================================================================
+        // Check if we have already a friendship with this user
 
-        reponse.success = true;
+        if (yield user.hasFriend(newfriend.id)){
+            context.status = Util.status.VALIDATION_ERROR;
+            response.error = new ErrorUtil.ModelValidationError('This friend is already in your friendslist');
+            console.error(`[ERROR] User:${user.id} Email:${data.email} ${response.error.message}`);
+            return;
+        }
+
+        // =============================================================================================
+        // Check if the other user has already invited us as friend
+        // =============================================================================================
+        const invitedfriends = yield newfriend.getFriends({
+        }, {
+            FriendId: user.id
+        });
+
+        const newfriendOptions = {
+            accepted: false
+        };
+        // =============================================================================================
+        // If the we have beein invited by the other user we immediatly accept friendship on both sides
+        // =============================================================================================
+        if (invitedfriends.length > 0) {
+            invitedfriends[0].Friends.accepted = true;
+            invitedfriends[0].Friends.save();
+            newfriendOptions.accepted = true;
+            //TODO send mail
+        }
+
+        // =============================================================================================
+        // Add user as friend
+        // =============================================================================================
+        yield user.addFriend(newfriend, newfriendOptions);
+
+        // =============================================================================================
+        // In case we immediatly accept we send IM Used status code (226)
+        // =============================================================================================
+        if (newfriendOptions.accepted === true) {
+            context.status = Util.status.IM_USED;
+            response.message = `New Friend ${data.email} has been added`;
+        } else {
+            response.message = `The user ${data.email} has been invited`;
+        }
+
+        response.success = true;
     }
-
 }
 
