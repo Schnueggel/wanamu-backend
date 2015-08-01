@@ -11,13 +11,6 @@
     "url" : {
         "confirmation": "/#/confirmation/${hash}"
     },
-    "mail": {
-        "service": "gmail",
-        "auth": {
-            "user": "christian.steinmann.test@gmail.com",
-            "pass": "$$Test$$"
-        }
-    },
     "sequelize": {
         "dialect": "postgres",
         "define": {
