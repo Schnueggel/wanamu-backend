@@ -1,6 +1,7 @@
 var config = require('../../../dist/server/server/config'),
     ConfirmationMail = require('../../../dist/server/server/services/mails/confirmation/mail.js'),
     ConfirmationSuccessMail = require('../../../dist/server/server/services/mails/confirmationsuccess/mail.js'),
+    FriendInviteMail = require('../../../dist/server/server/services/mails/friendinvite/mail.js'),
     should = require('should'),
     _ = require('lodash');
 
@@ -34,6 +35,46 @@ describe ('Test mail service', function() {
         mail.subject.should.match(/TestFirstname/mi);
         mail.subject.should.match(/TestLastname/mi);
 
-        console.log(mail.text);
     });
+
+    it('should generate a valid friendship accept mail', function(){
+        var inviter = {
+            Profile: {
+                firstname: 'InviterFirstname',
+                lastname: 'InviterLastname',
+                salutation: 'Mr.'
+            }
+        };
+
+        var invited = {
+            Profile: {
+                firstname: 'InvitedFirstname',
+                lastname: 'InvitedLastname',
+                salutation: 'Mrs.'
+            }
+        };
+
+        var mail = new FriendInviteMail('http://homelink', inviter, invited);
+
+        mail.text.should.match(/InviterFirstname/mi);
+        mail.text.should.match(/Mr\./mi);
+        mail.text.should.match(/InviterLastname/mi);
+        mail.text.should.match(/http:\/\/homelink/mi);
+
+        mail.text.should.match(/InvitedFirstname/mi);
+        mail.text.should.match(/Mrs\./mi);
+        mail.text.should.match(/InvitedLastname/mi);
+
+
+        mail.html.should.match(/InviterFirstname/mi);
+        mail.html.should.match(/Mr\./mi);
+        mail.html.should.match(/InviterLastname/mi);
+        mail.html.should.match(/http:\/\/homelink/mi);
+
+        mail.html.should.match(/InvitedFirstname/mi);
+        mail.html.should.match(/Mr\./mi);
+        mail.html.should.match(/InvitedLastname/mi);
+        mail.html.should.match(/http:\/\/homelink/mi);
+    });
+
 });
