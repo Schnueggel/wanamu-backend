@@ -3,6 +3,7 @@
 import Profile from '../model/profile';
 import User from '../model/user.js';
 import { Response } from '../util/response.js';
+import crypto from 'crypto';
 const ErrorUtil = require('../util/error.js');
 const Util = require('../util/util.js');
 
@@ -139,8 +140,11 @@ export class FriendsController {
             FriendId: user.id
         });
 
+        const shasum = crypto.createHash('sha256');
+        shasum.update(user.id + '' + newfriend.id + Date(), 'utf8');
         const newfriendOptions = {
-            accepted: false
+            accepted: false,
+            accepttoken: shasum.digest('hex')
         };
         // =============================================================================================
         // If the we have beein invited by the other user we immediatly accept friendship on both sides

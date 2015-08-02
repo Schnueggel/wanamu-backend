@@ -167,7 +167,7 @@ describe('Test Friends Controller', function () {
     // ==========================================================================
     // Add Friend
     // ==========================================================================
-    it('Should add a friends', function(done){
+    it('Should invite a user', function(done){
 
         co(function *() {
             newfriend = yield User.create({
@@ -191,6 +191,18 @@ describe('Test Friends Controller', function () {
 
             res.body.should.be.type('object');
             res.body.success.should.be.true;
+
+            const frienddata = yield user.getFriends({
+                where : {
+                    id: newfriend.id
+                }
+            });
+
+            frienddata.should.be.an.Array;
+            frienddata.should.have.length(1);
+            frienddata[0].id.should.equal(newfriend.id);
+            frienddata[0].Friends.accepttoken.should.be.a.String;
+            frienddata[0].Friends.accepttoken.should.have.length(64);
             return null;
         }).then(function(){
             done();
