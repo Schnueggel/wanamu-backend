@@ -16,5 +16,7 @@
     "debug": true,
     "sequelize": {
         "host": "localhost"
-    }
+    },
+    "testmail1" : "christian.steinmann.test@gmail.com",
+    "testmail2" : "christian.steinmann.test2@gmail.com"
 }
