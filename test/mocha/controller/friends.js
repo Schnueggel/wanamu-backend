@@ -43,11 +43,17 @@ describe('Test Friends Controller', function () {
     it('Should create Users', function(done){
         co(function *() {
             user = yield User.create({
-                email : 'testuser@email.de',
+                email : 'friendtestuser@email.de',
                 confirmed: 1,
                 password: 'abcdefghijk'
             }, { isNewRecord: true});
 
+            yield Profile.create({
+                UserId: user.id,
+                salutation: 'mr',
+                firstname: 'user',
+                lastname: 'user'
+            });
 
             friend1 = yield User.create({
                 email : 'testfriend1@email.de',
@@ -55,7 +61,7 @@ describe('Test Friends Controller', function () {
                 password: 'abcdefghijk'
             }, { isNewRecord: true});
 
-            var profile1 = yield Profile.create({
+            yield Profile.create({
                 UserId: friend1.id,
                 salutation: 'mr',
                 firstname: 'friend1',
@@ -68,11 +74,11 @@ describe('Test Friends Controller', function () {
                 password: 'abcdefghijk'
             }, { isNewRecord: true});
 
-            var profile2 = yield Profile.create({
+            yield Profile.create({
                 UserId: friend2.id,
                 salutation: 'mr',
-                firstname: 'friend1',
-                lastname: 'friend1'
+                firstname: 'friend2',
+                lastname: 'friend2'
             });
 
             yield user.addFriend(friend1, {accepted: true});
@@ -175,6 +181,14 @@ describe('Test Friends Controller', function () {
                 confirmed: 1,
                 password: 'abcdefghijk'
             }, { isNewRecord: true});
+
+            const profiledata = {
+                firstname: 'firstName',
+                lastname: 'lastName',
+                salutation: 'mr'
+            };
+            profiledata.UserId = newfriend.id;
+            yield Profile.create(profiledata, { isNewRecord: true });
 
             var res = yield request
                 .post('/addfriend')
@@ -308,6 +322,14 @@ describe('Test Friends Controller', function () {
                 confirmed: 1,
                 password: 'abcdefghijk'
             }, { isNewRecord: true});
+
+            const profiledata = {
+                firstname: 'firstName',
+                lastname: 'lastName',
+                salutation: 'mr'
+            };
+            profiledata.UserId = newacceptfriend.id;
+            yield Profile.create(profiledata, { isNewRecord: true });
 
             var token = 'testoken_newacceptfriend';
             yield user.addFriend(newacceptfriend, {accepttoken: token});
