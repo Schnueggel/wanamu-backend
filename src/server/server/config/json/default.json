@@ -8,8 +8,10 @@
     "debug": false,
     "webhost": "http://localhost:3000",
     "webhome": "/home",
-    "url" : {
-        "confirmation": "/#/confirmation/${hash}"
+    "frontendurl" : {
+        "home": "/",
+        "confirmation": "/#/confirmation/${token}",
+        "acceptfriend": "/#/acceptfriend/${token}"
     },
     "sequelize": {
         "dialect": "postgres",

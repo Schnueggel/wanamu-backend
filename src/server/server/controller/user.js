@@ -104,7 +104,6 @@ export class UserController {
                 include: User.getIncludeAllOption(false)
             });
 
-            console.log(mailService);
             mailService.sendConfirmationMail(user, registration);
 
             result.success = true;

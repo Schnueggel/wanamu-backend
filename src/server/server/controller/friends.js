@@ -4,6 +4,7 @@ import Profile from '../model/profile';
 import User from '../model/user.js';
 import Friends from '../model/friends.js';
 import { Response } from '../util/response.js';
+import mailService from '../services/mail.js';
 import crypto from 'crypto';
 const ErrorUtil = require('../util/error.js');
 const Util = require('../util/util.js');
@@ -125,7 +126,8 @@ export class FriendsController {
 
         // =============================================================================================
         // Check if we have already a friendship with this user
-
+        // TODO resend invitation if last update on friend is older then one our and accepted is false
+        // =============================================================================================
         if (yield user.hasFriend(newfriend.id)){
             context.status = Util.status.VALIDATION_ERROR;
             response.error = new ErrorUtil.ModelValidationError('This friend is already in your friendslist');
@@ -143,10 +145,12 @@ export class FriendsController {
 
         const shasum = crypto.createHash('sha256');
         shasum.update(user.id + '' + newfriend.id + Date(), 'utf8');
+
         const newfriendOptions = {
             accepted: false,
             accepttoken: shasum.digest('hex')
         };
+
         // =============================================================================================
         // If the we have beein invited by the other user we immediatly accept friendship on both sides
         // =============================================================================================
@@ -169,6 +173,7 @@ export class FriendsController {
             context.status = Util.status.IM_USED;
             response.message = `New Friend ${data.email} has been added`;
         } else {
+            mailService.sendFriendInvitationMail(newfriendOptions.accepttoken, user, newfriend);
             response.message = `The user ${data.email} has been invited`;
         }
 
