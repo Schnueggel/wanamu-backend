@@ -8,22 +8,22 @@ import sequelize from '../config/sequelize';
 const FriendsModel = sequelize.define('Friends', {
     /**
      * @name FriendId
-     * @fieldOf Friends
+     * @fieldOf Friends#
      * @type number
      */
     /**
      * @name UserId
-     * @fieldOf Friends
+     * @fieldOf Friends#
      * @type number
      */
     /**
      * @name updatedAt
-     * @fieldOf Friends
+     * @fieldOf Friends#
      * @type Date
      */
     /**
      * @name createdAt
-     * @fieldOf Friends
+     * @fieldOf Friends#
      * @type Date
      */
     /**
@@ -44,7 +44,8 @@ const FriendsModel = sequelize.define('Friends', {
      * @propertyOf Friends
      */
         accepttoken : {
-            type : sequelize.Sequelize.STRING(100)
+            type : sequelize.Sequelize.STRING(100),
+            unique: true
         }
    },{
     // ==========================================================================

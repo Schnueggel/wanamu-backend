@@ -74,6 +74,7 @@ function* createUsers() {
     const settingdata = { };
     const registrationdata = { };
 
+
     const user = yield User.create(userdata, { isNewRecord: true });
     const user2 = yield User.create(userdata2, { isNewRecord: true });
     const user3 = yield User.create(userdata3, { isNewRecord: true });

@@ -128,6 +128,9 @@ module.exports = function(app){
     app.use(route.post('/addfriend', function* (next){
         yield friendsCtrl.addFriend(next, this);
     }));
+    app.use(route.get('/acceptfriend/:token', function* (token, next){
+        yield friendsCtrl.accept(token, next, this);
+    }));
 };
 
 

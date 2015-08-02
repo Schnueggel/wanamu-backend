@@ -2,6 +2,7 @@
 
 import Profile from '../model/profile';
 import User from '../model/user.js';
+import Friends from '../model/friends.js';
 import { Response } from '../util/response.js';
 import crypto from 'crypto';
 const ErrorUtil = require('../util/error.js');
@@ -169,6 +170,38 @@ export class FriendsController {
             response.message = `New Friend ${data.email} has been added`;
         } else {
             response.message = `The user ${data.email} has been invited`;
+        }
+
+        response.success = true;
+    }
+
+    /**
+     * tys to accept a friendship token
+     * @param {string} token
+     * @param {function} next
+     * @param {Object} context
+     */
+    *accept( token, next, context){
+        const response = new Response(),
+            user = context.req.user;
+
+        context.body = response;
+
+        /** @type Array.<affectedCount: number> */
+        const updateResult = yield Friends.update({
+            accepted: true
+        }, {
+            where: {
+                accepttoken: token,
+                UserId: user.id
+            }
+        });
+
+        if (updateResult[0] === 0 ) {
+            context.status = Util.status.NOTFOUND;
+            response.error = new ErrorUtil.UserNotFound();
+            console.error(`[ERROR] Friend Invitation with token ${token} for user ${user.id} not found`);
+            return;
         }
 
         response.success = true;
