@@ -1,6 +1,7 @@
 let mailer = require('../config/mailer');
 import ConfirmationMail from './mails/confirmation/mail';
 import ConfirmationSuccessMail  from './mails/confirmationsuccess/mail';
+import FriendInviteMail  from './mails/friendinvite/mail';
 let config = require('../config');
 let errors = require('../util/error');
 
@@ -12,7 +13,7 @@ export class MailService {
      * @param {RegistrationController} registration
      */
     sendConfirmationMail(user, registration) {
-        let mail = new ConfirmationMail(config.getConfirmationUrl(registration.confirmhash));
+        const mail = new ConfirmationMail(config.getConfirmationUrl(registration.confirmhash));
         mail.to = user.email;
 
         return this.sendMail(mail);
@@ -25,8 +26,20 @@ export class MailService {
      * @returns {Promise}
      */
     sendConfirmationSuccessMail(email, profile) {
-        let mail = new ConfirmationSuccessMail(profile, config.getWebhomeUrl());
+        const mail = new ConfirmationSuccessMail(profile, config.getWebhomeUrl());
         mail.to = email;
+        return this.sendMail(mail);
+    }
+
+    /**
+     *
+     * @param inviter
+     * @param invited
+     * @returns {Promise}
+     */
+    sendFriendInvitationMail(token, inviter, invited) {
+        const mail = new FriendInviteMail(config.getAcceptFriendInviteUrl(token), inviter, invited);
+        mail.to = invited.email;
         return this.sendMail(mail);
     }
 

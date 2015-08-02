@@ -1,0 +1,9 @@
+p Hello #{invited.Profile.salutation} #{invited.Profile.firstname} #{invited.Profile.lastname}
+p.
+    #{inviter.Profile.salutation} #{inviter.Profile.firstname} #{inviter.Profile.lastname} wants to add you to his friendlist.
+    <br/><br/>
+    To accept his invitation follow this link:
+p
+    a(href="#{acceptlink}") #{acceptlink}
+
+
