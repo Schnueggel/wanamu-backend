@@ -155,6 +155,14 @@ The url to the database
 Must be one of: development, staging, production, test
 ### WU_BACKEND_PFX
 Path to pfx cert file for ssl
+### WU_MAIL_HOST
+Mail Host
+### WU_MAIL_USER
+USer for Mail Account
+### WU_MAIL_PASSWORD
+Password for mail account
+### WU_MAIL_FROM
+Default sender email
 
 ## TODO
 
@@ -173,3 +181,15 @@ Wercker Build Test
 Redis Session Store
 
 Redis DB Cache
+
+Reset DB State on every Testcase
+ 
+Add Mail Server Environment Var
+
+Use Wanamu Mail Server instead of Google
+
+Move to ES6
+
+Friend Invitation Acceptance Mail
+
+Friend Invitation Accept Action

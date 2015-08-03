@@ -60,6 +60,15 @@ let Util = {
         });
 
         return promise;
+    },
+
+    status: {
+        VALIDATION_ERROR: 422,
+        NOTFOUND: 404,
+        ACCESS_VIOLATION: 401,
+        UNAUTHORIZED: 403,
+        SERVER_ERROR: 500,
+        IM_USED: 226
     }
 };
 

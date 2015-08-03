@@ -11,19 +11,28 @@ const textJadeFunction = jade.compileFile(__dirname + '/template.txt.jade');
 const htmlJadeFunction = jade.compileFile(__dirname + '/template.html.jade');
 
 /**
- * Confirmation Mail
- * @namespace services.mail
+ * FriendInviteMail
+ * @namespace services.mail.FriendInviteMail
  */
-export default class ConfirmationMail extends BaseMail {
+export default class FriendInviteMail extends BaseMail {
 
-    constructor (confirmationlink) {
+    /**
+     *
+     * @param {string} acceptlink
+     * @param {User} inviter
+     * @param {User} invited
+     */
+    constructor (acceptlink, inviter, invited) {
         super(textJadeFunction, htmlJadeFunction);
+        this.inviter = inviter;
+        this.invited = invited;
+
         // =============================================================================================
         // TODO translate
         // =============================================================================================
-        this.subject = 'Wanamu registration confirmation';
+        this.subject = 'Wanamu friendship invitiation';
         this.to = '';
 
-        this.confirmationlink = confirmationlink;
+        this.acceptlink = acceptlink;
     }
 }

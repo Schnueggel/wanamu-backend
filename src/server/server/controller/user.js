@@ -6,10 +6,11 @@ let TodoList = require('../model/todolist'),
     Setting = require('../model/setting'),
     Profile = require('../model/profile'),
     Registration = require('../model/registration'),
-    mailService = require('../services/mail'),
+
     ErrorUtil = require('../util/error'),
     _ = require('lodash');
 
+import mailService from '../services/mail.js';
 
 export class UserController {
     /**

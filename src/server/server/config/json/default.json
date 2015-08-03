@@ -8,15 +8,10 @@
     "debug": false,
     "webhost": "http://localhost:3000",
     "webhome": "/home",
-    "url" : {
-        "confirmation": "/#/confirmation/${hash}"
-    },
-    "mail": {
-        "service": "gmail",
-        "auth": {
-            "user": "christian.steinmann.test@gmail.com",
-            "pass": "$$Test$$"
-        }
+    "frontendurl" : {
+        "home": "/",
+        "confirmation": "/#/confirmation/${token}",
+        "acceptfriend": "/#/acceptfriend/${token}"
     },
     "sequelize": {
         "dialect": "postgres",

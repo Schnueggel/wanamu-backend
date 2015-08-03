@@ -1,17 +1,51 @@
-let sequelize = require('../config/sequelize');
+import sequelize from '../config/sequelize';
 
 /**
- * Friends
- * @type {*|{}|Model}
+ * @typedef {Object} Friends
+ * @namespace models.Friends
+ * @type {Friends}
  */
-let Friends = sequelize.define('Friends', {
+const FriendsModel = sequelize.define('Friends', {
+    /**
+     * @name FriendId
+     * @fieldOf Friends#
+     * @type number
+     */
+    /**
+     * @name UserId
+     * @fieldOf Friends#
+     * @type number
+     */
+    /**
+     * @name updatedAt
+     * @fieldOf Friends#
+     * @type Date
+     */
+    /**
+     * @name createdAt
+     * @fieldOf Friends#
+     * @type Date
+     */
+    /**
+     * @propertyOf Friends
+     */
         accepted : {
             type : sequelize.Sequelize.BOOLEAN,
             defaultValue : false
         },
+    /**
+     * @propertyOf Friends
+     */
         invisible : {
             type : sequelize.Sequelize.BOOLEAN,
             defaultValue : false
+        },
+    /**
+     * @propertyOf Friends
+     */
+        accepttoken : {
+            type : sequelize.Sequelize.STRING(100),
+            unique: true
         }
    },{
     // ==========================================================================
@@ -21,4 +55,5 @@ let Friends = sequelize.define('Friends', {
     }
 });
 
-module.exports = Friends;
+
+module.exports = FriendsModel;

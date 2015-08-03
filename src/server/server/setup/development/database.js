@@ -43,48 +43,76 @@ function* createUsers() {
         }
     });
 
-    let user = yield User.findOne({
-        where: {
-            email:conf.get('testmail1')
-        }
-    });
-
-    let userdata =  {
+    const userdata =  {
         email: conf.get('testmail1'),
         password: 'abcdefghijk',
         confirmed : 1
     };
 
-    let profiledata = {
+    const userdata2 =  {
+        email: conf.get('testmail2'),
+        password: 'abcdefghijk',
+        confirmed : 1
+    };
+    const userdata3 =  {
+        email: 'friend@email.de',
+        password: 'abcdefghijk',
+        confirmed : 1
+    };
+    const userdata4 =  {
+        email: 'friend2@email.de',
+        password: 'abcdefghijk',
+        confirmed : 1
+    };
+
+    const profiledata = {
         firstname: 'firstName',
         lastname: 'lastName',
         salutation: 'mr'
     };
 
-    let settingdata = { };
+    const settingdata = { };
+    const registrationdata = { };
 
-    let registrationdata = { };
 
-    if (!user) {
+    const user = yield User.create(userdata, { isNewRecord: true });
+    const user2 = yield User.create(userdata2, { isNewRecord: true });
+    const user3 = yield User.create(userdata3, { isNewRecord: true });
+    const user4 = yield User.create(userdata4, { isNewRecord: true });
 
-        user = yield User.create(userdata, { isNewRecord: true });
+    profiledata.UserId = user.id;
+    registrationdata.UserId = user.id;
+    settingdata.UserId = user.id;
+    yield Profile.create(profiledata, { isNewRecord: true });
+    yield Setting.create( settingdata, { isNewRecord: true });
+    yield Registration.create( registrationdata, { isNewRecord: true });
 
-        settingdata.UserId = user.id;
-        profiledata.UserId = user.id;
-        registrationdata.UserId = user.id;
-        yield Profile.create(profiledata, { isNewRecord: true });
+    profiledata.UserId = user2.id;
+    registrationdata.UserId = user2.id;
+    settingdata.UserId = user2.id;
+    yield Profile.create(profiledata, { isNewRecord: true });
+    yield Setting.create( settingdata, { isNewRecord: true });
+    yield Registration.create( registrationdata, { isNewRecord: true });
 
-        yield Setting.create( settingdata, { isNewRecord: true });
+    profiledata.UserId = user3.id;
+    registrationdata.UserId = user3.id;
+    settingdata.UserId = user3.id;
+    yield Profile.create(profiledata, { isNewRecord: true });
+    yield Setting.create( settingdata, { isNewRecord: true });
+    yield Registration.create( registrationdata, { isNewRecord: true });
 
-        yield Registration.create( registrationdata, { isNewRecord: true });
-        console.log('user created');
-    } else {
-        yield user.updateAttributes( userdata );
-        let profile = yield user.getProfile();
-        yield profile.updateAttributes(profiledata);
-        console.log('user updated');
-    }
+    profiledata.UserId = user4.id;
+    registrationdata.UserId = user4.id;
+    settingdata.UserId = user4.id;
+    yield Profile.create(profiledata, { isNewRecord: true });
+    yield Setting.create( settingdata, { isNewRecord: true });
+    yield Registration.create( registrationdata, { isNewRecord: true });
 
+    user.addFriend(user3, {accepted: true});
+    user.addFriend(user4);
+
+    user3.addFriend(user, {accepted: true});
+    console.log('user created');
 }
 
 function* createTodoList() {

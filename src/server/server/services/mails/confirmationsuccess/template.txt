@@ -1,9 +1,0 @@
-Dear
-
-${salutation}
-${firstname} ${lastname}
-
-
-Welcome to wanamu.
-
-Wanamu: ${homelink}
