@@ -3,8 +3,8 @@ var request = require('../../../dist/server/server/config/mocha').request,
     config = require('../../../dist/server/server/config'),
     Profile = require('../../../dist/server/server/model/profile'),
     User = require('../../../dist/server/server/model/user'),
-    assert = require('assert'),
     co = require('co'),
+    databasehelper = require('../../../dist/server/server/setup/databasehelper');
     should = require('should'),
     _ = require('lodash');
 
@@ -22,6 +22,8 @@ describe('Test Friends Controller', function () {
     before(function (done) {
 
         co(function*() {
+            //TODO enable this when introduced in all tests
+            //yield databasehelper.truncateDatabase();
             yield app.init();
         }).then(function () {
             done();
@@ -42,49 +44,13 @@ describe('Test Friends Controller', function () {
     // =============================================================================================
     it('Should create Users', function(done){
         co(function *() {
-            user = yield User.create({
-                email : 'friendtestuser@email.de',
-                confirmed: 1,
-                password: 'abcdefghijk'
-            }, { isNewRecord: true});
+            user = yield databasehelper.createUser();
 
-            yield Profile.create({
-                UserId: user.id,
-                salutation: 'mr',
-                firstname: 'user',
-                lastname: 'user'
-            });
-
-            friend1 = yield User.create({
-                email : 'testfriend1@email.de',
-                confirmed: 1,
-                password: 'abcdefghijk'
-            }, { isNewRecord: true});
-
-            yield Profile.create({
-                UserId: friend1.id,
-                salutation: 'mr',
-                firstname: 'friend1',
-                lastname: 'friend1'
-            });
-
-            friend2 = yield User.create({
-                email : 'testfriend2@email.de',
-                confirmed: 1,
-                password: 'abcdefghijk'
-            }, { isNewRecord: true});
-
-            yield Profile.create({
-                UserId: friend2.id,
-                salutation: 'mr',
-                firstname: 'friend2',
-                lastname: 'friend2'
-            });
+            friend1 = yield databasehelper.createUser();
+            friend2 = yield databasehelper.createUser();
 
             yield user.addFriend(friend1, {accepted: true});
             yield user.addFriend(friend2, {accepted: true});
-
-            yield user.reload();
 
             var friends = yield user.getFriends({
                 include: [
@@ -97,7 +63,7 @@ describe('Test Friends Controller', function () {
             });
 
             friends.should.be.an.instanceOf(Array);
-           (friends.length).should.be.exactly(2);
+            friends.length.should.be.exactly(2);
             return null;
         }).then(function(){
             done();
@@ -116,17 +82,16 @@ describe('Test Friends Controller', function () {
                 .type('form')
                 .send({
                     username: user.email,
-                    password: 'abcdefghijk'
+                    password: databasehelper.DEFAULT_PASSWORD
                 })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end();
 
-            assert(res.body.success);
-            assert(_.isPlainObject(res.body));
-            assert(_.isArray(res.body.data));
-            (res.body.data[0].Profile === null).should.be.true;
+            res.body.success.should.be.true;
+            res.body.should.be.an.Object;
+            res.body.data.should.be.an.Array;
             return null;
         }).then(function(){
             done();
@@ -176,26 +141,14 @@ describe('Test Friends Controller', function () {
     it('Should invite a user', function(done){
 
         co(function *() {
-            newfriend = yield User.create({
-                email : 'newfriend@email.de',
-                confirmed: 1,
-                password: 'abcdefghijk'
-            }, { isNewRecord: true});
-
-            const profiledata = {
-                firstname: 'firstName',
-                lastname: 'lastName',
-                salutation: 'mr'
-            };
-            profiledata.UserId = newfriend.id;
-            yield Profile.create(profiledata, { isNewRecord: true });
+            newfriend = yield databasehelper.createUser();
 
             var res = yield request
                 .post('/addfriend')
                 .type('json')
                 .send({
                     data: {
-                        email: 'newfriend@email.de'
+                        email: newfriend.email
                     }
                 })
                 .set('Accept', 'application/json')
@@ -267,8 +220,8 @@ describe('Test Friends Controller', function () {
                 .post('/auth/login')
                 .type('form')
                 .send({
-                    username: 'newfriend@email.de',
-                    password: 'abcdefghijk'
+                    username: newfriend.email,
+                    password: databasehelper.DEFAULT_PASSWORD
                 })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -310,26 +263,14 @@ describe('Test Friends Controller', function () {
                 .type('form')
                 .send({
                     username: user.email,
-                    password: 'abcdefghijk'
+                    password: databasehelper.DEFAULT_PASSWORD
                 })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end();
 
-            var newacceptfriend = yield User.create({
-                email : 'newacceptfriend@email.de',
-                confirmed: 1,
-                password: 'abcdefghijk'
-            }, { isNewRecord: true});
-
-            const profiledata = {
-                firstname: 'firstName',
-                lastname: 'lastName',
-                salutation: 'mr'
-            };
-            profiledata.UserId = newacceptfriend.id;
-            yield Profile.create(profiledata, { isNewRecord: true });
+            var newacceptfriend = yield databasehelper.createUser();
 
             var token = 'testoken_newacceptfriend';
             yield user.addFriend(newacceptfriend, {accepttoken: token});
@@ -357,6 +298,53 @@ describe('Test Friends Controller', function () {
             frienddata[0].Friends.accepted.should.be.true;
             frienddata[0].Friends.accepttoken.should.be.a.String;
             frienddata[0].Friends.accepttoken.should.have.length(token.length);
+
+            return null;
+        }).then(function(){
+            done();
+        }).catch(function(err){
+            done(err);
+        });
+    });
+
+    // ==========================================================================
+    // Test is friend was added
+    // ==========================================================================
+    it('Should remove friend', function(done){
+        co(function *() {
+
+            yield request
+                .post('/auth/login')
+                .type('form')
+                .send({
+                    username: user.email,
+                    password: databasehelper.DEFAULT_PASSWORD
+                })
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /json/)
+                .expect(200)
+                .end();
+
+
+            var res = yield request
+                .delete('/friend/' + newfriend.id)
+                .type('json')
+                .set('Accept', 'application/json')
+                .expect(200)
+                .expect('Content-Type', /json/)
+                .end();
+
+            res.body.should.be.an.Object;
+            res.body.success.should.be.true;
+
+            const frienddata = yield user.getFriends({
+                where: {
+                    id: newfriend.id
+                }
+            });
+
+            frienddata.should.be.an.Array;
+            frienddata.should.have.length(0);
 
             return null;
         }).then(function(){
