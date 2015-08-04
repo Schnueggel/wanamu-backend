@@ -4,3 +4,4 @@ export * from './registration.js';
 export * from './setting.js';
 export * from './todo.js';
 export * from './friends.js';
+export * from './profile.js';
