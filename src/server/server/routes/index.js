@@ -1,8 +1,8 @@
-import { AuthController, UserController, RegistrationController, SettingController, TodoController, FriendsController } from '../controller/controller.js';
+import { AuthController, UserController, RegistrationController, SettingController,
+    TodoController, FriendsController, ProfileController } from '../controller/controller.js';
 
 let route = require('koa-route'),
-    TodoListController = require('../controller/todolist'),
-    ProfileController = require('../controller/profile');
+    TodoListController = require('../controller/todolist');
 
 /**
  * ######################################################################################
@@ -41,6 +41,7 @@ module.exports = function(app){
     const registrationCtrl = new RegistrationController();
     const settingCtrl = new SettingController();
     const todoCtrl = new TodoController();
+    const profileCtrl = new ProfileController();
     const friendsCtrl = new FriendsController();
 
     /**
@@ -108,8 +109,12 @@ module.exports = function(app){
     // =============================================================================================
     // Profile
     // =============================================================================================
-    app.use(route.put('/profile/:id', ProfileController.update));
-    app.use(route.get('/profile/:id', ProfileController.get));
+    app.use(route.put('/profile/:id', function*(id, next){
+        yield profileCtrl.updateProfile(id, next, this);
+    }));
+    app.use(route.get('/profile/:id', function*(id, next){
+        yield profileCtrl.getProfile(id, next, this);
+    }));
     // =============================================================================================
     // Settings
     // =============================================================================================
