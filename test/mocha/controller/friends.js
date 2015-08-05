@@ -4,7 +4,7 @@ var request = require('../../../dist/server/server/config/mocha').request,
     Profile = require('../../../dist/server/server/model/profile'),
     User = require('../../../dist/server/server/model/user'),
     co = require('co'),
-    databasehelper = require('../../../dist/server/server/setup/databasehelper');
+    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
     should = require('should'),
     _ = require('lodash');
 
@@ -22,8 +22,7 @@ describe('Test Friends Controller', function () {
     before(function (done) {
 
         co(function*() {
-            //TODO enable this when introduced in all tests
-            //yield databasehelper.truncateDatabase();
+            yield databasehelper.truncateDatabase();
             yield app.init();
         }).then(function () {
             done();

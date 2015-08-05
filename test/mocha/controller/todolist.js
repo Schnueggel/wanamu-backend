@@ -1,11 +1,10 @@
-/**
- * Created by Christian on 5/21/2015.
- */
-
 var request = require('../../../dist/server/server/config/mocha').request,
     app = require('../../../dist/server/server.js'),
     config = require('../../../dist/server/server/config'),
     assert = require('assert'), co = require('co'),
+    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
+    should = require('should'),
+
     _ = require('lodash');
 
 
@@ -17,6 +16,7 @@ describe('Test Todolist Controller', function () {
     before(function (done) {
 
         co(function*() {
+            yield databasehelper.truncateDatabase();
             yield app.init();
         }).then(function () {
             done();
@@ -37,23 +37,23 @@ describe('Test Todolist Controller', function () {
     // ==========================================================================
     it('Should login for todolist creation', function(done){
         co(function *() {
+            user = yield databasehelper.createUser();
             var res = yield request
                 .post('/auth/login')
                 .type('form')
                 .send({
-                    username: config.getTestMail1(),
-                    password: 'abcdefghijk'
+                    username: user.email,
+                    password: databasehelper.DEFAULT_PASSWORD
                 })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end();
 
-            assert(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert(res.body.data.length, 1);
+            res.body.success.should.be.true;
+            res.body.data.should.be.an.Array;
+            res.body.data.should.have.length(1);
             assert(_.isNumber(res.body.data[0].DefaultTodoListId));
-            user = res.body.data[0];
         }).then(function(){
             done();
         }).catch(function(err){
@@ -74,11 +74,11 @@ describe('Test Todolist Controller', function () {
                 .expect(200)
                 .end();
 
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert(res.body.data.length, 1);
-            assert(typeof res.body.data[0], 'object');
+            res.body.should.be.an.Object;
+            res.body.success.should.be.true;
+            res.body.data.should.be.an.Array;
+            res.body.data.should.have.length(1);
+            res.body.data.should.be.an.Object;
             assert(res.body.data[0].name, 'default');
 
         }).then(function(){
@@ -104,11 +104,11 @@ describe('Test Todolist Controller', function () {
                 .expect(403)
                 .end();
 
-            assert.equal(typeof res.body, 'object');
-            assert.equal(res.body.success, false);
-            assert(_.isArray(res.body.data));
-            assert.equal(res.body.data.length, 0);
-            assert.equal(typeof res.body.error, 'object');
+            res.body.should.be.an.Object;
+            res.body.success.should.be.true;
+            res.body.data.should.be.an.Array;
+            res.body.data.should.have.length(0);
+            res.body.error.should.be.an.Object;
             assert.equal(res.body.error.name, 'TodoListDefaultNoDelete');
         }).then(function(){
             done();
@@ -127,14 +127,13 @@ describe('Test Todolist Controller', function () {
                 .expect(200)
                 .end();
 
-            assert.equal(typeof res.body, 'object');
-            assert.equal(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert.equal(res.body.data.length, 1);
+            res.body.should.be.an.Object;
+            res.body.success.should.be.true;
+            res.body.data.should.be.an.Array;
+            res.body.data.should.have.length(1);
             assert.equal(res.body.data[0].name, 'default');
             assert(_.isArray(res.body.data[0].Todos));
-            assert(res.body.data[0].Todos.length > 1);
-            assert(typeof res.body.data[0].Todos[0].title, 'string');
+            res.body.data[0].Todos.should.have.length(0);
         }).then(function () {
             done();
         }).catch(function (err) {

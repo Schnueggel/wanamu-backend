@@ -3,6 +3,8 @@ let request = require('../../../dist/server/server/config/mocha').request,
     app = require('../../../dist/server/server.js'),
     config = require('../../../dist/server/server/config'),
     assert = require('assert'), co = require('co'),
+    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
+    should = require('should'),
     _ = require('lodash');
 
 describe('Test Auth Controller', function () {
@@ -13,8 +15,10 @@ describe('Test Auth Controller', function () {
     before((done) => {
 
         co(function*() {
+            yield databasehelper.truncateDatabase();
             yield app.init();
         }).then(function () {
+            console.log('hui');
             done();
         }).catch(function (err) {
             done(err);
@@ -30,19 +34,20 @@ describe('Test Auth Controller', function () {
 
     it('Should login', function(done){
         co(function *() {
+            var user = yield databasehelper.createUser();
             var res = yield request
                 .post('/auth/login')
                 .type('form')
                 .send({
-                    username: config.get('testmail1'),
-                    password: 'abcdefghijk'
+                    username: user.email,
+                    password: databasehelper.DEFAULT_PASSWORD
                 })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end();
 
-            assert(res.body.success, true);
+            res.body.success.should.be.true;
 
         }).then(function(){
             done();
@@ -77,8 +82,8 @@ describe('Test Auth Controller', function () {
                 .expect(200)
                 .end();
 
-            assert(typeof res.body, 'object');
-            assert.equal(res.body.success, true);
+            res.body.should.be.an.Object;
+            res.body.success.should.be.true;
 
         }).then(function(){
             done();
@@ -98,8 +103,8 @@ describe('Test Auth Controller', function () {
                  .expect(401)
                  .end();
 
-            assert(typeof res.body, 'object');
-            assert.equal(res.body.success, false);
+            res.body.should.be.an.Object;
+            res.body.success.should.be.true;
         }).then(function () {
             done();
         }).catch(function (err) {
@@ -109,19 +114,20 @@ describe('Test Auth Controller', function () {
 
     it('Should login', function(done){
         co(function *() {
+            var user = yield databasehelper.createUser();
             var res = yield request
                 .post('/auth/login')
                 .type('form')
                 .send({
-                    username: config.get('testmail1'),
-                    password: 'abcdefghijk'
+                    username: user.email,
+                    password: databasehelper.DEFAULT_PASSWORD
                 })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end();
 
-            assert(res.body.success, true);
+            res.body.success.should.be.true;
 
         }).then(function(){
             done();
@@ -141,8 +147,8 @@ describe('Test Auth Controller', function () {
                 .expect(200)
                 .end();
 
-            assert(typeof res.body, 'object');
-            assert.equal(res.body.success, true);
+            res.body.should.be.an.Object;
+            res.body.success.should.be.true;
 
         }).then(function(){
             done();
