@@ -1,8 +1,7 @@
 import { AuthController, UserController, RegistrationController, SettingController,
-    TodoController, FriendsController, ProfileController } from '../controller/controller.js';
+    TodoController, FriendsController, ProfileController, TodoListController } from '../controller/controller.js';
 
-let route = require('koa-route'),
-    TodoListController = require('../controller/todolist');
+import route from 'koa-route';
 
 /**
  * ######################################################################################
@@ -43,6 +42,7 @@ module.exports = function(app){
     const todoCtrl = new TodoController();
     const profileCtrl = new ProfileController();
     const friendsCtrl = new FriendsController();
+    const todolistCtrl = new TodoListController();
 
     /**
      * ######################################################################################
@@ -88,9 +88,16 @@ module.exports = function(app){
     // ==========================================================================
     // TODOLIST
     // ==========================================================================
-    app.use(route.get('/todolist/:id', TodoListController.get));
-    app.use(route.get('/todolist', TodoListController.list));
-    app.use(route.delete('/todolist/:id', TodoListController.delete));
+    app.use(route.get('/todolist/:id', function*(id, next){
+        yield todolistCtrl.getTodolist(id, next, this);
+    }));
+    app.use(route.get('/todolist', function*(next){
+        yield todolistCtrl.listTodolist(next, this);
+    }));
+    app.use(route.delete('/todolist/:id', function*(id, next){
+        yield todolistCtrl.deleteTodoList(id, next, this);
+    }));
+    
     // ==========================================================================
     // USER
     // ==========================================================================
