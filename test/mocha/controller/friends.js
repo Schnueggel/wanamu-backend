@@ -107,7 +107,7 @@ describe('Test Friends Controller', function () {
     it('Should list friends', function(done){
         co(function *() {
             var res = yield request
-                .get('/friends')
+                .get('/friend')
                 .type('json')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -144,7 +144,7 @@ describe('Test Friends Controller', function () {
             newfriend = yield databasehelper.createUser();
 
             var res = yield request
-                .post('/addfriend')
+                .post('/friend')
                 .type('json')
                 .send({
                     data: {
@@ -185,7 +185,7 @@ describe('Test Friends Controller', function () {
     it('Should have a new friend', function(done){
         co(function *() {
             var res = yield request
-                .get('/friends')
+                .get('/friend')
                 .type('json')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -229,7 +229,7 @@ describe('Test Friends Controller', function () {
                 .end();
 
             var res = yield request
-                .post('/addfriend')
+                .post('/friend')
                 .type('json')
                 .send({
                     data: {

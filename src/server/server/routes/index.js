@@ -97,7 +97,7 @@ module.exports = function(app){
     app.use(route.delete('/todolist/:id', function*(id, next){
         yield todolistCtrl.deleteTodoList(id, next, this);
     }));
-    
+
     // ==========================================================================
     // USER
     // ==========================================================================
@@ -134,10 +134,10 @@ module.exports = function(app){
     // =============================================================================================
     // Friends
     // =============================================================================================
-    app.use(route.get('/friends', function* (next){
+    app.use(route.get('/friend', function* (next){
         yield friendsCtrl.getList(next, this);
     }));
-    app.use(route.post('/addfriend', function* (next){
+    app.use(route.post('/friend', function* (next){
         yield friendsCtrl.addFriend(next, this);
     }));
     app.use(route.delete('/friend/:id', function* (id, next){
