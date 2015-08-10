@@ -181,7 +181,7 @@ export class FriendsController {
     }
 
     /**
-     * tys to accept a friendship token
+     * Action to accept a friendship token
      * @param {string} token
      * @param {function} next
      * @param {Object} context
@@ -210,6 +210,29 @@ export class FriendsController {
         }
 
         response.success = true;
+    }
+
+    /**
+     * Removes a firend from a users friendlist by its primary key
+     * @param {number} id
+     * @param {function} next
+     * @param {Object} context
+     */
+    *remove(id, next, context){
+        const response = new Response(),
+            user = context.req.user;
+
+        context.body = response;
+
+        const removed = yield user.removeFriend(id);
+
+        if (removed === 1){
+            response.success = true;
+        } else {
+            context.status = Util.status.NOTFOUND;
+            response.error = new ErrorUtil.UserNotFound();
+            console.error(`[ERROR] Removing friend with ID: ${id} for user ${user.id} failed with: Friend not found`);
+        }
     }
 }
 
