@@ -1,11 +1,11 @@
-/**
- * Created by Christian on 5/21/2015.
- */
-
+'use strict';
 var request = require('../../../dist/server/server/config/mocha').request,
     app = require('../../../dist/server/server.js'),
     config = require('../../../dist/server/server/config'),
-    assert = require('assert'), co = require('co'),
+    assert = require('assert'),
+    co = require('co'),
+    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
+    should = require('should'),
     _ = require('lodash');
 
 
@@ -19,6 +19,7 @@ describe('Test Todo Controller', function () {
     before(function (done) {
 
         co(function*() {
+            yield databasehelper.truncateDatabase();
             yield app.init();
         }).then(function () {
             done();
@@ -39,21 +40,22 @@ describe('Test Todo Controller', function () {
     // ==========================================================================
     it('Should login', function(done){
         co(function *() {
+            var user = yield databasehelper.createUser();
             var res = yield request
                 .post('/auth/login')
                 .type('form')
                 .send({
-                    username: config.getTestMail1(),
-                    password: 'abcdefghijk'
+                    username: user.email,
+                    password: databasehelper.DEFAULT_PASSWORD
                 })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end();
 
-            assert(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert(res.body.data.length, 1);
+            res.body.success.should.be.true;
+            res.body.data.should.be.an.Array;
+            res.body.data.should.have.length(1);
             assert(_.isNumber(res.body.data[0].DefaultTodoListId));
             todolistid = res.body.data[0].DefaultTodoListId;
         }).then(function(){
@@ -85,11 +87,11 @@ describe('Test Todo Controller', function () {
                 .expect(200)
                 .end();
 
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert(res.body.data.length, 1);
-            assert(typeof res.body.data[0], 'object');
+            res.body.should.be.an.Object;
+            res.body.success.should.be.true;
+            res.body.data.should.be.an.Array;
+            res.body.data.should.have.length(1);
+            res.body.data.should.be.an.Object;
             assert(res.body.data[0].title, 'Feed dog');
 
             todoid = res.body.data[0].id;
@@ -101,7 +103,7 @@ describe('Test Todo Controller', function () {
     });
 
     it('Should update todo', function(done){
-        assert(_.isNumber(todoid));
+        todoid.should.be.a.Number
 
         co(function *() {
             var res = yield request
@@ -118,11 +120,11 @@ describe('Test Todo Controller', function () {
                 .expect(200)
                 .end();
 
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert(res.body.data.length, 1);
-            assert(typeof res.body.data[0], 'object');
+            res.body.should.be.an.Object
+            res.body.success.should.be.true
+            res.body.data.should.be.an.Array
+           res.body.data.should.have.length(1)
+            res.body.data.should.be.an.Object
             assert(res.body.data[0].title, 'Feed the cat');
         }).then(function(){
             done();
@@ -132,7 +134,7 @@ describe('Test Todo Controller', function () {
     });
 
     it('Should Delete Todo', function (done) {
-        assert(_.isNumber(todoid));
+        todoid.should.be.a.Number
         co(function*(){
             var res = yield request
                 .delete('/todo/' + todoid)
@@ -142,10 +144,10 @@ describe('Test Todo Controller', function () {
                 .expect(200)
                 .end();
 
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert.equal(res.body.data.length, 1);
+            res.body.should.be.an.Object
+            res.body.success.should.be.true
+            res.body.data.should.be.an.Array
+            res.body.data.should.have.length(1)
 
         }).then(function () {
             done();

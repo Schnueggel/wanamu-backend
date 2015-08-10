@@ -1,7 +1,9 @@
 var request = require('../../../dist/server/server/config/mocha').request,
     app = require('../../../dist/server/server.js'),
     config = require('../../../dist/server/server/config'),
-    assert = require('assert'), co = require('co'),
+    assert = require('assert'),
+    co = require('co'),
+    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
     should = require('should'),
     _ = require('lodash');
 
@@ -15,6 +17,7 @@ describe('Test Setting Controller', function () {
     before(function (done) {
 
         co(function*() {
+            yield databasehelper.truncateDatabase();
             yield app.init();
         }).then(function () {
             done();
@@ -35,21 +38,22 @@ describe('Test Setting Controller', function () {
     // ==========================================================================
     it('Should login', function(done){
         co(function *() {
+            var user = yield databasehelper.createUser();
             var res = yield request
                 .post('/auth/login')
                 .type('form')
                 .send({
-                    username: config.getTestMail1(),
-                    password: 'abcdefghijk'
+                    username: user.email,
+                    password: databasehelper.DEFAULT_PASSWORD
                 })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end();
 
-            assert(res.body.success, true);
+            res.body.success.should.be.true
             assert(_.isPlainObject(res.body));
-            assert(_.isArray(res.body.data));
+            res.body.data.should.be.an.Array
             assert(_.isPlainObject(res.body.data[0].Setting));
             assert( _.isNumber(res.body.data[0].Setting.id));
 
@@ -74,10 +78,10 @@ describe('Test Setting Controller', function () {
                 .expect(200)
                 .end();
 
-            res.body.should.be.an.instanceOf(Object);
-            assert(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert(res.body.data.length, 1);
+            res.body.should.be.an.Object;
+            res.body.success.should.be.true
+            res.body.data.should.be.an.Array
+           res.body.data.should.have.length(1)
             assert(_.isPlainObject(res.body.data[0]));
             should(res.body.data[0].color1).be.exactly(setting.color1);
             should(res.body.data[0].color2).be.exactly(setting.color2);
@@ -106,11 +110,11 @@ describe('Test Setting Controller', function () {
                 .expect(200)
                 .end();
 
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert(res.body.data.length, 1);
-            assert(typeof res.body.data[0], 'object');
+            res.body.should.be.an.Object
+            res.body.success.should.be.true
+            res.body.data.should.be.an.Array
+           res.body.data.should.have.length(1)
+            res.body.data.should.be.an.Object
             assert(res.body.data[0].color1, 'color1');
 
         }).then(function(){

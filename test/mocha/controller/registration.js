@@ -5,6 +5,8 @@ var mochaconf = require('../../../dist/server/server/config/mocha'),
     app = require('../../../dist/server/server.js'),
     config = require('../../../dist/server/server/config'),
     Registration = require('../../../dist/server/server/model/registration'),
+    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
+    should = require('should'),
     assert = require('assert'), co = require('co'),
     _ = require('lodash');
 
@@ -19,6 +21,7 @@ describe('Test Registration Controller', function () {
     before(function (done) {
 
         co(function*() {
+            yield databasehelper.truncateDatabase();
             yield app.init();
         }).then(function () {
             done();
@@ -40,14 +43,6 @@ describe('Test Registration Controller', function () {
     it('should Register', function(done){
 
         co(function *() {
-            //TODO destroy session on each te
-            var res = yield request
-                .post('/auth/logout')
-                .type('json')
-                .send({})
-                .set('Accept', 'application/json')
-                .end();
-
             var res = yield request
                 .post('/user')
                 .type('json')
@@ -67,11 +62,11 @@ describe('Test Registration Controller', function () {
                 .expect(200)
                 .end();
 
-            assert.equal(typeof res.body, 'object');
-            assert.equal(res.body.success, true);
-            assert(_.isArray(res.body.data));
-            assert.equal(res.body.data.length, 1);
-            assert.equal(typeof res.body.data[0], 'object');
+            res.body.should.be.an.Object;
+            res.body.success.should.be.true;
+            res.body.data.should.be.an.Array;
+            res.body.data.should.have.length(1);
+            res.body.data[0].should.be.an.Object;
 
             userid = res.body.data[0].id;
         }).then(mochaconf.doneGood(done))
@@ -112,8 +107,8 @@ describe('Test Registration Controller', function () {
                 .expect('Content-Type', /json/)
                 .expect(200)
                 .end();
-            assert(typeof res.body, 'object');
-            assert(res.body.success, true);
+            res.body.should.be.an.Object;
+            res.body.success.should.be.true;
 
         }).then(function(){
             done();

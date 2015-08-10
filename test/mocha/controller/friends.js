@@ -4,7 +4,7 @@ var request = require('../../../dist/server/server/config/mocha').request,
     Profile = require('../../../dist/server/server/model/profile'),
     User = require('../../../dist/server/server/model/user'),
     co = require('co'),
-    databasehelper = require('../../../dist/server/server/setup/databasehelper');
+    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
     should = require('should'),
     _ = require('lodash');
 
@@ -22,8 +22,7 @@ describe('Test Friends Controller', function () {
     before(function (done) {
 
         co(function*() {
-            //TODO enable this when introduced in all tests
-            //yield databasehelper.truncateDatabase();
+            yield databasehelper.truncateDatabase();
             yield app.init();
         }).then(function () {
             done();
@@ -107,7 +106,7 @@ describe('Test Friends Controller', function () {
     it('Should list friends', function(done){
         co(function *() {
             var res = yield request
-                .get('/friends')
+                .get('/friend')
                 .type('json')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -144,7 +143,7 @@ describe('Test Friends Controller', function () {
             newfriend = yield databasehelper.createUser();
 
             var res = yield request
-                .post('/addfriend')
+                .post('/friend')
                 .type('json')
                 .send({
                     data: {
@@ -185,7 +184,7 @@ describe('Test Friends Controller', function () {
     it('Should have a new friend', function(done){
         co(function *() {
             var res = yield request
-                .get('/friends')
+                .get('/friend')
                 .type('json')
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /json/)
@@ -229,7 +228,7 @@ describe('Test Friends Controller', function () {
                 .end();
 
             var res = yield request
-                .post('/addfriend')
+                .post('/friend')
                 .type('json')
                 .send({
                     data: {

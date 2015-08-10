@@ -72,7 +72,7 @@ module.exports =  {
             UserId: user.id,
             name: 'default'
         }, {isNewRecord: true});
-        user.setDefaultTodoList(todolist);
+        yield user.setDefaultTodoList(todolist);
         user = yield User.findById(user.id,{ include: [{ all: true, nested: true }]});
 
         return user;
