@@ -1,6 +1,7 @@
 # Wanamu Backend
 This is the backend of the wanamu. It is the api layer and the bl layer. In the future they will be seperated perhaps. 
-Lets see when I get tired of this app
+
+Wanamu is my Todo appp to evaluate technologies.
 
 ##Setup
 
@@ -54,8 +55,6 @@ The frontend is made with Angular.
 
 mocha
 
-npm-check-updates
-
 babel
 
 docker
@@ -68,7 +67,7 @@ wercker
 
 Koa
 
-ES6
+ES6 generators
 
 
 ## Build
