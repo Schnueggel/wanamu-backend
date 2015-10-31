@@ -10,6 +10,11 @@ build:
                 gulp build
                 git branch
                 cp -a . $WERCKER_OUTPUT_DIR
+    after-steps:
+        - slack-notifier:
+            url: $SLACK_WEBHOOK_URL
+            channel: wercker-notify
+            username: werckerbot
 deploy:
     box: golio/ubuntu:latest
     steps:
