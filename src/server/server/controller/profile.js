@@ -16,9 +16,8 @@ export class ProfileController {
      * @param {Object} context
      */
     *getProfile(id, next, context) {
-        let user = context.req.user,
+        const user = context.req.user,
             isAdmin = user.isAdmin(),
-            data,
             result = {
                 error: null,
                 success: false,
@@ -34,7 +33,7 @@ export class ProfileController {
             result.error = new ErrorUtil.ProfileNotFound();
             return;
         }
-        if (!isAdmin && context.req.user.id !== profile.UserId) {
+        if (isAdmin === false && context.req.user.id !== profile.UserId) {
             context.status = 403;
             result.error = new ErrorUtil.AccessViolation();
             return;
@@ -42,9 +41,9 @@ export class ProfileController {
 
         result.success = true;
 
-        data = _.pick(profile.get({plain: true}), Profile.getVisibleFields(isAdmin));
+        const resultdata = _.pick(profile.get({plain: true}), Profile.getVisibleFields(isAdmin));
 
-        result.data.push(data);
+        result.data.push(resultdata);
     }
 
     /**
@@ -55,11 +54,10 @@ export class ProfileController {
      * @param {Object} context
      */
     *updateProfile(id, next, context) {
-        let user = context.req.user,
+        const user = context.req.user,
             isAdmin = user.isAdmin(),
             input = context.request.body || {},
             data = input.data || {},
-            resultdata,
             result = {
                 error: null,
                 success: false,
@@ -90,7 +88,7 @@ export class ProfileController {
 
         profile = yield profile.reload();
 
-        resultdata = _.pick(profile.get({plain: true}), Profile.getVisibleFields(isAdmin));
+        const resultdata = _.pick(profile.get({plain: true}), Profile.getVisibleFields(isAdmin));
 
         result.success = true;
         result.data.push(resultdata);

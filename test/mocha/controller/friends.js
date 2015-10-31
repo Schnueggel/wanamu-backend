@@ -1,34 +1,27 @@
-var request = require('../../../dist/server/server/config/mocha').request,
-    app = require('../../../dist/server/server.js'),
-    config = require('../../../dist/server/server/config'),
-    Profile = require('../../../dist/server/server/model/profile'),
-    User = require('../../../dist/server/server/model/user'),
-    co = require('co'),
-    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
-    should = require('should'),
-    _ = require('lodash');
+import mocha from '../../../dist/server/server/config/mocha';
+import app from '../../../dist/server/server.js';
+import config from '../../../dist/server/server/config';
+import Profile from '../../../dist/server/server/model/profile';
+import User from '../../../dist/server/server/model/user';
+import co from 'co';
+import databasehelper from '../../../dist/server/server/setup/databasehelper';
+import should from 'should';
+import _ from 'lodash';
 
 
-describe('Test Friends Controller', function () {
+describe('Test Friends Controller', () => {
 
-    var user;
-    var friend1;
-    var friend2;
-    var newfriend;
+    let user, friend1, friend2, newfriend;
 
     // ==========================================================================
     // Before test we start the server
     // ==========================================================================
-    before(function (done) {
+    before((done) => {
 
         co(function*() {
             yield databasehelper.truncateDatabase();
             yield app.init();
-        }).then(function () {
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
@@ -41,7 +34,7 @@ describe('Test Friends Controller', function () {
     // =============================================================================================
     // Create User with friends
     // =============================================================================================
-    it('Should create Users', function(done){
+    it('Should create Users', (done) => {
         co(function *() {
             user = yield databasehelper.createUser();
 
@@ -51,11 +44,11 @@ describe('Test Friends Controller', function () {
             yield user.addFriend(friend1, {accepted: true});
             yield user.addFriend(friend2, {accepted: true});
 
-            var friends = yield user.getFriends({
+            const friends = yield user.getFriends({
                 include: [
                     {
                         model: Profile,
-                        attributes:[ 'firstname', 'lastname' ]
+                        attributes: ['firstname', 'lastname']
                     }
                 ],
                 attributes: ['id']
@@ -64,19 +57,15 @@ describe('Test Friends Controller', function () {
             friends.should.be.an.instanceOf(Array);
             friends.length.should.be.exactly(2);
             return null;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // Login with the created user
     // ==========================================================================
-    it('Should login', function(done){
+    it('Should login', (done) => {
         co(function *() {
-            var res = yield request
+            const res = yield mocha.request
                 .post('/auth/login')
                 .type('form')
                 .send({
@@ -92,20 +81,16 @@ describe('Test Friends Controller', function () {
             res.body.should.be.an.Object;
             res.body.data.should.be.an.Array;
             return null;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
 
     // ==========================================================================
     // Login with the created user
     // ==========================================================================
-    it('Should list friends', function(done){
+    it('Should list friends', (done) => {
         co(function *() {
-            var res = yield request
+            const res = yield mocha.request
                 .get('/friend')
                 .type('json')
                 .set('Accept', 'application/json')
@@ -127,22 +112,18 @@ describe('Test Friends Controller', function () {
             res.body.data[0].Profile.should.have.properties('id', 'firstname', 'lastname');
 
             return null;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // Add Friend
     // ==========================================================================
-    it('Should invite a user', function(done){
+    it('Should invite a user', (done) => {
 
         co(function *() {
             newfriend = yield databasehelper.createUser();
 
-            var res = yield request
+            const res = yield mocha.request
                 .post('/friend')
                 .type('json')
                 .send({
@@ -159,7 +140,7 @@ describe('Test Friends Controller', function () {
             res.body.success.should.be.true;
 
             const frienddata = yield user.getFriends({
-                where : {
+                where: {
                     id: newfriend.id
                 }
             });
@@ -171,19 +152,15 @@ describe('Test Friends Controller', function () {
             frienddata[0].Friends.accepttoken.should.be.a.String;
             frienddata[0].Friends.accepttoken.should.have.length(64);
             return null;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // Test is friend was added
     // ==========================================================================
-    it('Should have a new friend', function(done){
+    it('Should have a new friend', (done) => {
         co(function *() {
-            var res = yield request
+            const res = yield mocha.request
                 .get('/friend')
                 .type('json')
                 .set('Accept', 'application/json')
@@ -202,20 +179,16 @@ describe('Test Friends Controller', function () {
             res.body.data.should.containDeep([{id: newfriend.id, Friends: {accepted: false}}]);
 
             return null;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
     // ==========================================================================
     // Add Friend and auto accept Friendship
     // ==========================================================================
-    it('Should add a friends', function(done){
+    it('Should add a friends', (done) => {
 
         co(function *() {
 
-            yield request
+            yield mocha.request
                 .post('/auth/login')
                 .type('form')
                 .send({
@@ -227,7 +200,7 @@ describe('Test Friends Controller', function () {
                 .expect(200)
                 .end();
 
-            var res = yield request
+            const res = yield mocha.request
                 .post('/friend')
                 .type('json')
                 .send({
@@ -244,20 +217,16 @@ describe('Test Friends Controller', function () {
             res.body.success.should.be.true;
             res.body.message.should.be.a.String;
             return null;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // Test is friend was added
     // ==========================================================================
-    it('Should accept friend', function(done){
+    it('Should accept friend', (done) => {
         co(function *() {
 
-            yield request
+            yield mocha.request
                 .post('/auth/login')
                 .type('form')
                 .send({
@@ -269,12 +238,12 @@ describe('Test Friends Controller', function () {
                 .expect(200)
                 .end();
 
-            var newacceptfriend = yield databasehelper.createUser();
+            const newacceptfriend = yield databasehelper.createUser();
 
-            var token = 'testoken_newacceptfriend';
+            const token = 'testoken_newacceptfriend';
             yield user.addFriend(newacceptfriend, {accepttoken: token});
 
-            var res = yield request
+            const res = yield mocha.request
                 .get('/acceptfriend/' + token)
                 .type('json')
                 .set('Accept', 'application/json')
@@ -299,20 +268,16 @@ describe('Test Friends Controller', function () {
             frienddata[0].Friends.accepttoken.should.have.length(token.length);
 
             return null;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // Test is friend was added
     // ==========================================================================
-    it('Should remove friend', function(done){
+    it('Should remove friend', (done) => {
         co(function *() {
 
-            yield request
+            yield mocha.request
                 .post('/auth/login')
                 .type('form')
                 .send({
@@ -325,7 +290,7 @@ describe('Test Friends Controller', function () {
                 .end();
 
 
-            var res = yield request
+            const res = yield mocha.request
                 .delete('/friend/' + newfriend.id)
                 .type('json')
                 .set('Accept', 'application/json')
@@ -346,10 +311,6 @@ describe('Test Friends Controller', function () {
             frienddata.should.have.length(0);
 
             return null;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 });

@@ -1,7 +1,6 @@
 'use strict';
 
 import { BaseMail } from '../BaseMail.js';
-
 import jade from 'jade';
 
 // =============================================================================================

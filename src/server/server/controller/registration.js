@@ -1,12 +1,11 @@
 'use strict';
 
-const User = require('../model/user'),
-    Registration = require('../model/registration'),
-    Profile = require('../model/profile'),
-    bcrypt = require('../config/bcrypt'),
-    util = require('../util/util'),
-    ErrorUtil = require('../util/error');
-
+import User from '../model/user';
+import Registration from '../model/registration';
+import Profile from '../model/profile';
+import bcrypt from '../config/bcrypt';
+import util from '../util/util';
+import ErrorUtil from '../util/error';
 import mailService from '../services/mail.js';
 
 export class RegistrationController {
@@ -20,8 +19,7 @@ export class RegistrationController {
      * ######################################################################################
      */
     *confirmRegistration(hash, next, context) {
-        let user,
-            result = {
+        const result = {
                 error: null,
                 success: false,
                 data: []
@@ -29,7 +27,7 @@ export class RegistrationController {
 
         context.body = result;
 
-        user = yield User.findOne({
+        const user = yield User.findOne({
             include: [
                 {
                     model: Profile
@@ -74,19 +72,18 @@ export class RegistrationController {
      * ######################################################################################
      */
     *resendConfirmation(next, context) {
-        let input = context.request.body || {},
+        const input = context.request.body || {},
             result = {
                 data: [],
                 success: false,
                 error: null
             },
-            user,
             isAdmin = context.req.user && context.req.user.isAdmin(),
             data = input.data || {};
 
         context.body = result;
 
-        user = yield User.findOne({
+        const user = yield User.findOne({
             where: {
                 email: data.email
             },
@@ -114,8 +111,8 @@ export class RegistrationController {
         // =============================================================================================
         // Check if password matches
         // =============================================================================================
-        let isMatch = yield bcrypt.compare(data.password, user.password);
-        if (!isMatch && !isAdmin) {
+        const isMatch = yield bcrypt.compare(data.password, user.password);
+        if (isMatch === false && isAdmin === false) {
             context.status = 412;
             result.error = new ErrorUtil.NotIdentified('Please check your credentials');
             return;

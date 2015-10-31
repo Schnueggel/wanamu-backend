@@ -1,9 +1,9 @@
-let mailer = require('../config/mailer');
+import mailer from '../config/mailer';
 import ConfirmationMail from './mails/confirmation/mail';
 import ConfirmationSuccessMail  from './mails/confirmationsuccess/mail';
 import FriendInviteMail  from './mails/friendinvite/mail';
-let config = require('../config');
-let errors = require('../util/error');
+import config from '../config';
+import errors from '../util/error';
 
 export class MailService {
 

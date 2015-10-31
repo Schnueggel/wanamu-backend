@@ -1,38 +1,37 @@
-var mochaconf =  require('../../../dist/server/server/config/mocha'),
-    request = mochaconf.request,
-    app = require('../../../dist/server/server.js'),
-    config = require('../../../dist/server/server/config'),
-    User = require('../../../dist/server/server/model/user'),
-    supertest = require('co-supertest'),
-    should = require('should'),
-    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
-    co = require('co'),
-    _ = require('lodash');
+import mochaConfig from '../../../dist/server/server/config/mocha';
+import app from '../../../dist/server/server.js';
+import config from '../../../dist/server/server/config';
+import User from '../../../dist/server/server/model/user';
+import supertest from 'co-supertest';
+import should from 'should';
+import databasehelper from '../../../dist/server/server/setup/databasehelper';
+import co from 'co';
+import _ from 'lodash';
 
-describe('Test User Controller', function () {
+describe('Test User Controller', () => {
 
-    var userid;
+    let userid;
     // ==========================================================================
     // Before test we start the server
     // ==========================================================================
-    before(function (done) {
+    before((done) => {
         co(function*() {
             yield databasehelper.truncateDatabase();
             yield app.init();
-        }).then(mochaconf.doneGood(done)).catch(mochaconf.doneErr(done));
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // After each test we end the server
     // ==========================================================================
-    after(function (done) {
+    after((done) => {
         app.server.close(done);
     });
 
-    it('Should create user', function(done){
+    it('Should create user', (done) => {
 
         co(function *() {
-            var res = yield request
+            const res = yield mochaConfig.request
                 .post('/user')
                 .type('json')
                 .send({
@@ -59,13 +58,12 @@ describe('Test User Controller', function () {
 
             userid = res.body.data[0].id;
             return null;
-        }).then(mochaconf.doneGood(done))
-            .catch(mochaconf.doneErr(done));
+        }).then(done).catch(done);
     });
 
-    it('Should not login', function(done){
+    it('Should not login', (done) => {
         co(function *() {
-            var res = yield request
+            const res = yield mochaConfig.request
                 .post('/auth/login')
                 .type('form')
                 .send({
@@ -79,15 +77,14 @@ describe('Test User Controller', function () {
 
             res.body.success.should.be.true;
 
-        }).then(mochaconf.doneGood(done))
-            .catch(mochaconf.doneErr(done));
+        }).then(done).catch(done);
     });
 
-    it('Should not update user', function(done){
+    it('Should not update user', (done) => {
         userid.should.be.a.Number;
 
         co(function *() {
-            var res = yield request
+            const res = yield mochaConfig.request
                 .put('/user/' + userid)
                 .type('json')
                 .send({
@@ -107,19 +104,19 @@ describe('Test User Controller', function () {
             res.body.should.be.an.Object;
             res.body.success.should.be.true;
 
-        }).then(mochaconf.doneGood(done)).catch(mochaconf.doneErr(done));
+        }).then(done).catch(done);
     });
 
-    it('Should login', function(done){
+    it('Should login', (done) => {
         co(function *() {
             // =============================================================================================
             // We need to confirm the user before we can update him
             // =============================================================================================
-            var user = yield User.findById(userid);
+            const user = yield User.findById(userid);
             user.confirmed = 1;
             yield user.save();
 
-            var res = yield request
+            const res = yield mochaConfig.request
                 .post('/auth/login')
                 .type('form')
                 .send({
@@ -133,14 +130,14 @@ describe('Test User Controller', function () {
 
             res.body.success.should.be.true;
 
-        }).then(mochaconf.doneGood(done)).catch(mochaconf.doneErr(done));
+        }).then(done).catch(done);
     });
 
-    it('Should update user', function(done){
+    it('Should update user', (done) => {
         userid.should.be.a.Number;
 
         co(function *() {
-            var res = yield request
+            const res = yield mochaConfig.request
                 .put('/user/' + userid)
                 .type('json')
                 .send({
@@ -169,13 +166,13 @@ describe('Test User Controller', function () {
            res.body.data[0].Profile.firstname.should.equal('dog');
            res.body.data[0].Profile.lastname.should.equal('cat');
 
-        }).then(mochaconf.doneGood(done)).catch(mochaconf.doneErr(done));
+        }).then(done).catch(done);
     });
 
-    it('Should Get User', function (done) {
+    it('Should Get User', (done) => {
         userid.should.be.a.Number;
         co(function*(){
-            var res = yield request
+            const res = yield mochaConfig.request
                  .get('/user/' + userid)
                  .type('json')
                  .set('Accept', 'application/json')
@@ -190,7 +187,7 @@ describe('Test User Controller', function () {
             res.body.data[0].id.should.equal(userid);
             res.body.data[0].Profile.firstname.should.equal('dog');
             res.body.data[0].Profile.lastname.should.equal('cat');
-        }).then(mochaconf.doneGood(done)).catch(mochaconf.doneErr(done));
+        }).then(done).catch(done);
     });
 });
 

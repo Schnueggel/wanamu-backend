@@ -1,45 +1,41 @@
-var request = require('../../../dist/server/server/config/mocha').request,
-    app = require('../../../dist/server/server.js'),
-    config = require('../../../dist/server/server/config'),
-    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
-    should = require('should'),
-    assert = require('assert'),
-    co = require('co'),
-    _ = require('lodash');
+import mocha from '../../../dist/server/server/config/mocha';
+import app from '../../../dist/server/server.js';
+import config from '../../../dist/server/server/config';
+import databasehelper from '../../../dist/server/server/setup/databasehelper';
+import should from 'should';
+import assert from 'assert';
+import co from 'co';
+import _ from 'lodash';
 
 
 describe('Test Profile Controller', function () {
 
-    var profile;
+    let profile;
     // ==========================================================================
     // Before test we start the server
     // ==========================================================================
-    before(function (done) {
+    before((done) => {
 
         co(function*() {
             yield databasehelper.truncateDatabase();
             yield app.init();
-        }).then(function () {
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // After the test we end the server
     // ==========================================================================
-    after(function (done) {
+    after((done) =>  {
         app.server.close(done);
     });
 
     // ==========================================================================
     // First wie check login also to be authorized
     // ==========================================================================
-    it('Should login', function(done){
+    it('Should login', (done) => {
         co(function *() {
-            var user = yield databasehelper.createUser();
-            var res = yield request
+            const user = yield databasehelper.createUser();
+            const res = yield mocha.request
                 .post('/auth/login')
                 .type('form')
                 .send({
@@ -58,19 +54,15 @@ describe('Test Profile Controller', function () {
             assert( _.isNumber(res.body.data[0].Profile.id));
 
             profile = res.body.data[0].Profile;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
 
-    it('Should get profile', function(done){
+    it('Should get profile', (done) => {
         assert(_.isPlainObject(profile));
 
         co(function *() {
-            var res = yield request
+            const res = yield mocha.request
                 .get('/profile/' + profile.id)
                 .type('json')
                 .set('Accept', 'application/json')
@@ -85,19 +77,15 @@ describe('Test Profile Controller', function () {
             assert(_.isPlainObject(res.body.data[0]));
             assert(res.body.data[0].firstname, profile.firstname);
             assert(res.body.data[0].lastname, profile.lastname);
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // We create a todo_ in the default todolost
     // ==========================================================================
-    it('Should update', function(done){
+    it('Should update', (done) => {
         co(function *() {
-            var res = yield request
+            const res = yield mocha.request
                 .put('/profile/' + profile.id)
                 .type('json')
                 .send({
@@ -121,10 +109,6 @@ describe('Test Profile Controller', function () {
             assert(res.body.data[0].lastname, 'dog');
             assert(res.body.data[0].salutation, 'mr');
 
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 });

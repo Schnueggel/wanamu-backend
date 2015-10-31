@@ -1,26 +1,26 @@
-var config = require('../../../dist/server/server/config'),
-    ConfirmationMail = require('../../../dist/server/server/services/mails/confirmation/mail.js'),
-    ConfirmationSuccessMail = require('../../../dist/server/server/services/mails/confirmationsuccess/mail.js'),
-    FriendInviteMail = require('../../../dist/server/server/services/mails/friendinvite/mail.js'),
-    should = require('should'),
-    _ = require('lodash');
+import config from '../../../dist/server/server/config';
+import ConfirmationMail from '../../../dist/server/server/services/mails/confirmation/mail';
+import ConfirmationSuccessMail from '../../../dist/server/server/services/mails/confirmationsuccess/mail.js';
+import FriendInviteMail from '../../../dist/server/server/services/mails/friendinvite/mail.js';
+import should from 'should';
+import  _  from 'lodash';
 
-describe ('Test mail service', function() {
+describe ('Test mail service', () => {
 
-    it('should generate a valid confirmation mail', function(){
-        var mail = new ConfirmationMail('http://testconfirmationlink');
+    it('should generate a valid confirmation mail', () => {
+        const mail = new ConfirmationMail('http://testconfirmationlink');
         mail.text.should.match(/http:\/\/testconfirmationlink/mi);
         mail.html.should.match(/http:\/\/testconfirmationlink/mi)
     });
 
-    it('should generate a valid confirmationsuccess mail', function(){
-        var profile = {
+    it('should generate a valid confirmationsuccess mail', () => {
+        const profile = {
             firstname: 'TestFirstname',
             lastname: 'TestLastname',
             salutation: 'Mr.'
         };
 
-        var mail = new ConfirmationSuccessMail(profile, 'http://homelink');
+        const mail = new ConfirmationSuccessMail(profile, 'http://homelink');
 
         mail.text.should.match(/TestFirstname/mi);
         mail.text.should.match(/Mr\./mi);
@@ -37,8 +37,8 @@ describe ('Test mail service', function() {
 
     });
 
-    it('should generate a valid friendship accept mail', function(){
-        var inviter = {
+    it('should generate a valid friendship accept mail', () => {
+        const inviter = {
             Profile: {
                 firstname: 'InviterFirstname',
                 lastname: 'InviterLastname',
@@ -46,7 +46,7 @@ describe ('Test mail service', function() {
             }
         };
 
-        var invited = {
+        const invited = {
             Profile: {
                 firstname: 'InvitedFirstname',
                 lastname: 'InvitedLastname',
@@ -54,7 +54,7 @@ describe ('Test mail service', function() {
             }
         };
 
-        var mail = new FriendInviteMail('http://homelink', inviter, invited);
+        const mail = new FriendInviteMail('http://homelink', inviter, invited);
 
         mail.text.should.match(/InviterFirstname/mi);
         mail.text.should.match(/Mr\./mi);

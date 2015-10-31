@@ -1,47 +1,43 @@
 'use strict';
-var request = require('../../../dist/server/server/config/mocha').request,
-    app = require('../../../dist/server/server.js'),
-    config = require('../../../dist/server/server/config'),
-    assert = require('assert'),
-    co = require('co'),
-    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
-    should = require('should'),
-    _ = require('lodash');
 
+import mocha from '../../../dist/server/server/config/mocha';
+import app from '../../../dist/server/server.js';
+import config from '../../../dist/server/server/config';
+import assert from 'assert';
+import co from 'co';
+import databasehelper from '../../../dist/server/server/setup/databasehelper';
+import should from 'should';
+import _ from 'lodash';
 
-describe('Test Todo Controller', function () {
+describe('Test Todo Controller', () => {
 
-    var todoid;
-    var todolistid;
+    let todoid,
+        todolistid;
     // ==========================================================================
     // Before test we start the server
     // ==========================================================================
-    before(function (done) {
+    before((done) => {
 
         co(function*() {
             yield databasehelper.truncateDatabase();
             yield app.init();
-        }).then(function () {
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // After each test we end the server
     // ==========================================================================
-    after(function (done) {
+    after((done) => {
         app.server.close(done);
     });
 
     // ==========================================================================
     // First wie check login also to be authorized
     // ==========================================================================
-    it('Should login', function(done){
+    it('Should login', (done) =>{
         co(function *() {
-            var user = yield databasehelper.createUser();
-            var res = yield request
+            const user = yield databasehelper.createUser();
+            const res = yield mocha.request
                 .post('/auth/login')
                 .type('form')
                 .send({
@@ -58,19 +54,15 @@ describe('Test Todo Controller', function () {
             res.body.data.should.have.length(1);
             assert(_.isNumber(res.body.data[0].DefaultTodoListId));
             todolistid = res.body.data[0].DefaultTodoListId;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // We create a todo_ in the default todolost
     // ==========================================================================
-    it('Should create todo', function(done){
+    it('Should create todo', (done) =>{
         co(function *() {
-            var res = yield request
+            const res = yield mocha.request
                 .post('/todo')
                 .type('json')
                 .send({
@@ -95,18 +87,14 @@ describe('Test Todo Controller', function () {
             assert(res.body.data[0].title, 'Feed dog');
 
             todoid = res.body.data[0].id;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
-    it('Should update todo', function(done){
+    it('Should update todo', (done) =>{
         todoid.should.be.a.Number
 
         co(function *() {
-            var res = yield request
+            const res = yield mocha.request
                 .put('/todo/' + todoid)
                 .type('json')
                 .send({
@@ -126,17 +114,13 @@ describe('Test Todo Controller', function () {
            res.body.data.should.have.length(1)
             res.body.data.should.be.an.Object
             assert(res.body.data[0].title, 'Feed the cat');
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
-    it('Should Delete Todo', function (done) {
+    it('Should Delete Todo', (done) => {
         todoid.should.be.a.Number
         co(function*(){
-            var res = yield request
+            const res = yield mocha.request
                 .delete('/todo/' + todoid)
                 .type('json')
                 .set('Accept', 'application/json')
@@ -149,10 +133,6 @@ describe('Test Todo Controller', function () {
             res.body.data.should.be.an.Array
             res.body.data.should.have.length(1)
 
-        }).then(function () {
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 });

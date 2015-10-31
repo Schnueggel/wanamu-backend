@@ -1,6 +1,6 @@
 'use strict';
 
-let passport = require('../config/passport.js'),
+const passport = require('../config/passport.js'),
     ErrorUtil = require('../util/error');
 
 export class AuthController {

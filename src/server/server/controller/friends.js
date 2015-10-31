@@ -6,8 +6,8 @@ import Friends from '../model/friends.js';
 import { Response } from '../util/response.js';
 import mailService from '../services/mail.js';
 import crypto from 'crypto';
-const ErrorUtil = require('../util/error.js');
-const Util = require('../util/util.js');
+import ErrorUtil from '../util/error.js';
+import Util from '../util/util.js';
 
 /**
  * Manage Friends

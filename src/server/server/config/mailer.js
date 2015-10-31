@@ -1,5 +1,5 @@
 
-let nodemailer = require('nodemailer');
-let config = require('../config');
+const nodemailer = require('nodemailer'),
+    config = require('../config');
 
 module.exports = nodemailer.createTransport( config.mailerTransportConfig );

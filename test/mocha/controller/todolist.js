@@ -1,44 +1,40 @@
-var request = require('../../../dist/server/server/config/mocha').request,
-    app = require('../../../dist/server/server.js'),
-    config = require('../../../dist/server/server/config'),
-    assert = require('assert'), co = require('co'),
-    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
-    should = require('should'),
+import mochaConfig from '../../../dist/server/server/config/mocha';
+import app from '../../../dist/server/server.js';
+import config from '../../../dist/server/server/config';
+import assert from 'assert';
+import co from 'co';
+import databasehelper from '../../../dist/server/server/setup/databasehelper';
+import should from 'should';
+import _ from 'lodash';
 
-    _ = require('lodash');
+describe('Test Todolist Controller',() => {
 
-
-describe('Test Todolist Controller', function () {
-    var user;
+    let user;
     // ==========================================================================
     // Before test we start the server
     // ==========================================================================
-    before(function (done) {
+    before((done) => {
 
         co(function*() {
             yield databasehelper.truncateDatabase();
             yield app.init();
-        }).then(function () {
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // After each test we end the server
     // ==========================================================================
-    after(function (done) {
+    after((done) => {
         app.server.close(done);
     });
 
     // ==========================================================================
     // First wie check login also to be authorized
     // ==========================================================================
-    it('Should login for todolist creation', function(done){
+    it('Should login for todolist creation', (done) => {
         co(function *() {
             user = yield databasehelper.createUser();
-            var res = yield request
+            const res = yield mochaConfig.request
                 .post('/auth/login')
                 .type('form')
                 .send({
@@ -54,19 +50,15 @@ describe('Test Todolist Controller', function () {
             res.body.data.should.be.an.Array;
             res.body.data.should.have.length(1);
             assert(_.isNumber(res.body.data[0].DefaultTodoListId));
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // We  a todolist in the default todolost
     // ==========================================================================
-    it('Should list Todolists for the logged in User', function(done){
+    it('Should list Todolists for the logged in User', (done) => {
         co(function *() {
-            var res = yield request
+            const res = yield mochaConfig.request
                 .get('/todolist')
                 .type('json')
                 .set('Accept', 'application/json')
@@ -81,16 +73,12 @@ describe('Test Todolist Controller', function () {
             res.body.data.should.be.an.Object;
             assert(res.body.data[0].name, 'default');
 
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
-    it('Should not delete default Todolist', function(done){
+    it('Should not delete default Todolist', (done) => {
         co(function *() {
-            var res = yield request
+            const res = yield mochaConfig.request
                 .delete('/todolist/' + user.DefaultTodoListId)
                 .type('json')
                 .send({
@@ -110,16 +98,12 @@ describe('Test Todolist Controller', function () {
             res.body.data.should.have.length(0);
             res.body.error.should.be.an.Object;
             assert.equal(res.body.error.name, 'TodoListDefaultNoDelete');
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
-    it('Should Get Todolist', function (done) {
+    it('Should Get Todolist', (done) => {
         co(function*(){
-            var res = yield request
+            const res = yield mochaConfig.request
                 .get('/todolist/' + user.DefaultTodoListId)
                 .type('json')
                 .set('Accept', 'application/json')
@@ -134,10 +118,6 @@ describe('Test Todolist Controller', function () {
             assert.equal(res.body.data[0].name, 'default');
             assert(_.isArray(res.body.data[0].Todos));
             res.body.data[0].Todos.should.have.length(0);
-        }).then(function () {
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 });

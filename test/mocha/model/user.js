@@ -1,30 +1,25 @@
 'use strict';
 
-var assert = require('assert'),
-    User = require('../../../dist/server/server/model/user'),
-    ErrorUtil = require('../../../dist/server/server/util/error'),
-    sequelize = require('../../../dist/server/server/config/sequelize'),
-    co = require('co');
+import assert from 'assert';
+import User from '../../../dist/server/server/model/user';
+import ErrorUtil from '../../../dist/server/server/util/error';
+import sequelize from '../../../dist/server/server/config/sequelize';
+import co from 'co';
 
 
-describe('Test User Model', function () {
+describe('Test User Model', () => {
 
-    it('Should create User', function (done) {
+    it('Should create User', (done) => {
         assert.equal(typeof User, 'object');
 
-        co(testCreateUser).then(function(){
-            done();
-        }).catch(function(err){
-            console.error(err);
-            done(err);
-        });
+        co(testCreateUser).then(done).catch(done);
     });
 });
 
 
 function* testCreateUser(){
 
-    var user = User.build({
+    const user = User.build({
         email: 'test1@email.de',
         firstname: 'firstName',
         lastname: 'lastName',
@@ -41,14 +36,14 @@ function* testCreateUser(){
         assert.equal(err.errors[0].path, 'password');
     }
 
-    var password = 'abcdefghijk';
+    const password = 'abcdefghijk';
     user.password = password;
 
     yield user.save();
     assert.notEqual(user.password, password);
     assert.equal(user.password.length, 60);
 
-    var isMatch = yield user.comparePassword(password);
+    const isMatch = yield user.comparePassword(password);
 
     assert(isMatch, true);
 }

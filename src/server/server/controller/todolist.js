@@ -17,17 +17,15 @@ export class TodoListController {
      * Gets a single todolist
      */
     * getTodolist(id, next, context) {
-        let user = context.req.user,
-            todolist,
+        const user = context.req.user,
             isAdmin = user.isAdmin(),
-            resultdata,
             todolistVisibleFields = TodoList.getVisibleFields(isAdmin),
             result = {
                 error: null,
                 success: false,
                 data: []
             };
-
+        let todolist = null;
         context.body = result;
 
         if (id === 'default') {
@@ -65,7 +63,7 @@ export class TodoListController {
         // included. Because its not a normal attribute of the TodoList model.
         // ==========================================================================
         todolistVisibleFields.push('Todos');
-        resultdata = _.pick(todolist.get({plain: true}), todolistVisibleFields);
+        const resultdata = _.pick(todolist.get({plain: true}), todolistVisibleFields);
 
         result.success = true;
         result.data.push(resultdata);
@@ -84,20 +82,20 @@ export class TodoListController {
      * ```
      */
     * listTodolist(next, context) {
-        let input = context.request.body || {},
+        const input = context.request.body || {},
             limit = input.limit || 100,
             offset = input.offset || 0,
             user = context.req.user,
-            todolistresult,
             isAdmin = user.isAdmin(),
-            include = [],
-            id = user.id,
             result = {
                 count: 0,
                 error: null,
                 success: false,
                 data: []
             };
+
+        let include = [],
+            id = user.id;
 
         context.body = result;
 
@@ -111,7 +109,7 @@ export class TodoListController {
         if (input.includetodos === true) {
             include = [{model: Todo, attributes: Todo.getVisibleFields(isAdmin)}];
         }
-        todolistresult = yield TodoList.findAndCountAll({
+        const todolistresult = yield TodoList.findAndCountAll({
             where: {
                 UserId: id
             },

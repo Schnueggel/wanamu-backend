@@ -1,6 +1,6 @@
 'use strict';
 
-let passport = require('koa-passport'),
+const passport = require('koa-passport'),
     LocalStrategy = require('passport-local').Strategy,
     bcrypt = require('../config/bcrypt.js'),
     User = require('../model/user.js'),

@@ -1,9 +1,9 @@
 'use strict';
 
-let TodoList = require('../model/todolist'),
-    Todo = require('../model/todo'),
-    ErrorUtil = require('../util/error'),
-    _ = require('lodash');
+import TodoList from '../model/todolist';
+import Todo from '../model/todo';
+import ErrorUtil from '../util/error';
+import _ from 'lodash';
 
 export class TodoController {
 
@@ -11,7 +11,7 @@ export class TodoController {
      * Create Action
      */
      *create(next, context) {
-        let input = context.request.body || {},
+        const input = context.request.body || {},
             result = {
                 data: [],
                 success: false,
@@ -19,22 +19,18 @@ export class TodoController {
             },
             user = context.req.user,
             isAdmin = user.isAdmin(),
-            options = {},
-            data = input.data || {},
-            todolistid = data.TodoListId || '',
-            resultdata,
-            queryOptions = {where: {id: todolistid}},
-            todo;
+            todolistid = _.get(input, 'data.TodoListId',''),
+            queryOptions = {where: {id: todolistid}};
 
         // ==========================================================================
         // Filter data
         // TODO check how the Model react to different case of fieldnames
         // ==========================================================================
-        data = _.pick(data, Todo.getCreateFields(isAdmin));
+        const data = _.pick(input.data || {}, Todo.getCreateFields(isAdmin));
 
         context.body = result;
 
-        if (!_.isNumber(todolistid)) {
+        if (_.isNumber(todolistid) === false) {
             context.status = 422;
             console.error('Todolist id is not a number: ' + todolistid);
             result.error = new ErrorUtil.TodoListNotFound();
@@ -60,10 +56,9 @@ export class TodoController {
         }
 
         try {
-            options = {fields: Todo.getUpdateFields(isAdmin)};
+            const options = {fields: Todo.getUpdateFields(isAdmin)};
 
-            todo = yield Todo.create(data, options);
-
+            let todo = yield Todo.create(data, options);
             todo = yield todo.reload();
             result.success = true;
 
@@ -71,7 +66,7 @@ export class TodoController {
             // Filter the resulting data
             // Only visible fields will be sent to the user
             // ==========================================================================
-            resultdata = _.pick(todo.get({plain: true}), Todo.getVisibleFields(isAdmin));
+            const resultdata = _.pick(todo.get({plain: true}), Todo.getVisibleFields(isAdmin));
             result.data.push(resultdata);
         } catch (err) {
             console.error(err);
@@ -99,9 +94,6 @@ export class TodoController {
             user = context.req.user,
             isAdmin = user.isAdmin(),
             todolist,
-            options,
-            resultdata,
-            data = input.data || {},
             todo;
 
         context.body = result;
@@ -119,7 +111,7 @@ export class TodoController {
         // ==========================================================================
         // Filter input data
         // ==========================================================================
-        data = _.pick(data, Todo.getUpdateFields(isAdmin));
+        const data = _.pick(input.data || {}, Todo.getUpdateFields(isAdmin));
 
         try {
             // ==========================================================================
@@ -140,7 +132,7 @@ export class TodoController {
             // ==========================================================================
             // Set the Query options
             // ==========================================================================
-            options = {fields: Todo.getUpdateFields(isAdmin)};
+            const options = {fields: Todo.getUpdateFields(isAdmin)};
 
             yield todo.updateAttributes(data, options);
             // ==========================================================================
@@ -151,7 +143,7 @@ export class TodoController {
             // Filter the resulting data
             // Only visible fields will be sent to the user
             // ==========================================================================
-            resultdata = _.pick(todo.get({plain: true}), Todo.getVisibleFields(isAdmin));
+            const resultdata = _.pick(todo.get({plain: true}), Todo.getVisibleFields(isAdmin));
 
             result.success = true;
 
@@ -174,22 +166,20 @@ export class TodoController {
      * @param id
      */
     *deleteTodo(id, next, context) {
-        let result = {
+        const result = {
                 data: [],
                 success: false,
                 error: null
             },
             user = context.req.user,
-            isAdmin = user.isAdmin(),
-            todolist,
-            todo;
+            isAdmin = user.isAdmin();
 
         context.body = result;
 
         // ==========================================================================
         // Try to find the given todo
         // ==========================================================================
-        todo = yield Todo.findById(id);
+        let todo = yield Todo.findById(id);
 
         if (todo === null) {
             context.status = 404;
@@ -202,7 +192,7 @@ export class TodoController {
             // Try to find the TodoList of this Todo_ to get the user
             // TODO We mainly need the userid here perhaps we should store it in the TodoModel
             // ==========================================================================
-            todolist = yield TodoList.findById(todo.TodoListId);
+            let todolist = yield TodoList.findById(todo.TodoListId);
 
             // ==========================================================================
             // Check if user owns this todo

@@ -2,6 +2,7 @@ import { AuthController, UserController, RegistrationController, SettingControll
     TodoController, FriendsController, ProfileController, TodoListController } from '../controller/controller.js';
 
 import route from 'koa-route';
+import convert from 'koa-convert';
 
 /**
  * ######################################################################################
@@ -52,18 +53,18 @@ module.exports = function(app){
      * ######################################################################################
      */
 
-    app.use(route.post('/auth/login', function* (next){
+    app.use(convert(route.post('/auth/login', function* (next){
         yield authCtrl.login(next, this);
-    }));
-    app.use(route.post('/user', function *(next){
+    })));
+    app.use(convert(route.post('/user', function *(next){
         yield userCtrl.createUser(next, this);
-    }));
-    app.use(route.get('/confirmation/:hash', function *(hash, next) {
+    })));
+    app.use(convert(route.get('/confirmation/:hash', function *(hash, next) {
         yield registrationCtrl.confirmRegistration(hash, next, this);
-    }));
-    app.use(route.post('/confirmation', function *(next) {
+    })));
+    app.use(convert(route.post('/confirmation', function *(next) {
         yield registrationCtrl.resendConfirmation(next, this);
-    }));
+    })));
 
     /**
      * ######################################################################################
@@ -72,80 +73,80 @@ module.exports = function(app){
      * ######################################################################################
      * ######################################################################################
      */
-    app.use(auth);
+    app.use(convert(auth));
     // ==========================================================================
     // TODOS
     // ==========================================================================
-    app.use(route.post('/todo', function* (next) {
+    app.use(convert(route.post('/todo', function* (next) {
         yield todoCtrl.create(next, this);
-    }));
-    app.use(route.put('/todo/:id', function* (id, next) {
+    })));
+    app.use(convert(route.put('/todo/:id', function* (id, next) {
         yield todoCtrl.update(id, next, this);
-    }));
-    app.use(route.delete('/todo/:id',  function* (id, next) {
+    })));
+    app.use(convert(route.delete('/todo/:id',  function* (id, next) {
         yield todoCtrl.deleteTodo(id, next, this);
-    }));
+    })));
     // ==========================================================================
     // TODOLIST
     // ==========================================================================
-    app.use(route.get('/todolist/:id', function*(id, next){
+    app.use(convert(route.get('/todolist/:id', function*(id, next){
         yield todolistCtrl.getTodolist(id, next, this);
-    }));
-    app.use(route.get('/todolist', function*(next){
+    })));
+    app.use(convert(route.get('/todolist', function*(next){
         yield todolistCtrl.listTodolist(next, this);
-    }));
-    app.use(route.delete('/todolist/:id', function*(id, next){
+    })));
+    app.use(convert(route.delete('/todolist/:id', function*(id, next){
         yield todolistCtrl.deleteTodoList(id, next, this);
-    }));
+    })));
 
     // ==========================================================================
     // USER
     // ==========================================================================
-    app.use(route.put('/user/:id', function* (id, next) {
+    app.use(convert(route.put('/user/:id', function* (id, next) {
         yield userCtrl.updateUser(id, next, this);
-    }));
-    app.use(route.get('/user/:id', function* (id, next){
+    })));
+    app.use(convert(route.get('/user/:id', function* (id, next){
         yield userCtrl.getUser(id, next, this);
-    }));
+    })));
     // ==========================================================================
     // AUTH
     // ==========================================================================
-    app.use(route.post('/auth/logout', function* (next) {
+    app.use(convert(route.post('/auth/logout', function* (next) {
         yield authCtrl.doLogout(next, this);
-    }));
+    })));
     // =============================================================================================
     // Profile
     // =============================================================================================
-    app.use(route.put('/profile/:id', function*(id, next){
+    app.use(convert(route.put('/profile/:id', function*(id, next){
         yield profileCtrl.updateProfile(id, next, this);
-    }));
-    app.use(route.get('/profile/:id', function*(id, next){
+    })));
+    app.use(convert(route.get('/profile/:id', function*(id, next){
         yield profileCtrl.getProfile(id, next, this);
-    }));
+    })));
     // =============================================================================================
     // Settings
     // =============================================================================================
-    app.use(route.put('/setting/:id', function*(id, next){
+    app.use(convert(route.put('/setting/:id', function*(id, next){
         yield settingCtrl.updateSetting(id, next, this);
-    }));
-    app.use(route.get('/setting/:id', function*(id, next){
+    })));
+    app.use(convert(route.get('/setting/:id', function*(id, next){
         yield settingCtrl.getSetting(id, next, this);
-    }));
+    })));
     // =============================================================================================
     // Friends
     // =============================================================================================
-    app.use(route.get('/friend', function* (next){
+    app.use(convert(route.get('/friend', function* (next){
         yield friendsCtrl.getList(next, this);
-    }));
-    app.use(route.post('/friend', function* (next){
+    })));
+    app.use(convert(route.post('/friend', function* (next){
         yield friendsCtrl.addFriend(next, this);
-    }));
-    app.use(route.delete('/friend/:id', function* (id, next){
+    })));
+    app.use(convert(route.delete('/friend/:id', function* (id, next){
         yield friendsCtrl.remove(id, next, this);
-    }));
-    app.use(route.get('/acceptfriend/:token', function* (token, next){
+    })));
+    app.use(convert(route.get('/acceptfriend/:token', function* (token, next){
         yield friendsCtrl.accept(token, next, this);
-    }));
+    })));
 };
 
 

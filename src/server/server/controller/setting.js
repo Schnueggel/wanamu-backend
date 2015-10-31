@@ -1,8 +1,8 @@
 'use strict';
 
-let Setting = require('../model/setting'),
-    ErrorUtil = require('../util/error'),
-    _ = require('lodash');
+import Setting from '../model/setting';
+import ErrorUtil from '../util/error';
+import _ from 'lodash';
 
 export class SettingController {
 
@@ -14,9 +14,8 @@ export class SettingController {
      * ######################################################################################
      */
     *getSetting(id, next, context) {
-        let user = context.req.user,
+        const user = context.req.user,
             isAdmin = user.isAdmin(),
-            data,
             result = {
                 error: null,
                 success: false,
@@ -40,7 +39,7 @@ export class SettingController {
 
         result.success = true;
 
-        data = _.pick(setting.get({plain: true}), Setting.getVisibleFields(isAdmin));
+        const data = _.pick(setting.get({plain: true}), Setting.getVisibleFields(isAdmin));
 
         result.data.push(data);
     }
@@ -55,11 +54,10 @@ export class SettingController {
      * ######################################################################################
      */
     *updateSetting(id, next, context) {
-        let user = context.req.user,
+        const user = context.req.user,
             isAdmin = user.isAdmin(),
             input = context.request.body || {},
             data = input.data || {},
-            resultdata,
             result = {
                 error: null,
                 success: false,
@@ -85,12 +83,12 @@ export class SettingController {
             return;
         }
 
-        let options = Setting.getUpdateFields(isAdmin);
+        const options = Setting.getUpdateFields(isAdmin);
         yield setting.updateAttributes(data, options);
 
         setting = yield setting.reload();
 
-        resultdata = _.pick(setting.get({plain: true}), Setting.getVisibleFields(isAdmin));
+        const resultdata = _.pick(setting.get({plain: true}), Setting.getVisibleFields(isAdmin));
 
         result.success = true;
         result.data.push(resultdata);

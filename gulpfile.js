@@ -4,10 +4,6 @@
  * dist folder.
  * The dist folder contains the finished app
  */
-// ==========================================================================
-// Start node with harmony flag
-// ==========================================================================
-require('harmonize')();
 
 /**
  * ######################################################################################
@@ -16,7 +12,7 @@ require('harmonize')();
  * ######################################################################################
  * ######################################################################################
  */
-var gulp = require('gulp'),
+const gulp = require('gulp'),
     gutil = require('gulp-util'),
     jshint = require('gulp-jshint'),
     replace = require('gulp-replace'),
@@ -26,6 +22,7 @@ var gulp = require('gulp'),
     server = require('gulp-develop-server'),
     mocha = require('gulp-mocha'),
     jscs = require('gulp-jscs'),
+    polyfill = require('babel-polyfill'),
     babel = require('gulp-babel'),
     fs = require('fs'),
     rename = require('gulp-rename'),
@@ -37,7 +34,7 @@ var gulp = require('gulp'),
  * ######################################################################################
  * ######################################################################################
  */
-var srcServerPath = path.join(__dirname, 'src/server'),
+const srcServerPath = path.join(__dirname, 'src/server'),
     distPath = path.join(__dirname, 'dist'),
     distServerPath = path.join(distPath, 'server'),
     distServerScript = path.join(distServerPath, 'server.js');
@@ -50,10 +47,18 @@ var srcServerPath = path.join(__dirname, 'src/server'),
  * ######################################################################################
  * ######################################################################################
  */
-var requireFolder = null;
-var babelOptions = {
-    blacklist:  [
-        'es6.constants', 'regenerator'
+let requireFolder = null;
+const babelOptions = {
+    plugins:  [
+        require("babel-plugin-transform-strict-mode"),
+        require("babel-plugin-transform-es2015-sticky-regex"),
+        require("babel-plugin-transform-es2015-unicode-regex"),
+        require("babel-plugin-transform-es2015-parameters"),
+        require("babel-plugin-transform-es2015-destructuring"),
+        require("babel-plugin-transform-es2015-typeof-symbol"),
+        require("babel-plugin-transform-es2015-modules-commonjs"),
+        require("babel-plugin-syntax-async-functions"),
+        require("babel-plugin-syntax-async-generators")
     ]
 };
 
@@ -214,6 +219,9 @@ gulp.task('test-mocha', ['prepare-mocha-tests'], function () {
     process.env.WU_ENV = 'test';
     return gulp.src('test/mocha/**/**.js')
         .pipe(mocha({
+            compilers: {
+                js: require('babel-core/register')(babelOptions)
+            },
             timeout: 5000
         }));
 });

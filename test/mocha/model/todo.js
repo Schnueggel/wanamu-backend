@@ -1,32 +1,24 @@
 'use strict';
-/**
- * Created by Christian on 5/6/2015.
- */
-var assert = require('assert'),
-    Todo = require('../../../dist/server/server/model/todo.js'),
-    User =  require('../../../dist/server/server/model/user.js'),
-    ErrorUtil = require('../../../dist/server/server/util/error.js'),
-    co = require('co');
 
+import assert from 'assert';
+import Todo from '../../../dist/server/server/model/todo.js';
+import User from '../../../dist/server/server/model/user.js';
+import ErrorUtil from '../../../dist/server/server/util/error.js';
+import co from 'co';
 
-describe('Test Todo Model', function () {
+describe('Test Todo Model', () => {
 
-    it('Should create Todo', function (done) {
+    it('Should create Todo', (done) => {
         assert.equal(typeof Todo, 'object');
         assert.equal(typeof User, 'object');
 
-        co(testCreateTodo).then(function(){
-            done();
-        }).catch(function(err){
-            console.error(err);
-            done(err);
-        });
+        co(testCreateTodo).then(done).catch(done);
     });
 });
 
 /**
  * Test TodoCreation
  */
-function* testCreateTodo(){
+function* testCreateTodo() {
 
 }

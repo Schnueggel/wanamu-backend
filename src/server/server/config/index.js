@@ -1,7 +1,7 @@
 'use strict';
 
-let nconf = require('nconf');
-let fs = require('fs'),
+const nconf = require('nconf'),
+    fs = require('fs'),
     _ = require('lodash');
 
 // ==========================================================================
@@ -27,7 +27,7 @@ export class Config {
         nconf.argv();
         nconf.env({
             separator: '__',
-            match: /WANAMU_.+/
+            match: /WU_.+/
         });
 
         // =============================================================================================
@@ -50,14 +50,12 @@ export class Config {
         // Test inherits from development
         // =============================================================================================
         if (this.isTest()) {
-            let path  = `${__dirname}/json/${DEVELOPMENT}.json`;
-            nconf.file('development', {file: path });
+            nconf.file('development', {file: `${__dirname}/json/${DEVELOPMENT}.json` });
         }
         // =============================================================================================
         // Load the environment specific config
         // =============================================================================================
-        let envConfigPath = `${__dirname}/json/${this.env.toLowerCase()}.json`;
-        nconf.file('envconfig', { file: envConfigPath });
+        nconf.file('envconfig', { file: `${__dirname}/json/${this.env.toLowerCase()}.json` });
 
         // =============================================================================================
         // If a local.json exist it will overwrite any config

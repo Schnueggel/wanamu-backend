@@ -1,45 +1,40 @@
-var request = require('../../../dist/server/server/config/mocha').request,
-    app = require('../../../dist/server/server.js'),
-    config = require('../../../dist/server/server/config'),
-    assert = require('assert'),
-    co = require('co'),
-    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
-    should = require('should'),
-    _ = require('lodash');
+import mocha from '../../../dist/server/server/config/mocha';
+import app from '../../../dist/server/server.js';
+import config from '../../../dist/server/server/config';
+import assert from 'assert';
+import co from 'co';
+import databasehelper from '../../../dist/server/server/setup/databasehelper';
+import should from 'should';
+import _ from 'lodash';
 
+describe('Test Setting Controller', () => {
 
-describe('Test Setting Controller', function () {
-
-    var setting;
+    let setting;
     // ==========================================================================
     // Before test we start the server
     // ==========================================================================
-    before(function (done) {
+    before((done) => {
 
         co(function*() {
             yield databasehelper.truncateDatabase();
             yield app.init();
-        }).then(function () {
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // After the test we end the server
     // ==========================================================================
-    after(function (done) {
+    after((done) => {
         app.server.close(done);
     });
 
     // ==========================================================================
     // First wie check login also to be authorized
     // ==========================================================================
-    it('Should login', function(done){
+    it('Should login', (done) => {
         co(function *() {
-            var user = yield databasehelper.createUser();
-            var res = yield request
+            const user = yield databasehelper.createUser();
+            const res = yield mocha.request
                 .post('/auth/login')
                 .type('form')
                 .send({
@@ -51,26 +46,22 @@ describe('Test Setting Controller', function () {
                 .expect(200)
                 .end();
 
-            res.body.success.should.be.true
+            res.body.success.should.be.true;
             assert(_.isPlainObject(res.body));
-            res.body.data.should.be.an.Array
+            res.body.data.should.be.an.Array;
             assert(_.isPlainObject(res.body.data[0].Setting));
-            assert( _.isNumber(res.body.data[0].Setting.id));
+            assert(_.isNumber(res.body.data[0].Setting.id));
 
             setting = res.body.data[0].Setting;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
 
-    it('Should get setting', function(done){
+    it('Should get setting', (done) => {
         assert(_.isPlainObject(setting));
 
         co(function *() {
-            var res = yield request
+            const res = yield mocha.request
                 .get('/setting/' + setting.id)
                 .type('json')
                 .set('Accept', 'application/json')
@@ -79,25 +70,21 @@ describe('Test Setting Controller', function () {
                 .end();
 
             res.body.should.be.an.Object;
-            res.body.success.should.be.true
-            res.body.data.should.be.an.Array
-           res.body.data.should.have.length(1)
+            res.body.success.should.be.true;
+            res.body.data.should.be.an.Array;
+            res.body.data.should.have.length(1);
             assert(_.isPlainObject(res.body.data[0]));
             should(res.body.data[0].color1).be.exactly(setting.color1);
             should(res.body.data[0].color2).be.exactly(setting.color2);
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // We create a todo_ in the default todolost
     // ==========================================================================
-    it('Should update', function(done){
+    it('Should update', (done) => {
         co(function *() {
-            var res = yield request
+            const res = yield mocha.request
                 .put('/setting/' + setting.id)
                 .type('json')
                 .send({
@@ -110,17 +97,13 @@ describe('Test Setting Controller', function () {
                 .expect(200)
                 .end();
 
-            res.body.should.be.an.Object
-            res.body.success.should.be.true
-            res.body.data.should.be.an.Array
-           res.body.data.should.have.length(1)
-            res.body.data.should.be.an.Object
+            res.body.should.be.an.Object;
+            res.body.success.should.be.true;
+            res.body.data.should.be.an.Array;
+            res.body.data.should.have.length(1);
+            res.body.data.should.be.an.Object;
             assert(res.body.data[0].color1, 'color1');
 
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 });

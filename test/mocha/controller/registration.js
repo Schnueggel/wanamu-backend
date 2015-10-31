@@ -1,20 +1,20 @@
 'use strict';
 
-var mochaconf = require('../../../dist/server/server/config/mocha'),
-    request = mochaconf.request,
-    app = require('../../../dist/server/server.js'),
-    config = require('../../../dist/server/server/config'),
-    Registration = require('../../../dist/server/server/model/registration'),
-    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
-    should = require('should'),
-    assert = require('assert'), co = require('co'),
-    _ = require('lodash');
+import mochaconf from '../../../dist/server/server/config/mocha';
+import app from '../../../dist/server/server.js';
+import config from '../../../dist/server/server/config';
+import Registration from '../../../dist/server/server/model/registration';
+import databasehelper from '../../../dist/server/server/setup/databasehelper';
+import should from 'should';
+import assert from 'assert';
+import co from 'co';
+import _ from 'lodash';
 
 describe('Test Registration Controller', function () {
 
-    var registeremail = 'dog@registertest.de';
-    var confirmationhash;
-    var userid;
+    let registeremail = 'dog@registertest.de',
+        confirmationhash,
+        userid;
     // ==========================================================================
     // Before test we start the server
     // ==========================================================================
@@ -23,11 +23,7 @@ describe('Test Registration Controller', function () {
         co(function*() {
             yield databasehelper.truncateDatabase();
             yield app.init();
-        }).then(function () {
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
@@ -43,7 +39,7 @@ describe('Test Registration Controller', function () {
     it('should Register', function(done){
 
         co(function *() {
-            var res = yield request
+            const res = yield mochaconf.request
                 .post('/user')
                 .type('json')
                 .send({
@@ -69,8 +65,7 @@ describe('Test Registration Controller', function () {
             res.body.data[0].should.be.an.Object;
 
             userid = res.body.data[0].id;
-        }).then(mochaconf.doneGood(done))
-            .catch(mochaconf.doneErr(done));
+        }).then(done).catch(done);
     });
 
 
@@ -78,18 +73,14 @@ describe('Test Registration Controller', function () {
         assert(_.isNumber(userid));
 
         co(function *() {
-            var registration = yield Registration.findOne({
+            const registration = yield Registration.findOne({
              where : {
                  UserId:userid
              }
             });
             assert(_.isObject(registration));
             confirmationhash = registration.confirmhash;
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
@@ -100,7 +91,7 @@ describe('Test Registration Controller', function () {
         assert(_.isString(confirmationhash));
 
         co(function *() {
-            var res = yield request
+            const res = yield mochaconf.request
                 .get('/confirmation/' + confirmationhash)
                 .type('json')
                 .set('Accept', 'application/json')
@@ -110,10 +101,6 @@ describe('Test Registration Controller', function () {
             res.body.should.be.an.Object;
             res.body.success.should.be.true;
 
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 });

@@ -1,13 +1,15 @@
 'use strict';
-let request = require('../../../dist/server/server/config/mocha').request,
-    app = require('../../../dist/server/server.js'),
-    config = require('../../../dist/server/server/config'),
-    assert = require('assert'), co = require('co'),
-    databasehelper = require('../../../dist/server/server/setup/databasehelper'),
-    should = require('should'),
-    _ = require('lodash');
 
-describe('Test Auth Controller', function () {
+import mocha from '../../../dist/server/server/config/mocha';
+import app from '../../../dist/server/server.js';
+import config from '../../../dist/server/server/config';
+import assert from 'assert';
+import co from 'co';
+import databasehelper from '../../../dist/server/server/setup/databasehelper';
+import should from 'should';
+import _ from 'lodash';
+
+describe('Test Auth Controller', () => {
 
     // ==========================================================================
     // Before test we start the server
@@ -17,25 +19,20 @@ describe('Test Auth Controller', function () {
         co(function*() {
             yield databasehelper.truncateDatabase();
             yield app.init();
-        }).then(function () {
-            console.log('hui');
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
     // ==========================================================================
     // After each test we end the server
     // ==========================================================================
-    after(function (done) {
+    after((done) => {
         app.server.close(done);
     });
 
-    it('Should login', function(done){
+    it('Should login', (done) =>{
         co(function *() {
-            var user = yield databasehelper.createUser();
-            var res = yield request
+            const user = yield databasehelper.createUser();
+            const res = yield mocha.request
                 .post('/auth/login')
                 .type('form')
                 .send({
@@ -49,32 +46,24 @@ describe('Test Auth Controller', function () {
 
             res.body.success.should.be.true;
 
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
-    it('Should not logout. Wrong method', function(done){
+    it('Should not logout. Wrong method',(done) =>{
         co(function *() {
-            var res = yield request
+            const res = yield mocha.request
                 .get('/auth/logout')
                 .type('json')
                 .set('Accept', 'application/json')
                 .expect(404)
                 .end();
 
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
-    it('Should logout', function(done){
+    it('Should logout', (done) =>{
 
         co(function *() {
-            var res = yield request
+            const res = yield mocha.request
                 .post('/auth/logout')
                 .type('json')
                 .set('Accept', 'application/json')
@@ -85,17 +74,13 @@ describe('Test Auth Controller', function () {
             res.body.should.be.an.Object;
             res.body.success.should.be.true;
 
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
-    it('Should not logout', function (done) {
+    it('Should not logout',(done) => {
 
         co(function*(){
-            var res = yield request
+            var res = yield mocha.request
                  .post('/auth/logout')
                  .type('json')
                  .set('Accept', 'application/json')
@@ -105,17 +90,13 @@ describe('Test Auth Controller', function () {
 
             res.body.should.be.an.Object;
             res.body.success.should.be.true;
-        }).then(function () {
-            done();
-        }).catch(function (err) {
-           done(err);
-        });
+        }).then(done).catch(done);
     });
 
-    it('Should login', function(done){
+    it('Should login',(done) =>{
         co(function *() {
-            var user = yield databasehelper.createUser();
-            var res = yield request
+            const user = yield databasehelper.createUser();
+            const res = yield mocha.request
                 .post('/auth/login')
                 .type('form')
                 .send({
@@ -129,17 +110,13 @@ describe('Test Auth Controller', function () {
 
             res.body.success.should.be.true;
 
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch(done);
     });
 
-    it('Should logout', function(done){
+    it('Should logout',(done) => {
 
         co(function *() {
-            var res = yield request
+            const res = yield mocha.request
                 .post('/auth/logout')
                 .type('json')
                 .set('Accept', 'application/json')
@@ -150,11 +127,7 @@ describe('Test Auth Controller', function () {
             res.body.should.be.an.Object;
             res.body.success.should.be.true;
 
-        }).then(function(){
-            done();
-        }).catch(function(err){
-            done(err);
-        });
+        }).then(done).catch( done);
     });
 });
 
