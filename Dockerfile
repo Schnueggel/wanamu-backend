@@ -1,5 +1,5 @@
 #@IgnoreInspection BashAddShebang
-FROM node:0.12.7-wheezy
+FROM node:4.2.1-wheezy
 
 RUN mkdir -p /usr/src/app
 
