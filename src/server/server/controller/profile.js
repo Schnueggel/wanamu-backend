@@ -1,7 +1,7 @@
 'use strict';
 
 import Profile from '../model/profile';
-import ErrorUtil from '../util/error';
+import {ProfileNotFound, AccessViolation} from '../util/error';
 import _ from 'lodash';
 
 /**
@@ -30,12 +30,12 @@ export class ProfileController {
 
         if (!profile) {
             context.status = 404;
-            result.error = new ErrorUtil.ProfileNotFound();
+            result.error = new ProfileNotFound();
             return;
         }
         if (isAdmin === false && context.req.user.id !== profile.UserId) {
             context.status = 403;
-            result.error = new ErrorUtil.AccessViolation();
+            result.error = new AccessViolation();
             return;
         }
 
@@ -70,7 +70,7 @@ export class ProfileController {
 
         if (!profile) {
             context.status = 404;
-            result.error = new ErrorUtil.ProfileNotFound();
+            result.error = new ProfileNotFound();
             return;
         }
 
@@ -79,7 +79,7 @@ export class ProfileController {
         // ==========================================================================
         if (!isAdmin && profile.UserId !== user.id) {
             context.status = 403;
-            result.error = new ErrorUtil.AccessViolation();
+            result.error = new AccessViolation();
             return;
         }
 

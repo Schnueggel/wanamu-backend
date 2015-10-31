@@ -1,12 +1,12 @@
-let sequelize = require('../config/sequelize'),
-    Todo = require('./todo'),
-    _ = require('lodash');
+import sequelize from '../config/sequelize';
+import Todo from './todo';
+import _ from 'lodash';
 
 /**
  * TodoList Model
  * @type {Model}
  */
-let TodoList = sequelize.define('TodoList', {
+const TodoList = sequelize.define('TodoList', {
     /**
      * ######################################################################################
      * ######################################################################################

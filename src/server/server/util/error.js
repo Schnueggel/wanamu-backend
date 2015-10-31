@@ -1,197 +1,165 @@
-let util = require('util');
-
 /**
  * Base Error
  * @constructor
  */
-let WanamuError = function(message) {
-    Error.call(this);
-    Error.captureStackTrace(this, this.constructor);
-    this.message = message;
-};
-
-util.inherits(WanamuError, Error);
-
-module.exports = {
-    WanamuError : WanamuError,
-    TodoNotFound: TodoNotFound,
-    AccessViolation: AccessViolation,
-    UserPasswordNotCreated : UserPasswordNotCreated,
-    UserAlreadyExists : UserAlreadyExists,
-    ModelValidationError : ModelValidationError,
-    ModelValidationFieldError : ModelValidationFieldError,
-    TodoListNotFound : TodoListNotFound,
-    TodoAlreadyExists : TodoAlreadyExists,
-    UserNotFound : UserNotFound,
-    ProfileNotFound : ProfileNotFound,
-    TodoListDefaultNoDelete : TodoListDefaultNoDelete,
-    NotFound : NotFound,
-    NotIdentified : NotIdentified,
-    NotConfirmed : NotConfirmed,
-    AlreadyReported : AlreadyReported,
-    ServerError : ServerError
-};
+export class WanamuError extends Error {
+    /**
+     *
+     * @param {String} message
+     */
+    constructor(message) {
+        super(message);
+        this.name = this.constructor.name;
+        this.message = message;
+        //Show the name of the parent class in the stack trace
+        Error.captureStackTrace(this, this.constructor.name)
+    }
+}
 
 /**
  *
  * @param {String} [message]
  * @constructor
  */
-function NotConfirmed (message) {
-    this.name = 'NotConfirmed';
-    this.message = message;
+export class NotConfirmed extends WanamuError {
 }
-util.inherits(NotConfirmed, WanamuError);
 
 /**
  *
  * @param {String} [message]
  * @constructor
  */
-function AlreadyReported (message) {
-    this.name = 'AlreadyReported';
-    this.message = message;
+export class AlreadyReported extends WanamuError {
 }
-util.inherits(AlreadyReported, WanamuError);
 
 /**
  *
  * @param {String} [message]
  * @constructor
  */
-function NotIdentified (message) {
-    this.name = 'NotIdentified';
-    this.message = message;
+export class NotIdentified extends WanamuError {
 }
-
-util.inherits(NotIdentified, WanamuError);
 
 /**
  *
  * @param {String} [message]
  * @constructor
  */
-function ServerError (message) {
-    this.name = 'ServerError';
-    this.message = message ||  'ServerError';
+export class ServerError extends WanamuError {
+    constructor(message = 'ServerError.') {
+        super(message);
+    }
 }
-
-util.inherits(ServerError, WanamuError);
-
 
 /**
  *
  * @param {String} [message]
  * @constructor
  */
-function NotFound (message) {
-    this.name = 'NotFound';
-    this.message = message ||  'The request data could not be found';
+export class NotFound extends WanamuError {
+    constructor(message = 'The request data could not be found.') {
+        super(message);
+    }
 }
-
-util.inherits(NotFound, WanamuError);
-/**
- *
- * @param {String} [message]
- * @constructor
- */
-function ProfileNotFound (message) {
-    this.name = 'ProfileNotFound';
-    this.message = message ||  'The request Profile could not be found';
-}
-util.inherits(ProfileNotFound, WanamuError);
 
 /**
  *
  * @param {String} [message]
  * @constructor
  */
-function TodoAlreadyExists (message) {
-    this.name = 'TodoAlreadyExists';
-    this.message = message ||  'Todo with the same title already exists';
+export class ProfileNotFound extends WanamuError {
+    constructor(message = 'The request Profile could not be found.') {
+        super(message);
+    }
 }
-
-util.inherits(TodoAlreadyExists, WanamuError);
 
 /**
  *
  * @param {String} [message]
  * @constructor
  */
-function TodoListDefaultNoDelete (message) {
-    this.name = 'TodoListDefaultNoDelete';
-    this.message = message ||  'Default TodoList cannot be deleted';
+export class TodoAlreadyExists extends WanamuError {
+    constructor(message = 'Todo with the same title already exists.') {
+        super(message);
+    }
 }
-
-util.inherits(TodoListDefaultNoDelete, WanamuError);
 
 /**
  *
  * @param {String} [message]
  * @constructor
  */
-function TodoListNotFound (message) {
-    this.name = 'TodoListNotFound';
-    this.message = message ||  'No valid todolist could be found.';
+export class TodoListDefaultNoDelete extends WanamuError {
+    constructor(message = 'Default TodoList cannot be deleted.') {
+        super(message);
+    }
 }
-util.inherits(TodoListNotFound, WanamuError);
 
 /**
  *
  * @param {String} [message]
  * @constructor
  */
-function TodoNotFound (message) {
-    this.name = 'TodoNotFound';
-    this.message = message ||  'No valid todo could be found.';
+export class TodoListNotFound extends WanamuError {
+    constructor(message = 'No valid todolist could be found.') {
+        super(message);
+    }
 }
-
-util.inherits(TodoNotFound, WanamuError);
-/**
- *
- * @param {String} [message]
- * @constructor
- */
-function AccessViolation (message) {
-    this.name = 'AccessViolation';
-    this.message = message ||  'Not enough permission';
-}
-
-util.inherits(AccessViolation, WanamuError);
-/**
- *
- * @param {String} [message]
- * @constructor
- */
-function UserNotFound (message) {
-    this.name = 'UserNotFound';
-    this.message = message ||  'No valid user could be found.';
-}
-util.inherits(UserNotFound, WanamuError);
 
 /**
  *
  * @param {String} [message]
  * @constructor
  */
-function UserPasswordNotCreated (message) {
-    this.name = 'UserPasswordNotCreated';
-    this.message = message ||  'Unable to create user password.';
+export class TodoNotFound extends WanamuError {
+    constructor(message = 'No valid todo could be found.') {
+        super(message);
+    }
 }
-
-util.inherits(UserPasswordNotCreated, WanamuError);
 
 /**
  *
  * @param {String} [message]
  * @constructor
  */
-function UserAlreadyExists (message) {
-    this.name = 'UserAlreadyExists';
-    this.message = message || 'User already exists.';
+export class AccessViolation extends WanamuError {
+    constructor(message = 'Not enough permission') {
+        super(message);
+    }
 }
 
-util.inherits(UserAlreadyExists, WanamuError);
+/**
+ *
+ * @param {String} [message]
+ * @constructor
+ */
+export class UserNotFound extends WanamuError {
+    constructor(message = 'No valid user could be found.') {
+        super(message);
+    }
+}
+
+/**
+ *
+ * @param {String} [message]
+ * @constructor
+ */
+export class UserPasswordNotCreated extends WanamuError {
+    constructor(message = 'Unable to create user password.') {
+        super(message);
+    }
+}
+
+/**
+ *
+ * @param {String} [message]
+ * @constructor
+ */
+export class UserAlreadyExists extends WanamuError {
+    constructor(message = 'User already exists.') {
+        super(message);
+    }
+}
 
 /**
  * Error on Model Validation
@@ -200,14 +168,13 @@ util.inherits(UserAlreadyExists, WanamuError);
  * @param {String} [model]
  * @constructor
  */
-function ModelValidationError (message, errors, model) {
-    this.name = 'ModelValidationError';
-    this.message = message || 'Data validation error';
-    this.errors = errors || [];
-    this.model = model;
+export class ModelValidationError extends WanamuError {
+    constructor(message, errors, model) {
+        super(message);
+        this.errors = errors || [];
+        this.model = model;
+    }
 }
-
-util.inherits(ModelValidationError, WanamuError);
 
 /**
  *
@@ -215,10 +182,9 @@ util.inherits(ModelValidationError, WanamuError);
  * @param {String} message
  * @constructor
  */
-function ModelValidationFieldError (field, message) {
-    this.name = 'ModelValidationFieldError';
-    this.message = message;
-    this.field = field;
+export class ModelValidationFieldError extends WanamuError {
+    constructor(field, message) {
+        super(message);
+        this.field = field;
+    }
 }
-
-util.inherits(ModelValidationFieldError, WanamuError);

@@ -1,14 +1,14 @@
-let sequelize = require('../config/sequelize'),
-    crypto = require('crypto'),
-    errors = require('../util/error'),
-    co = require('co'),
-    _ = require('lodash');
+import sequelize from '../config/sequelize';
+import crypto from 'crypto';
+import errors from '../util/error';
+import co from 'co';
+import _ from 'lodash';
 
 /**
  * Registration
- * @type {*|{}|Model}
+ * @type {Model}
  */
-let Registration = sequelize.define('Registration', {
+const Registration = sequelize.define('Registration', {
     /**
      * ######################################################################################
      * ######################################################################################

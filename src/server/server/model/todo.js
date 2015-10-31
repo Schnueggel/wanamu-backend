@@ -1,11 +1,11 @@
-let sequelize = require('../config/sequelize'),
-    _ = require('lodash');
+import sequelize from '../config/sequelize';
+import _ from 'lodash';
 
 /**
  * TodoModel
- * @type {*|{}|Model}
+ * @type {Model}
  */
-let Todo = sequelize.define('Todo', {
+const Todo = sequelize.define('Todo', {
     /**
      * ######################################################################################
      * ######################################################################################

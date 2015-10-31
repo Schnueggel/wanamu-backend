@@ -1,7 +1,7 @@
 'use strict';
 
 import Setting from '../model/setting';
-import ErrorUtil from '../util/error';
+import {AccessViolation,NotFound } from '../util/error';
 import _ from 'lodash';
 
 export class SettingController {
@@ -28,12 +28,12 @@ export class SettingController {
 
         if (setting === null) {
             context.status = 404;
-            result.error = new ErrorUtil.NotFound();
+            result.error = new NotFound();
             return;
         }
         if (isAdmin === false && context.req.user.id !== setting.UserId) {
             context.status = 403;
-            result.error = new ErrorUtil.AccessViolation();
+            result.error = new AccessViolation();
             return;
         }
 
@@ -70,7 +70,7 @@ export class SettingController {
 
         if (setting === null) {
             context.status = 404;
-            result.error = new ErrorUtil.NotFound();
+            result.error = new NotFound();
             return;
         }
 
@@ -79,7 +79,7 @@ export class SettingController {
         // ==========================================================================
         if (isAdmin === false && setting.UserId !== user.id) {
             context.status = 403;
-            result.error = new ErrorUtil.AccessViolation();
+            result.error = new AccessViolation();
             return;
         }
 

@@ -2,7 +2,7 @@
 
 import TodoList from '../model/todolist';
 import Todo from '../model/todo';
-import ErrorUtil from '../util/error';
+import {TodoListNotFound, TodoNotFound, AccessViolation} from '../util/error';
 import _ from 'lodash';
 
 export class TodoController {
@@ -33,7 +33,7 @@ export class TodoController {
         if (_.isNumber(todolistid) === false) {
             context.status = 422;
             console.error('Todolist id is not a number: ' + todolistid);
-            result.error = new ErrorUtil.TodoListNotFound();
+            result.error = new TodoListNotFound();
             return;
         }
 
@@ -51,7 +51,7 @@ export class TodoController {
 
         if (todolist === null) {
             context.status = 404;
-            result.error = new ErrorUtil.TodoListNotFound();
+            result.error = new TodoListNotFound();
             return;
         }
 
@@ -104,7 +104,7 @@ export class TodoController {
 
         if (todo === null) {
             context.status = 404;
-            result.error = new ErrorUtil.TodoNotFound();
+            result.error = new TodoNotFound();
             return;
         }
 
@@ -125,7 +125,7 @@ export class TodoController {
             // ==========================================================================
             if (user.isAdmin() === false && (!user.id || todolist.UserId !== user.id)) {
                 context.status = 403;
-                result.error = new ErrorUtil.AccessViolation();
+                result.error = new AccessViolation();
                 return;
             }
 
@@ -183,7 +183,7 @@ export class TodoController {
 
         if (todo === null) {
             context.status = 404;
-            result.error = new ErrorUtil.TodoNotFound();
+            result.error = new TodoNotFound();
             return;
         }
 
@@ -199,7 +199,7 @@ export class TodoController {
             // ==========================================================================
             if (user.isAdmin() === false && todolist.UserId !== user.id) {
                 context.status = 403;
-                result.error = new ErrorUtil.AccessViolation();
+                result.error = new AccessViolation();
                 return;
             }
 

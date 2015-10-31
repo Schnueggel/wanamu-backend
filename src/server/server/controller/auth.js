@@ -1,7 +1,7 @@
 'use strict';
 
-const passport = require('../config/passport.js'),
-    ErrorUtil = require('../util/error');
+import passport from '../config/passport.js';
+import {NotConfirmed} from '../util/error';
 
 export class AuthController {
 
@@ -14,7 +14,7 @@ export class AuthController {
      * @param {Object} context Koa Request Context
      */
     *authenticateLocal(err, user, context) {
-        if (err instanceof ErrorUtil.NotConfirmed) {
+        if (err instanceof NotConfirmed) {
             context.status = 424;
             context.body = {
                 success: false

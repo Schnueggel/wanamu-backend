@@ -1,11 +1,11 @@
-let sequelize = require('../config/sequelize'),
-    _ = require('lodash');
+import sequelize from '../config/sequelize';
+import _ from 'lodash';
 
 /**
  * SettingModel
- * @type {*|{}|Model}
+ * @type {Model}
  */
-let Setting = sequelize.define('Setting', {
+const Setting = sequelize.define('Setting', {
     /**
      * ######################################################################################
      * ######################################################################################

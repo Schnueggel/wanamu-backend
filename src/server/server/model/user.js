@@ -1,13 +1,13 @@
-let sequelize = require('../config/sequelize'),
-    ErrorUtil = require('../util/error'),
-    TodoList = require('./todolist'),
-    co = require('co'),
-    _ = require('lodash'),
-    bcrypt = require('../config/bcrypt'),
-    Profile = require('./profile'),
-    Registration = require('./registration'),
-    Friends = require('./friends'),
-    Setting = require('./setting');
+import sequelize from '../config/sequelize';
+import ErrorUtil from '../util/error';
+import TodoList from './todolist';
+import co from 'co';
+import _ from 'lodash';
+import bcrypt from '../config/bcrypt';
+import Profile from './profile';
+import Registration from './registration';
+import Friends from './friends';
+import Setting from './setting';
 
 /**
  * User Model
@@ -15,7 +15,7 @@ let sequelize = require('../config/sequelize'),
  * @namespace model
  * @type {Model}
  */
-let User = sequelize.define('User', {
+const User = sequelize.define('User', {
     id : {
         type: sequelize.Sequelize.INTEGER,
         primaryKey: true,

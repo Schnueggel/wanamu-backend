@@ -5,7 +5,7 @@ import Registration from '../model/registration';
 import Profile from '../model/profile';
 import bcrypt from '../config/bcrypt';
 import util from '../util/util';
-import ErrorUtil from '../util/error';
+import {NotFound, AlreadyReported, NotIdentified} from '../util/error';
 import mailService from '../services/mail.js';
 
 export class RegistrationController {
@@ -43,7 +43,7 @@ export class RegistrationController {
 
         if (!user) {
             context.status = 404;
-            result.error = new ErrorUtil.NotFound();
+            result.error = new NotFound();
             return;
         }
 
@@ -99,13 +99,13 @@ export class RegistrationController {
 
         if (!user) {
             context.status = 404;
-            result.error = new ErrorUtil.NotFound();
+            result.error = new NotFound();
             return;
         }
 
         if (user.confirmed) {
             context.status = 208;
-            result.error = new ErrorUtil.AlreadyReported();
+            result.error = new AlreadyReported();
             return;
         }
         // =============================================================================================
@@ -114,7 +114,7 @@ export class RegistrationController {
         const isMatch = yield bcrypt.compare(data.password, user.password);
         if (isMatch === false && isAdmin === false) {
             context.status = 412;
-            result.error = new ErrorUtil.NotIdentified('Please check your credentials');
+            result.error = new NotIdentified('Please check your credentials');
             return;
         }
 

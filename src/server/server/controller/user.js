@@ -1,15 +1,13 @@
 'use strict';
 
-let TodoList = require('../model/todolist'),
-    User = require('../model/user'),
-    Todo = require('../model/todo'),
-    Setting = require('../model/setting'),
-    Profile = require('../model/profile'),
-    Registration = require('../model/registration'),
-
-    ErrorUtil = require('../util/error'),
-    _ = require('lodash');
-
+import TodoList from '../model/todolist';
+import User from '../model/user';
+import Todo from '../model/todo';
+import Setting from '../model/setting';
+import Profile from '../model/profile';
+import Registration from '../model/registration';
+import {UserNotFound, AccessViolation} from '../util/error';
+import _ from 'lodash';
 import mailService from '../services/mail.js';
 
 export class UserController {
@@ -21,16 +19,13 @@ export class UserController {
      * @param {Object} context koa context
      */
     *createUser(next, context) {
-        let input = context.request.body || {},
+        const input = context.request.body || {},
             result = {
                 data: [],
                 success: false,
                 error: null
             },
-            user,
-            todolist,
             isAdmin = false,
-            resultdata,
             data = input.data || {};
 
         context.body = result;
@@ -40,7 +35,7 @@ export class UserController {
         // ==========================================================================
         if (context.isAuthenticated() && !context.req.user.isAdmin()) {
             context.status = 403;
-            result.error = new ErrorUtil.AccessViolation('Please logout before creating a new User');
+            result.error = new AccessViolation('Please logout before creating a new User');
             return;
         }
         // ==========================================================================
@@ -61,13 +56,13 @@ export class UserController {
         let transaction = yield User.sequelize.transaction({isolationLevel: 'READ COMMITTED'});
 
         try {
-            user = yield User.create(userdata, {transaction: transaction});
+            let user = yield User.create(userdata, {transaction: transaction});
 
             // ==========================================================================
             // Creating the default todolist.
             // Every User has one.
             // ==========================================================================
-            todolist = yield TodoList.create({
+            let todolist = yield TodoList.create({
                 UserId: user.id,
                 name: 'default'
             }, {transaction: transaction});
@@ -111,7 +106,7 @@ export class UserController {
             // Filter the resulting data
             // Only visible fields will be sent to the user
             // ==========================================================================
-            resultdata = user.getVisibleData();
+            const resultdata = user.getVisibleData();
 
             result.data.push(resultdata);
 
@@ -164,7 +159,7 @@ export class UserController {
 
         if (user === null) {
             context.status = 404;
-            result.error = new ErrorUtil.UserNotFound();
+            result.error = new UserNotFound();
             return;
         }
 
@@ -173,7 +168,7 @@ export class UserController {
         // ==========================================================================
         if (!isAdmin && context.req.user.id !== user.id) {
             context.status = 403;
-            result.error = new ErrorUtil.AccessViolation();
+            result.error = new AccessViolation();
             return;
         }
 
@@ -246,7 +241,7 @@ export class UserController {
 
         if (!isAdmin && context.req.user.id !== id) {
             context.status = 403;
-            result.error = new ErrorUtil.AccessViolation();
+            result.error = new AccessViolation();
             return;
         }
 
@@ -272,7 +267,7 @@ export class UserController {
 
         if (!user) {
             context.status = 404;
-            result.error = new ErrorUtil.UserNotFound();
+            result.error = new UserNotFound();
             return;
         }
         result.success = true;

@@ -1,7 +1,7 @@
 'use strict';
 
 import TodoList from '../model/todolist';
-import ErrorUtil from '../util/error';
+import {TodoListDefaultNoDelete, AccessViolation, TodoListNotFound} from '../util/error';
 import _ from 'lodash';
 import  Todo from '../model/todo';
 
@@ -44,16 +44,15 @@ export class TodoListController {
             });
         }
 
-
         if (!todolist) {
             context.status = 404;
-            result.error = new ErrorUtil.TodoListNotFound();
+            result.error = new TodoListNotFound();
             return;
         }
 
         if (!isAdmin && todolist.UserId !== user.id) {
             context.status = 403;
-            result.error = new ErrorUtil.AccessViolation();
+            result.error = new AccessViolation();
             return;
         }
 
@@ -163,14 +162,14 @@ export class TodoListController {
 
         if (todolist === null) {
             context.status = 404;
-            result.error = new ErrorUtil.TodoListNotFound();
+            result.error = new TodoListNotFound();
             return;
         }
 
 
         if (todolist.isDefault()) {
             context.status = 403;
-            result.error = new ErrorUtil.TodoListDefaultNoDelete();
+            result.error = new TodoListDefaultNoDelete();
             return;
         }
 
@@ -179,7 +178,7 @@ export class TodoListController {
         // ==========================================================================
         if (!isAdmin && todolist.UserId !== user.id) {
             context.status = 403;
-            result.error = new ErrorUtil.AccessViolation();
+            result.error = new AccessViolation();
             return;
         }
 

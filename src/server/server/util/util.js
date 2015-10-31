@@ -3,7 +3,7 @@
  * Created by Christian on 5/9/2015.
  */
 
-let Util = {
+const Util = {
     /**
      * Pads a number with zeros. If the number length exceeds the padding, the number is returned as string
      * @param num the number to pad
@@ -11,9 +11,11 @@ let Util = {
      * @returns {string}
      */
     zeroPad: function (num, numZeros) {
-        let n = Math.abs(num);
-        let zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
+        const n = Math.abs(num),
+            zeros = Math.max(0, numZeros - Math.floor(n).toString().length);
+
         let zeroString = Math.pow(10, zeros).toString().substr(1);
+
         if (num < 0) {
             zeroString = '-' + zeroString;
         }

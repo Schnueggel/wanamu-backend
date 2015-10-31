@@ -1,6 +1,6 @@
 'use strict';
 
-let User = require('../../model/user.js'),
+const User = require('../../model/user.js'),
     TodoList = require('../../model/todolist.js'),
     Todo = require('../../model/todo'),
     Profile = require('../../model/profile'),
@@ -116,9 +116,7 @@ function* createUsers() {
 
 function* createTodoList() {
 
-
-
-    let user = yield User.findOne({
+    const user = yield User.findOne({
         where:{
             email: conf.get('testmail1')
         }
@@ -139,7 +137,7 @@ function* createTodoList() {
 }
 
 function* createTodos() {
-    let user = yield User.findOne({
+    const user = yield User.findOne({
         where:{
             email:conf.get('testmail1')
         }

@@ -6,7 +6,7 @@ import Friends from '../model/friends.js';
 import { Response } from '../util/response.js';
 import mailService from '../services/mail.js';
 import crypto from 'crypto';
-import ErrorUtil from '../util/error.js';
+import {ModelValidationError, UserNotFound} from '../util/error.js';
 import Util from '../util/util.js';
 
 /**
@@ -87,7 +87,7 @@ export class FriendsController {
         // =============================================================================================
         if (!data.email) {
             context.status = Util.status.VALIDATION_ERROR;
-            response.error = new ErrorUtil.ModelValidationError('Not enough data to fullfill request');
+            response.error = new ModelValidationError('Not enough data to fullfill request');
             console.error(`[ERROR] User:${user.id} ${response.error.message}`);
             return;
         }
@@ -109,7 +109,7 @@ export class FriendsController {
         // =============================================================================================
         if (newfriend === null) {
             context.status = Util.status.NOTFOUND;
-            response.error = new ErrorUtil.UserNotFound();
+            response.error = new UserNotFound();
             console.error(`[ERROR] User:${user.id} Email:${data.email} ${response.error.message}`);
             return;
         }
@@ -119,7 +119,7 @@ export class FriendsController {
         // =============================================================================================
         if (newfriend.id === user.id) {
             context.status = Util.status.VALIDATION_ERROR;
-            response.error = new ErrorUtil.ModelValidationError('You cannot add your self as friend');
+            response.error = new ModelValidationError('You cannot add your self as friend');
             console.error(`[ERROR] User:${user.id} Email:${data.email} ${response.error.message}`);
             return;
         }
@@ -130,7 +130,7 @@ export class FriendsController {
         // =============================================================================================
         if (yield user.hasFriend(newfriend.id)){
             context.status = Util.status.VALIDATION_ERROR;
-            response.error = new ErrorUtil.ModelValidationError('This friend is already in your friendslist');
+            response.error = new ModelValidationError('This friend is already in your friendslist');
             console.error(`[ERROR] User:${user.id} Email:${data.email} ${response.error.message}`);
             return;
         }
@@ -204,7 +204,7 @@ export class FriendsController {
 
         if (updateResult[0] === 0 ) {
             context.status = Util.status.NOTFOUND;
-            response.error = new ErrorUtil.UserNotFound();
+            response.error = new UserNotFound();
             console.error(`[ERROR] Friend Invitation with token ${token} for user ${user.id} not found`);
             return;
         }
@@ -230,7 +230,7 @@ export class FriendsController {
             response.success = true;
         } else {
             context.status = Util.status.NOTFOUND;
-            response.error = new ErrorUtil.UserNotFound();
+            response.error = new UserNotFound();
             console.error(`[ERROR] Removing friend with ID: ${id} for user ${user.id} failed with: Friend not found`);
         }
     }
