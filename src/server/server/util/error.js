@@ -12,7 +12,7 @@ export class WanamuError extends Error {
         this.name = this.constructor.name;
         this.message = message;
         //Show the name of the parent class in the stack trace
-        Error.captureStackTrace(this, this.constructor.name)
+        Error.captureStackTrace(this, this.constructor.name);
     }
 }
 
