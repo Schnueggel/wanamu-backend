@@ -167,8 +167,6 @@ Default sender email
 
 Friends Todo Sharing
 
-Template Engine for Mails
-
 Model Testing
 
 Serverside Translations
@@ -182,12 +180,6 @@ Redis Session Store
 Redis DB Cache
 
 Reset DB State on every Testcase
- 
-Add Mail Server Environment Var
-
-Use Wanamu Mail Server instead of Google
-
-Move to ES6
 
 Friend Invitation Acceptance Mail
 
