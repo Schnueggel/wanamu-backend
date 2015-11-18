@@ -93,4 +93,4 @@ const Setting = sequelize.define('Setting', {
     }
 });
 
-module.exports = Setting;
+export default Setting;

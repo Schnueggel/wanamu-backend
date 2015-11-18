@@ -56,4 +56,4 @@ const FriendsModel = sequelize.define('Friends', {
 });
 
 
-module.exports = FriendsModel;
+export default FriendsModel;

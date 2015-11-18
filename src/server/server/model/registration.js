@@ -107,4 +107,4 @@ function* beforeCreate(registration, options){
     }
 }
 
-module.exports = Registration;
+export default Registration;

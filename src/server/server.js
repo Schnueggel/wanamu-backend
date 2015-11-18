@@ -2,8 +2,9 @@
 
 require('babel-polyfill');
 
-const config = require('./server/config'),
-    logger = require('koa-logger'),
+import config from './server/config';
+
+const logger = require('koa-logger'),
     cors = require('koa-cors'),
     bodyParser = require('koa-bodyparser'),
     session = require('koa-generic-session'),

@@ -117,4 +117,4 @@ const Todo = sequelize.define('Todo', {
 });
 
 
-module.exports = Todo;
+export default Todo;

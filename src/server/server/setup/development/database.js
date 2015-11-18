@@ -1,15 +1,13 @@
 'use strict';
 
-const User = require('../../model/user.js'),
-    TodoList = require('../../model/todolist.js'),
-    Todo = require('../../model/todo'),
-    Profile = require('../../model/profile'),
-    Setting = require('../../model/setting'),
-    Registration = require('../../model/registration'),
-    conf = require('../../config'),
-    co = require('co');
-
-
+import User from'../../model/user.js';
+import TodoList from'../../model/todolist.js';
+import  Todo from'../../model/todo';
+import    Profile from'../../model/profile';
+import    Setting from'../../model/setting';
+import    Registration from'../../model/registration';
+import    conf from'../../config';
+import    co from'co';
 
 /**
  * Setup complete database

@@ -121,4 +121,4 @@ TodoList.hasMany(Todo,  { onDelete: 'cascade' });
  */
 
 
-module.exports = TodoList;
+export default TodoList;

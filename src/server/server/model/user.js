@@ -1,5 +1,5 @@
 import sequelize from '../config/sequelize';
-import ErrorUtil from '../util/error';
+import * as ErrorUtil from '../util/error';
 import TodoList from './todolist';
 import co from 'co';
 import _ from 'lodash';
@@ -212,7 +212,7 @@ User.hasOne(Profile, {
 });
 
 User.belongsToMany(User, { as: 'Friends', through : Friends});
-module.exports = User;
+export default  User;
 
 
 /**

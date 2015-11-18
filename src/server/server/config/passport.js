@@ -1,10 +1,11 @@
 'use strict';
 
+import User  from '../model/user.js';
+import * as ErrorUtil from '../util/error';
+
 const passport = require('koa-passport'),
     LocalStrategy = require('passport-local').Strategy,
     bcrypt = require('../config/bcrypt.js'),
-    User = require('../model/user.js'),
-    ErrorUtil = require('../util/error'),
     co = require('co');
 
 
@@ -88,4 +89,4 @@ function* strategy(username, password, done){
     done(null, user);
 }
 
-module.exports = passport;
+export default passport;
