@@ -49,17 +49,7 @@ const srcServerPath = path.join(__dirname, 'src/server'),
  */
 let requireFolder = null;
 const babelOptions = {
-    plugins:  [
-        require("babel-plugin-transform-strict-mode"),
-        require("babel-plugin-transform-es2015-sticky-regex"),
-        require("babel-plugin-transform-es2015-unicode-regex"),
-        require("babel-plugin-transform-es2015-parameters"),
-        require("babel-plugin-transform-es2015-destructuring"),
-        require("babel-plugin-transform-es2015-typeof-symbol"),
-        require("babel-plugin-transform-es2015-modules-commonjs"),
-        require("babel-plugin-syntax-async-functions"),
-        require("babel-plugin-syntax-async-generators")
-    ]
+    presets:  ['es2015-node5', 'stage-3']
 };
 
 /**

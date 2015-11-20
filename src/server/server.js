@@ -21,7 +21,7 @@ const logger = require('koa-logger'),
 
 app.init = co.wrap(function *() {
     if ( config.isTest() === false) {
-        app.use(convert(logger()));
+        app.use(logger());
     }
     if (config.isStaging() || config.isProduction()) {
         console.log('SLL enforced');
@@ -68,7 +68,7 @@ app.init = co.wrap(function *() {
         app.use(convert(auth(credentials)));
     }
 
-    app.use(convert(bodyParser()));
+    app.use(bodyParser());
 
     app.use(convert(passport.initialize()));
     app.use(convert(passport.session()));

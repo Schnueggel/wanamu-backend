@@ -3,7 +3,7 @@ import ConfirmationMail from './mails/confirmation/mail';
 import ConfirmationSuccessMail  from './mails/confirmationsuccess/mail';
 import FriendInviteMail  from './mails/friendinvite/mail';
 import config from '../config';
-import errors from '../util/error';
+import * as Err from '../util/error';
 
 export class MailService {
 
@@ -59,7 +59,7 @@ export class MailService {
 
         mailer.sendMail(mail, (err, info) => {
             if (err) {
-                reject(new errors.ServerError('Unable to create confirmation mail'));
+                reject(new Err.ServerError('Unable to create confirmation mail'));
                 console.error(err);
             } else {
                 resolve(info);

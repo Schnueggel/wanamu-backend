@@ -16,15 +16,15 @@ import convert from 'koa-convert';
  * Every middleware after this one can only be accessed by an authenticated user
  * @param {Function} next
  */
-function* auth(next){
-    if (!this.isAuthenticated()) {
-        this.status = 401;
-        this.body = {
+async function auth(ctx, next){
+    if (!ctx.isAuthenticated()) {
+        ctx.status = 401;
+        ctx.body = {
             success: false,
             error : 'Not logged in'
         };
     } else {
-        yield next;
+        await next();
     }
 }
 
@@ -73,7 +73,7 @@ module.exports = function(app){
      * ######################################################################################
      * ######################################################################################
      */
-    app.use(convert(auth));
+    app.use(auth);
     // ==========================================================================
     // TODOS
     // ==========================================================================
