@@ -242,6 +242,7 @@ function* beforeBulkCreate (users, options){
  *
  */
 function* beforeCreate(user, options){
+    user.email = user.email.toLowerCase();
     yield hashPassword(user);
 }
 /**
@@ -256,6 +257,7 @@ function* beforeUpdate(user, options){
     if (options.fields && options.fields.indexOf('password') === -1) {
         return;
     }
+    user.email = user.email.toLowerCase();
     yield hashPassword(user);
 }
 

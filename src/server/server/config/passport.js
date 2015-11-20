@@ -60,7 +60,7 @@ function* strategy(username, password, done){
     try{
         let options = {
             where : {
-                email: username
+                email: username.toLowerCase()
             },
             include: User.getIncludeAllOption(false),
             attributes : userfields
