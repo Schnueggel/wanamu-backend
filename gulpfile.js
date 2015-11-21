@@ -14,14 +14,13 @@
  */
 const gulp = require('gulp'),
     gutil = require('gulp-util'),
-    jshint = require('gulp-jshint'),
     replace = require('gulp-replace'),
     merge = require('merge2'),
     runSequence = require('run-sequence'),
     path = require('path'),
     server = require('gulp-develop-server'),
     mocha = require('gulp-mocha'),
-    jscs = require('gulp-jscs'),
+    eslint = require('gulp-eslint'),
     polyfill = require('babel-polyfill'),
     babel = require('gulp-babel'),
     fs = require('fs'),
@@ -67,7 +66,7 @@ gulp.task('default', ['build']);
 // Build the application into the dist folder
 // ===================================================================
 gulp.task('build', function (cb) {
-    runSequence('jshint', 'jscs', 'build-server', cb);
+    runSequence('eslint', 'build-server', cb);
 });
 
 // ===========================================================================
@@ -284,22 +283,20 @@ gulp.task('build-production-database',['build-server'], function (cb) {
     require(path.join(srcServerPath, 'server', 'setup', 'production', 'database.js'))(cb);
 });
 
-// ==========================================================================
-// Code Quality
-// ==========================================================================
-gulp.task('jshint', function () {
-    gulp.src('src/**/*.js')
-        .pipe(jshint('.jshintrc'))
-        .pipe(jshint.reporter('jshint-stylish'))
-        .pipe(jshint.reporter('fail'));
-});
-
 // =============================================================================================
-// Code Style
+// Code Lint
 // =============================================================================================
-gulp.task('jscs', function() {
+gulp.task('eslint', function() {
     gulp.src('src/**/*.js')
-        .pipe(jscs());
+        .pipe(eslint({
+            useEslintrc: true
+        }))
+        // eslint.format() outputs the lint results to the console.
+        // Alternatively use eslint.formatEach() (see Docs).
+        .pipe(eslint.format())
+        // To have the process exit with an error code (1) on
+        // lint error, return the stream and pipe to failAfterError last.
+        .pipe(eslint.failAfterError());
 });
 
 
