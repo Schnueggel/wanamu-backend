@@ -69,24 +69,19 @@ function* strategy(username, password, done){
         user = yield User.findOne(options);
     } catch(err) {
         console.error(err.stack);
-        return done(new ErrorUtil.ServerError('Could not process user login'), false, {});
+        done(new ErrorUtil.ServerError('Could not process user login'), false, {});
+        return;
     }
 
     if (user === null) {
-        return done(new ErrorUtil.NotFound(), false, {} );
+        done(new ErrorUtil.NotFound(), false, {} );
+    } else if (!(yield bcrypt.compare(password, user.password))) {
+        done(new ErrorUtil.AccessViolation(), false, {});
+    } else if (!user.confirmed) {
+        done(new ErrorUtil.NotConfirmed(), false,  {});
+    } else {
+        done(null, user);
     }
-
-    let isMatch = yield bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-        return done(new ErrorUtil.AccessViolation(), false, {});
-    }
-
-    if (!user.confirmed) {
-        return done(new ErrorUtil.NotConfirmed(), false,  {});
-    }
-
-    done(null, user);
 }
 
 export default passport;

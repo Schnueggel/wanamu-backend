@@ -13,9 +13,7 @@
  * ######################################################################################
  */
 const gulp = require('gulp'),
-    gutil = require('gulp-util'),
     replace = require('gulp-replace'),
-    merge = require('merge2'),
     runSequence = require('run-sequence'),
     path = require('path'),
     server = require('gulp-develop-server'),
