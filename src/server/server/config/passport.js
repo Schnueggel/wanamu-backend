@@ -14,7 +14,7 @@ passport.use(new LocalStrategy(co.wrap(strategy)));
 /**
  * Save user id in session
  */
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
     done(null, user.id);
 });
 
@@ -22,9 +22,9 @@ passport.serializeUser(function(user, done) {
  * deserialize user
  * find it under app.req.user (this.req.user) in koa app middleware
  */
-passport.deserializeUser(function(id, done) {
+passport.deserializeUser(function (id, done) {
 
-    co(function*(){
+    co(function*() {
         let user = yield User.findOne({
             where: {
                 id: id
@@ -36,7 +36,7 @@ passport.deserializeUser(function(id, done) {
             return done(null, false);
         }
         done(null, user);
-    }).catch(function(err){
+    }).catch(function (err) {
         console.error(err);
         done(null, false, {message: 'Could not find User'});
     });
@@ -49,7 +49,7 @@ passport.deserializeUser(function(id, done) {
  * @param {Function} done
  * @returns {*}
  */
-function* strategy(username, password, done){
+function* strategy(username, password, done) {
 
     let user,
         userfields = User.getVisibleFields(false);
@@ -57,28 +57,27 @@ function* strategy(username, password, done){
     //We need the password field for auth
     userfields.push('password');
 
-    try{
+    try {
         let options = {
-            where : {
+            where: {
                 email: username.toLowerCase()
             },
             include: User.getIncludeAllOption(false),
-            attributes : userfields
+            attributes: userfields
         };
 
         user = yield User.findOne(options);
-    } catch(err) {
+    } catch (err) {
         console.error(err.stack);
-        done(new ErrorUtil.ServerError('Could not process user login'), false, {});
-        return;
+        return done(new ErrorUtil.ServerError('Could not process user login'), false, {});
     }
 
     if (user === null) {
-        done(new ErrorUtil.NotFound(), false, {} );
+        done(new ErrorUtil.NotFound(), false, {});
     } else if (!(yield bcrypt.compare(password, user.password))) {
         done(new ErrorUtil.AccessViolation(), false, {});
     } else if (!user.confirmed) {
-        done(new ErrorUtil.NotConfirmed(), false,  {});
+        done(new ErrorUtil.NotConfirmed(), false, {});
     } else {
         done(null, user);
     }
