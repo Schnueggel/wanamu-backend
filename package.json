@@ -55,10 +55,10 @@
   "devDependencies": {
     "babel-eslint": "^4.1.6",
     "babel-polyfill": "^6.2.0",
-    "babel-preset-es2015-node5": "^1.1.0",
+    "babel-preset-es2015-node5": "^1.1.1",
     "babel-preset-stage-3": "^6.1.18",
     "co-supertest": "0.0.10",
-    "eslint": "^1.10.2",
+    "eslint": "^1.10.3",
     "gulp-babel": "^6.1.1",
     "del": "^2.1.0",
     "gulp": "^3.9.0",
