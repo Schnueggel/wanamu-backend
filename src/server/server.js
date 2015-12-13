@@ -1,7 +1,5 @@
 'use strict';
 
-require('babel-polyfill');
-
 import config from './server/config';
 
 const logger = require('koa-logger'),

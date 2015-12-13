@@ -1,7 +1,7 @@
 'use strict';
 
 import config from '../config';
-import   Sequelize from 'sequelize';
+import Sequelize from 'sequelize';
 
 let sequelizeOptions = config.SEQUELIZE;
 

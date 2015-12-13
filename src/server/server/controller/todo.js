@@ -56,7 +56,7 @@ export class TodoController {
         }
 
         try {
-            const options = {fields: Todo.getUpdateFields(isAdmin)};
+            const options = {fields: Todo.getCreateFields(isAdmin)};
 
             let todo = yield Todo.create(data, options);
             todo = yield todo.reload();

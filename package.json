@@ -37,7 +37,7 @@
     "koa-convert": "1.2.0",
     "koa-cors": "0.0.16",
     "koa-force-ssl": "0.0.5",
-    "koa-generic-session": "^1.9.0",
+    "koa-generic-session": "^1.10.0",
     "koa-logger": "^2.0.0",
     "koa-passport": "^1.1.6",
     "koa-route": "^2.4.2",
@@ -50,17 +50,18 @@
     "pg": "^4.4.3",
     "pg-hstore": "^2.3.2",
     "sequelize": "^3.14.2",
-    "validator": "^4.3.0"
+    "validator": "^4.4.0"
   },
   "devDependencies": {
+    "babel-core": "^6.3.17",
     "babel-eslint": "^4.1.6",
-    "babel-polyfill": "^6.2.0",
+    "babel-polyfill": "^6.3.14",
     "babel-preset-es2015-node5": "^1.1.1",
-    "babel-preset-stage-3": "^6.1.18",
+    "babel-preset-stage-3": "^6.3.13",
     "co-supertest": "0.0.10",
     "eslint": "^1.10.3",
     "gulp-babel": "^6.1.1",
-    "del": "^2.1.0",
+    "del": "^2.2.0",
     "gulp": "^3.9.0",
     "gulp-develop-server": "^0.5.0",
     "gulp-eslint": "^1.1.1",
@@ -70,7 +71,7 @@
     "gulp-replace": "^0.5.4",
     "raw-loader": "^0.5.1",
     "run-sequence": "^1.1.5",
-    "should": "^7.1.1",
+    "should": "^8.0.1",
     "sinon": "^1.17.2",
     "supertest": "^1.1.0"
   }

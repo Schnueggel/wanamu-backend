@@ -92,7 +92,7 @@ const Todo = sequelize.define('Todo', {
             let without = ['id'];
 
             if (!isAdmin) {
-                without = without.concat(['createdAt', 'updatedAt']);
+                without = without.concat(['createdAt', 'updatedAt', 'deletedAt']);
             }
             return _.difference(this.getAttribKeys(), without);
         },

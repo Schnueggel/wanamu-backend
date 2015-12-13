@@ -19,7 +19,6 @@ const gulp = require('gulp'),
     server = require('gulp-develop-server'),
     mocha = require('gulp-mocha'),
     eslint = require('gulp-eslint'),
-    polyfill = require('babel-polyfill'),
     babel = require('gulp-babel'),
     fs = require('fs'),
     rename = require('gulp-rename'),
@@ -45,9 +44,6 @@ const srcServerPath = path.join(__dirname, 'src/server'),
  * ######################################################################################
  */
 let requireFolder = null;
-const babelOptions = {
-    presets:  ['es2015-node5', 'stage-3']
-};
 
 /**
  * ######################################################################################
@@ -179,7 +175,7 @@ gulp.task('dist-server', function () {
 gulp.task('babel', function() {
     return gulp
         .src(path.join(distServerPath, '/**/*.*js'))
-        .pipe(babel(babelOptions))
+        .pipe(babel())
         .pipe(gulp.dest(distServerPath));
 });
 
@@ -204,10 +200,10 @@ gulp.task('dist-app-static', function () {
 // ==========================================================================
 gulp.task('test-mocha', ['prepare-mocha-tests'], function () {
     process.env.WU_ENV = 'test';
-    return gulp.src('test/mocha/**/**.js')
+    return gulp.src('test/mocha/**/auth.js')
         .pipe(mocha({
             compilers: {
-                js: require('babel-core/register')(babelOptions)
+                js: require('babel-core/register')
             },
             timeout: 5000
         }));

@@ -1,6 +1,6 @@
 'use strict';
 
-import mochaconf from '../../../dist/server/server/config/mocha';
+import * as mochaConfig from '../../../dist/server/server/config/mocha';
 import app from '../../../dist/server/server.js';
 import config from '../../../dist/server/server/config';
 import Registration from '../../../dist/server/server/model/registration';
@@ -39,7 +39,7 @@ describe('Test Registration Controller', function () {
     it('should Register', function(done){
 
         co(function *() {
-            const res = yield mochaconf.request
+            const res = yield mochaConfig.request
                 .post('/user')
                 .type('json')
                 .send({
@@ -91,7 +91,7 @@ describe('Test Registration Controller', function () {
         assert(_.isString(confirmationhash));
 
         co(function *() {
-            const res = yield mochaconf.request
+            const res = yield mochaConfig.request
                 .get('/confirmation/' + confirmationhash)
                 .type('json')
                 .set('Accept', 'application/json')

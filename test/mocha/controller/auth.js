@@ -1,13 +1,13 @@
 'use strict';
 
-import mocha from '../../../dist/server/server/config/mocha';
+import * as mocha from '../../../dist/server/server/config/mocha';
 import app from '../../../dist/server/server.js';
 import config from '../../../dist/server/server/config';
 import assert from 'assert';
 import co from 'co';
 import databasehelper from '../../../dist/server/server/setup/databasehelper';
 import should from 'should';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 describe('Test Auth Controller', () => {
 
